@@ -1,0 +1,23 @@
+{
+	"name": "phpgt/domtemplate",
+	"description": "Reuse HTML components and dynamically bind data",
+	"license": "MIT",
+
+	"require": {
+		"phpgt/dom": "^1"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^6.4"
+	},
+
+	"autoload": {
+		"psr-4": {
+			"Gt\\DomTemplate\\": "./src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Gt\\DomTemplate\\Test\\": "./test/unit"
+		}
+	}
+}
