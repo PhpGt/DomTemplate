@@ -80,7 +80,7 @@ trait TemplateParent {
 			}
 
 			/** @var DocumentFragment $fragment */
-			$fragment = $this->templateFragmentMap[$name];
+			$fragment = $this->templateFragmentMap[$name] ?? null;
 
 			if(is_null($fragment)) {
 				continue;
