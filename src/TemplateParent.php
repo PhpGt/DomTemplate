@@ -110,6 +110,8 @@ trait TemplateParent {
 	}
 
 	protected function getTemplateFilePath(string $name, string $path):string {
+		$templateFilePath = "";
+
 		foreach(new DirectoryIterator($path) as $fileInfo) {
 			if(!$fileInfo->isFile()) {
 				continue;
@@ -119,9 +121,11 @@ trait TemplateParent {
 			$noExt = strtok($fileName, ".");
 
 			if($name === $noExt) {
-				return $fileInfo->getRealPath();
+				$templateFilePath = $fileInfo->getRealPath();
 			}
 		}
+
+		return $templateFilePath;
 	}
 
 	protected function getTemplateNameFromElement(BaseElement $element):string {
