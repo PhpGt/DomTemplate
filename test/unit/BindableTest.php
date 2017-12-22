@@ -22,6 +22,7 @@ class BindableTest extends TestCase {
 
 	public function testBindMethodOnTemplateElement() {
 		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
+		$document->extractTemplates();
 		$template = $document->getTemplate("title-definition");
 
 		self::assertTrue(
