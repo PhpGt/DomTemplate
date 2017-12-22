@@ -94,10 +94,6 @@ trait TemplateParent {
 	protected function loadComponent(string $name, string $path):DocumentFragment {
 		$filePath = $this->getTemplateFilePath($name, $path);
 
-		if(is_null($filePath)) {
-			throw new TemplateComponentNotFoundException($filePath);
-		}
-
 		$html = file_get_contents($filePath);
 		/** @var DocumentFragment $fragment */
 		if(method_exists($this, "createDocumentFragment")) {
@@ -113,7 +109,7 @@ trait TemplateParent {
 		return $fragment;
 	}
 
-	protected function getTemplateFilePath(string $name, string $path):?string {
+	protected function getTemplateFilePath(string $name, string $path):string {
 		foreach(new DirectoryIterator($path) as $fileInfo) {
 			if(!$fileInfo->isFile()) {
 				continue;
@@ -126,8 +122,6 @@ trait TemplateParent {
 				return $fileInfo->getRealPath();
 			}
 		}
-
-		return null;
 	}
 
 	protected function getTemplateNameFromElement(BaseElement $element):string {
