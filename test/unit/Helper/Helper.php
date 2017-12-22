@@ -33,8 +33,8 @@ HTML;
 		</p>
 		<dl>
 			<template id="title-definition">
-				<dt>Title</dt>
-				<dd>Definition</dd>			
+				<dt data-bind:text="title">Title</dt>
+				<dd data-bind:text="definition">Definition</dd>			
 			</template>
 		</dl>
 		<p>
