@@ -15,7 +15,6 @@ class HTMLDocument extends BaseHTMLDocument {
 	public function __construct(string $document = "", string $templateDirectory = "") {
 		parent::__construct($document);
 
-		$this->registerNodeClass(DOMNode::class, Node::class);
 		$this->registerNodeClass(DOMElement::class, Element::class);
 		$this->registerNodeClass(DOMDocumentFragment::class, DocumentFragment::class);
 
