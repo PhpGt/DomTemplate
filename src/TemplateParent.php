@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use DirectoryIterator;
 use Gt\Dom\DocumentFragment;
 use Gt\Dom\HTMLCollection;
+use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
 	protected $templateFragments = [];
@@ -65,7 +66,7 @@ trait TemplateParent {
 		return null;
 	}
 
-	protected function getTemplateNameFromElement(Element $element):string {
+	protected function getTemplateNameFromElement(BaseElement $element):string {
 		switch($element->tagName) {
 		case "template":
 			return $element->id;
