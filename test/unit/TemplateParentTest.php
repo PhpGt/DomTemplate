@@ -83,7 +83,10 @@ class TemplateParentTest extends TestCase {
 			Helper::COMPONENT_TITLE_ORDERED_LIST
 		);
 
-		$document = new HTMLDocument(Helper::HTML_COMPONENTS);
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$templateDir
+		);
 		self::assertInstanceOf(Element::class, $document->querySelector("title-definition-list"));
 		self::assertInstanceOf(Element::class, $document->querySelector("ordered-list"));
 
@@ -108,8 +111,11 @@ class TemplateParentTest extends TestCase {
 			"$templateDir/title-definition.html",
 			Helper::COMPONENT_TITLE_DEFINITION
 		);
-		$document = new HTMLDocument(Helper::HTML_COMPONENTS);
-		$document->expandComponents($templateDir);
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$templateDir
+		);
+		$document->expandComponents();
 
 		$expandedComponent = $document->querySelector("dl");
 		self::assertInstanceOf(Element::class, $expandedComponent);
@@ -117,5 +123,20 @@ class TemplateParentTest extends TestCase {
 		self::assertInstanceOf(Element::class, $expandedComponent->lastElementChild);
 		self::assertEquals("dt", $expandedComponent->firstElementChild->tagName);
 		self::assertEquals("dd", $expandedComponent->lastElementChild->tagName);
+	}
+
+	public function testGetTemplateFromFile() {
+		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		file_put_contents(
+			"$templateDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+		$document = new HTMLDocument(
+			Helper::HTML_NO_TEMPLATES,
+			$templateDir
+		);
+
+		$fragment = $document->getTemplate("title-definition");
+		self::assertInstanceOf(DocumentFragment::class, $fragment);
 	}
 }

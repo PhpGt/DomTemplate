@@ -32,31 +32,39 @@ trait TemplateParent {
 		return $i + 1;
 	}
 
-	public function getTemplate(string $name):?DocumentFragment {
+	public function getTemplate(string $name, string $templateDirectory = null):DocumentFragment {
 		if(isset($this->templateFragmentMap[$name])) {
 			return $this->templateFragmentMap[$name];
 		}
+		if(is_null($templateDirectory)) {
+			$templateDirectory = $this->templateDirectory;
+		}
 
-		if(is_dir($this->templateDirectory)) {
-			foreach(new DirectoryIterator($this->templateDirectory) as $fileInfo) {
+		if(is_dir($templateDirectory)) {
+			foreach(new DirectoryIterator($templateDirectory) as $fileInfo) {
 				if(!$fileInfo->isFile()) {
 					continue;
 				}
 
 				$fileName = $fileInfo->getFilename();
+				$fileName = strtok($fileName, ".");
+
 				if($name === $fileName) {
-					return $this->loadTemplate(
+					return $this->loadComponent(
 						$name,
-						$fileInfo->getPathname()
+						dirname($fileInfo->getRealPath())
 					);
 				}
 			}
 		}
 
-		return null;
+		throw new TemplateComponentNotFoundException($name);
 	}
 
-	public function expandComponents(string $templateFilePath):int {
+	public function expandComponents(string $templateDirectory = null):int {
+		if(is_null($templateDirectory)) {
+			$templateDirectory = $this->templateDirectory;
+		}
 // Any HTML element is considered a "custom element" if it contains a hyphen in its name:
 // @see https://www.w3.org/TR/custom-elements/#valid-custom-element-name
 		/** @var HTMLCollection $componentList */
@@ -68,24 +76,14 @@ trait TemplateParent {
 		foreach($componentList as $component) {
 			$name = $component->tagName;
 
-			if(!isset($this->templateFragmentMap[$name])) {
-				try {
-					$this->templateFragmentMap[$name] = $this->loadComponent(
-						$name,
-						$templateFilePath
-					);
-				}
-				catch(TemplateComponentNotFoundException $exception) {}
+			try {
+				$fragment = $this->getTemplate($name, $templateDirectory);
 			}
-
-			/** @var DocumentFragment $fragment */
-			$fragment = $this->templateFragmentMap[$name] ?? null;
-
-			if(is_null($fragment)) {
+			catch(TemplateComponentNotFoundException $exception) {
 				continue;
 			}
 
-			$fragment->expandComponents($templateFilePath);
+			$fragment->expandComponents($templateDirectory);
 			$component->replaceWith($fragment);
 			$count++;
 		}
@@ -93,7 +91,7 @@ trait TemplateParent {
 		return $count;
 	}
 
-	protected function loadComponent(string $name, string $path):BaseDocumentFragment {
+	protected function loadComponent(string $name, string $path):DocumentFragment {
 		$filePath = $this->getTemplateFilePath($name, $path);
 
 		if(is_null($filePath)) {
