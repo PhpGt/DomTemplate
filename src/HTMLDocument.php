@@ -3,7 +3,6 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\HTMLDocument as BaseHTMLDocument;
 use Gt\Dom\DocumentFragment as BaseDocumentFragment;
-use DOMNode;
 use DOMElement;
 use DOMDocumentFragment;
 

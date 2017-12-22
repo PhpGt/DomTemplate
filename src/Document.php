@@ -2,10 +2,8 @@
 namespace Gt\DomTemplate;
 
 use Gt\Dom\Document as BaseDocument;
-use DOMNode;
 use DOMElement;
 use DOMDocumentFragment;
-
 
 class Document extends BaseDocument {
 	public function __construct($document = null) {
