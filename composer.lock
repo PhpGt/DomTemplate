@@ -8,24 +8,24 @@
     "packages": [
         {
             "name": "phpgt/dom",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "c16b9738ab942eb6bef6979aeae0fba56d69bd8c"
+                "reference": "865d16dfc91bfb1cdf31a53ccd487b933fa45655"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/c16b9738ab942eb6bef6979aeae0fba56d69bd8c",
-                "reference": "c16b9738ab942eb6bef6979aeae0fba56d69bd8c",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/865d16dfc91bfb1cdf31a53ccd487b933fa45655",
+                "reference": "865d16dfc91bfb1cdf31a53ccd487b933fa45655",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0",
+                "php": ">=7.1.0",
                 "symfony/css-selector": "3.2.*"
             },
             "require-dev": {
-                "phpunit/phpunit": "5.*"
+                "phpunit/phpunit": "^6.4"
             },
             "type": "library",
             "autoload": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "The modern DOM API for PHP 7 projects.",
-            "time": "2017-05-29T22:19:43+00:00"
+            "time": "2017-12-12T22:49:41+00:00"
         },
         {
             "name": "symfony/css-selector",
