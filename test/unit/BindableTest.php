@@ -30,4 +30,10 @@ class BindableTest extends TestCase {
 			"Template element is not bindable"
 		);
 	}
+
+//	public function testBindGetsCorrectChildren() {
+//		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
+//		$document->extractTemplates();
+//		$document->bind([]);
+//	}
 }
