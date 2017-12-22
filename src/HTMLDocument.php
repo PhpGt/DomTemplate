@@ -7,7 +7,7 @@ use Gt\Dom\DocumentFragment;
 use Gt\Dom\HTMLDocument as BaseHTMLDocument;
 
 class HTMLDocument extends BaseHTMLDocument {
-	protected $templateFragments = [];
+	use TemplateParent;
 
 	public function __construct($document = "") {
 		parent::__construct($document);
@@ -15,32 +15,14 @@ class HTMLDocument extends BaseHTMLDocument {
 		$this->registerNodeClass(DOMElement::class, Element::class);
 	}
 
-	public function extractTemplates():int {
-		$i = null;
-		$templateElementList = $this->querySelectorAll(
-			"template,[data-template]"
-		);
-
-		foreach($templateElementList as $i => $templateElement) {
-			$templateElement->remove();
-			$this->templateFragments []= $this->createTemplateFragment(
-				$templateElement
-			);
-		}
-
-		if(is_null($i)) {
-			return 0;
-		}
-
-		return $i + 1;
-	}
-
-	protected function createTemplateFragment(Element $templateElement):DocumentFragment {
+	protected function createTemplateFragment(DOMElement $templateElement):DocumentFragment {
 		$fragment = $this->createDocumentFragment();
 
 		if($templateElement->tagName === "template") {
-			foreach($templateElement->childNodes as $tChild) {
-				$fragment->appendChild($tChild);
+			while(!is_null($templateElement->childNodes[0])) {
+				$fragment->appendChild(
+					$templateElement->childNodes[0]
+				);
 			}
 		}
 		else {

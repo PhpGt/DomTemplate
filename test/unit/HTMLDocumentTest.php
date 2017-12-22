@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\DocumentFragment;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +36,11 @@ class HTMLDocumentTest extends TestCase {
 		self::assertEquals(0, count($newTemplateElements));
 	}
 
-//	public function testTemplateGet() {
-//
-//	}
+	public function testGetTemplate() {
+		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
+		$document->extractTemplates();
+		$t = $document->getTemplate("title-definition");
+		self::assertInstanceOf(DocumentFragment::class, $t);
+		self::assertCount(2, $t->children);
+	}
 }
