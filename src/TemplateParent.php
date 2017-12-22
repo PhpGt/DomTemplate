@@ -8,7 +8,6 @@ use Gt\Dom\DocumentFragment as BaseDocumentFragment;
 
 trait TemplateParent {
 	protected $templateFragmentMap = [];
-	protected $templateFilePath;
 
 	public function extractTemplates():int {
 		$i = null;
@@ -38,8 +37,8 @@ trait TemplateParent {
 			return $this->templateFragmentMap[$name];
 		}
 
-		if(is_dir($this->templateFilePath)) {
-			foreach(new DirectoryIterator($this->templateFilePath) as $fileInfo) {
+		if(is_dir($this->templateDirectory)) {
+			foreach(new DirectoryIterator($this->templateDirectory) as $fileInfo) {
 				if(!$fileInfo->isFile()) {
 					continue;
 				}
