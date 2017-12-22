@@ -9,6 +9,7 @@ use DOMDocumentFragment;
 
 class HTMLDocument extends BaseHTMLDocument {
 	use TemplateParent;
+	use Bindable;
 
 	protected $templateDirectory;
 
