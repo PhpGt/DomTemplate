@@ -28,25 +28,34 @@ Consider a page with an unordered list (`<ul>`). Within the list there should be
 
 In this example, we will simply use an array to contain the data, but the data can come from a data source such as a database.
 
-### Source HTML (`shopping-list.html`)
+### Source HTML (`example.html`)
 
 ```html
 <!doctype html>
 <h1>Shopping list</h1>
 
+<shopping-list></shopping-list>
+
+<p>The use of a custom element is more useful on more complex pages, but is shown here as an example.</p>
+```
+
+### Custom element HTML (`_template/shopping-list.html`)
+
+```html
 <ul id="shopping-list">
-	<li data-template-text="item-name">Item name</li>
+	<li data-template="shopping-list-item" data-template-text="item-name">Item name</li>
 </ul>
 ```
 
-### PHP used to inject the list (`index.php`)
+### PHP used to inject the list
 
 ```php
 <?php
 require "vendor/autoload.php";
 
-$html = file_get_contents("shopping-list.html");
-$document = new \Gt\DomTemplate\HTMLDocument($html);
+$html = file_get_contents("example.html");
+$document = new \Gt\DomTemplate\HTMLDocument($html, "./_template");
+$document->prepareTemplates();
 
 $data = [
 	["id" => 1, "title" => "Tomatoes"],
@@ -56,7 +65,7 @@ $data = [
 ];
 
 $outputTo = $document->getElementById("shopping-list");
-$outputTo->bind($data);
+$outputTo->bind("shopping-list-item", $data);
 ```
 
 ### Output:
