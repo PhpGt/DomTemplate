@@ -19,4 +19,14 @@ class BindableTest extends TestCase {
 			"Template container element (dl) is not bindable"
 		);
 	}
+
+	public function testBindMethodOnTemplateElement() {
+		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
+		$template = $document->getTemplate("title-definition");
+
+		self::assertTrue(
+			method_exists($template, "bind"),
+			"Template element is not bindable"
+		);
+	}
 }
