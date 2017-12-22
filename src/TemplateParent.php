@@ -7,8 +7,8 @@ use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
-	protected $templateFragments = [];
-	protected $templateFilePath = "src/page/_template";
+	protected $templateFragmentMap = [];
+	protected $templateFilePath;
 
 	public function extractTemplates():int {
 		$i = null;
@@ -21,7 +21,7 @@ trait TemplateParent {
 			$templateElement->remove();
 			$name = $this->getTemplateNameFromElement($templateElement);
 
-			$this->templateFragments[$name] = $this->createTemplateFragment(
+			$this->templateFragmentMap[$name] = $this->createTemplateFragment(
 				$templateElement
 			);
 		}
@@ -38,8 +38,8 @@ trait TemplateParent {
 	}
 
 	public function getTemplate(string $name):?DocumentFragment {
-		if(isset($this->templateFragments[$name])) {
-			return $this->templateFragments[$name];
+		if(isset($this->templateFragmentMap[$name])) {
+			return $this->templateFragmentMap[$name];
 		}
 
 		if(is_dir($this->templateFilePath)) {
@@ -61,8 +61,59 @@ trait TemplateParent {
 		return null;
 	}
 
-	protected function loadTemplate(string $name, string $path):?DocumentFragment {
-		// TODO: Implement loading from file.
+	public function expandComponents():int {
+		$count = 0;
+
+		/** @var HTMLCollection $componentList*/
+		$componentList = $this->xPath("//*[contains(local-name(), '-')]");
+
+		foreach($componentList as $component) {
+			$name = $component->tagName;
+
+			if(!isset($this->templateFragmentMap[$name])) {
+				$this->templateFragmentMap[$name] = $this->loadComponent($name);
+			}
+
+			$fragment = $this->templateFragmentMap[$name];
+			if(is_null($fragment)) {
+				continue;
+			}
+
+			$component->replaceWith($fragment);
+			$count++;
+		}
+
+		return $count;
+	}
+
+	protected function loadComponent(string $name):?DocumentFragment {
+		$filePath = $this->getTemplateFilePath($name);
+
+		if(is_null($filePath)) {
+			return null;
+		}
+
+		$html = file_get_contents($filePath);
+		/** @var DocumentFragment $fragment */
+		$fragment = $this->createDocumentFragment();
+		$fragment->appendXML($html);
+		return $fragment;
+	}
+
+	protected function getTemplateFilePath(string $name):?string {
+		foreach(new DirectoryIterator($this->templateFilePath) as $fileInfo) {
+			if(!$fileInfo->isFile()) {
+				continue;
+			}
+
+			$fileName = $fileInfo->getFilename();
+			$noExt = strtok($fileName, ".");
+
+			if($name === $noExt) {
+				return $fileInfo->getRealPath();
+			}
+		}
+
 		return null;
 	}
 

@@ -50,5 +50,50 @@ HTML;
 </main>
 HTML;
 
+	const HTML_COMPONENTS = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has some components</title>
+<main>
+	<section>
+		<h1>Hello, World!</h1>
+		<ul>
+			<li data-template="list-item">This is a list item</li>
+		</ul>
+		<p>
+			Above this paragraph is an unordered list, with the LI elements templated.
+		</p>
+		
+		<title-definition-list></title-definition-list>
+		
+		<p>
+			Above this paragraph is a custom component, which has a nested component within it.
+		</p>
+		<p>
+			Below is another custom component.		
+		</p>
+		<ordered-list></ordered-list>
+	</section>
+</main>
+HTML;
+
+	const COMPONENT_TITLE_DEFINITION_LIST = <<<HTML
+<dl>
+	<title-definition data-template="title-definition-item"></title-definition>
+</dl>
+HTML;
+
+	const COMPONENT_TITLE_DEFINITION = <<<HTML
+<dt data-template-text="@title">Title</dt>
+<dd data-template-text="@definition">Definition</dd>
+HTML;
+
+	const COMPONENT_TITLE_ORDERED_LIST = <<<HTML
+<ol>
+	<li data-template="ordered-list-item">This is an item in the second list</li>		
+</ol>
+HTML;
+
+
 
 }
