@@ -2,7 +2,7 @@
 namespace Gt\DomTemplate;
 
 trait Bindable {
-	public function bind(iterable $data):void {
+	public function bind(iterable $data, string $templateName = null):void {
 
 	}
 }
