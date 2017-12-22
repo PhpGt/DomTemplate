@@ -1,6 +1,6 @@
 {
 	"name": "phpgt/domtemplate",
-	"description": "Reuse HTML components and dynamically bind data",
+	"description": "Bind dynamic data to reusable HTML components.",
 	"license": "MIT",
 
 	"require": {
