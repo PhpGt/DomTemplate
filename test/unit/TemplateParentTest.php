@@ -62,8 +62,9 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function testExpandComponentsNoComponents() {
+		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
 		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
-		$count = $document->expandComponents();
+		$count = $document->expandComponents($templateDir);
 		self::assertEquals(0, $count);
 	}
 
@@ -88,12 +89,33 @@ class TemplateParentTest extends TestCase {
 
 		$elementBeforeOrderedList = $document->querySelector("ordered-list")->previousElementSibling;
 
-		$document->setTemplateFilePath($templateDir);
-		$count = $document->expandComponents();
+		$count = $document->expandComponents($templateDir);
 		self::assertEquals(2, $count);
 		self::assertNull($document->querySelector("title-definition-list"));
 		self::assertNull($document->querySelector("ordered-list"));
 
 		self::assertEquals("ol", $elementBeforeOrderedList->nextElementSibling->tagName);
+	}
+
+	public function testNestedComponentsExpand() {
+		// While the count of the expandCompnents > 0, do it again on the expanded component...
+		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		file_put_contents(
+			"$templateDir/title-definition-list.html",
+			Helper::COMPONENT_TITLE_DEFINITION_LIST
+		);
+		file_put_contents(
+			"$templateDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+		$document = new HTMLDocument(Helper::HTML_COMPONENTS);
+		$document->expandComponents($templateDir);
+
+		$expandedComponent = $document->querySelector("dl");
+		self::assertInstanceOf(Element::class, $expandedComponent);
+		self::assertInstanceOf(Element::class, $expandedComponent->firstElementChild);
+		self::assertInstanceOf(Element::class, $expandedComponent->lastElementChild);
+		self::assertEquals("dt", $expandedComponent->firstElementChild->tagName);
+		self::assertEquals("dd", $expandedComponent->lastElementChild->tagName);
 	}
 }
