@@ -34,7 +34,7 @@ HTML;
 		<dl>
 			<template id="title-definition">
 				<dt data-bind:text="title">Title</dt>
-				<dd data-bind:text="definition">Definition</dd>			
+				<dd data-bind:text="definition">Definition</dd>
 			</template>
 		</dl>
 		<p>
