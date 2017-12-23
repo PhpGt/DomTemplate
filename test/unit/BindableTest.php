@@ -31,9 +31,11 @@ class BindableTest extends TestCase {
 		);
 	}
 
-//	public function testBindGetsCorrectChildren() {
-//		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
-//		$document->extractTemplates();
-//		$document->bind([]);
-//	}
+	public function testBindExistingElements() {
+		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
+		$document->bind([
+			"name" => "Winston Smith",
+			"age" => 39,
+		]);
+	}
 }
