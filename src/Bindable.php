@@ -17,7 +17,10 @@ trait Bindable {
 		$this->bindExisting($element, $data);
 
 		if(is_null($templateName)) {
-			$templateNames = $this->getTemplateNamesForElement($element);
+			$templateNames = $this->getRootDocument()->getNamedTemplate(
+				$this->getNodePath(),
+				true
+			);
 		}
 		else {
 			$templateNames = [$templateName];
@@ -48,16 +51,10 @@ trait Bindable {
 	protected function bindTemplates(
 		BaseElement $element,
 		iterable $data,
-		string $templateName = null
+		string $templateName
 	):void {
-		$templateFragmentMap = $this->templateFragmentMap ?? [];
-		foreach($templateFragmentMap as $name => $fragment) {
-			if($name !== $templateName) {
-				continue;
-			}
-
-
-		}
+		$template = $this->getRootDocument()->getNamedTemplate($templateName);
+		var_dump($templateName);die();
 	}
 
 	protected function setData(BaseElement $element, iterable $data):void {

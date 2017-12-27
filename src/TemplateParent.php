@@ -6,8 +6,6 @@ use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
-	protected $templateFragmentMap = [];
-
 	public function extractTemplates():int {
 		$i = null;
 		/** @var HTMLCollection $templateElementList */
@@ -19,9 +17,10 @@ trait TemplateParent {
 			$name = $this->getTemplateNameFromElement($templateElement);
 			$templateElement->remove();
 
-			$this->templateFragmentMap[$name] = $this->createTemplateFragment(
+			$fragment = $this->createTemplateFragment(
 				$templateElement
 			);
+			$this->getRootDocument()->setNamedTemplate($name, $fragment);
 		}
 
 		if(is_null($i)) {
@@ -32,9 +31,11 @@ trait TemplateParent {
 	}
 
 	public function getTemplate(string $name, string $templateDirectory = null):DocumentFragment {
-		if(isset($this->templateFragmentMap[$name])) {
-			return $this->templateFragmentMap[$name];
+		$docTemplate = $this->getRootDocument()->getNamedTemplate($name);
+		if(!is_null($docTemplate)) {
+			return $docTemplate;
 		}
+
 		if(is_null($templateDirectory)) {
 			$templateDirectory = $this->templateDirectory;
 		}
