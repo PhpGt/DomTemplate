@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "696b81c0684121c981e73f450008d948",
+    "content-hash": "f10d83929a1cea1631d9826032eecd82",
     "packages": [
         {
             "name": "phpgt/dom",
-            "version": "v1.0.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "865d16dfc91bfb1cdf31a53ccd487b933fa45655"
+                "reference": "e0b3a90dd0fcc3653a7cbd2545f0f0f74327e24a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/865d16dfc91bfb1cdf31a53ccd487b933fa45655",
-                "reference": "865d16dfc91bfb1cdf31a53ccd487b933fa45655",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/e0b3a90dd0fcc3653a7cbd2545f0f0f74327e24a",
+                "reference": "e0b3a90dd0fcc3653a7cbd2545f0f0f74327e24a",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "The modern DOM API for PHP 7 projects.",
-            "time": "2017-12-12T22:49:41+00:00"
+            "time": "2017-12-27T12:47:13+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -956,16 +956,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "1174d9018191e93cb9d719edec01257fc05f8158"
+                "reference": "b11c729f95109b56a0fe9650c6a63a0fcd8c439f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/1174d9018191e93cb9d719edec01257fc05f8158",
-                "reference": "1174d9018191e93cb9d719edec01257fc05f8158",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/b11c729f95109b56a0fe9650c6a63a0fcd8c439f",
+                "reference": "b11c729f95109b56a0fe9650c6a63a0fcd8c439f",
                 "shasum": ""
             },
             "require": {
@@ -1016,7 +1016,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2017-11-03T07:16:52+00:00"
+            "time": "2017-12-22T14:50:35+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -1561,7 +1561,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "phpgt/dom": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
