@@ -16,8 +16,8 @@ trait TemplateParent {
 		);
 
 		foreach($templateElementList as $i => $templateElement) {
-			$templateElement->remove();
 			$name = $this->getTemplateNameFromElement($templateElement);
+			$templateElement->remove();
 
 			$this->templateFragmentMap[$name] = $this->createTemplateFragment(
 				$templateElement
@@ -130,10 +130,18 @@ trait TemplateParent {
 	protected function getTemplateNameFromElement(BaseElement $element):string {
 		switch($element->tagName) {
 		case "template":
-			return $element->id;
+			$name = $element->id;
+			break;
 
 		default:
-			return $element->getAttribute("data-template");
+			$name = $element->getAttribute("data-template");
+			break;
 		}
+
+		if(strlen($name) === 0) {
+			$name = $element->getNodePath();
+		}
+
+		return $name;
 	}
 }

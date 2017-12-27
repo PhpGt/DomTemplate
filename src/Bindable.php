@@ -12,14 +12,29 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
-		$this->bindExisting($element, $data, $templateName);
-		$this->bindTemplates($element, $data, $templateName);
+		$data = $this->wrapData($data);
+
+		$this->bindExisting($element, $data);
+
+		if(is_null($templateName)) {
+			$templateNames = $this->getTemplateNamesForElement($element);
+		}
+		else {
+			$templateNames = [$templateName];
+		}
+
+		foreach($templateNames as $templateName) {
+			$this->bindTemplates(
+				$element,
+				$data,
+				$templateName
+			);
+		}
 	}
 
 	protected function bindExisting(
 		BaseElement $parent,
-		iterable $data,
-		string $templateName = null
+		iterable $data
 	):void {
 		$elementsWithBindAttribute = $parent->xPath(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
@@ -41,10 +56,13 @@ trait Bindable {
 				continue;
 			}
 
+
 		}
 	}
 
 	protected function setData(BaseElement $element, iterable $data):void {
+		$data = $this->unwrapData($data);
+
 		foreach($element->attributes as $attr) {
 			$matches = [];
 			if(!preg_match("/(?:data-bind:)(.+)/",
@@ -66,6 +84,10 @@ trait Bindable {
 			case "text":
 				$element->innerText = $dataValue;
 				break;
+
+			case "value":
+				$element->value = $dataValue;
+				break;
 			}
 		}
 	}
@@ -84,5 +106,34 @@ trait Bindable {
 		}
 
 		return $key;
+	}
+
+	protected function wrapData(iterable $data):iterable {
+		if(!isset($data[0])) {
+			$data = [$data];
+		}
+
+		return $data;
+	}
+
+	protected function unwrapData(iterable $data):iterable {
+		if(isset($data[0])) {
+			$data = $data[0];
+		}
+
+		return $data;
+	}
+
+	protected function getTemplateNamesForElement(BaseElement $element):array {
+		$templateNames = [];
+		$nodePath = $element->getNodePath();
+
+		foreach($this->templateFragmentMap as $key => $templateFragment) {
+			if(strpos($key, $nodePath) === 0) {
+				$templateNames []= $key;
+			}
+		}
+
+		return $templateNames;
 	}
 }

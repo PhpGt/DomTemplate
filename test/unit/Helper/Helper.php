@@ -119,4 +119,20 @@ HTML;
 </ol>
 HTML;
 
+	const HTML_TODO_LIST = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Todo list</title>
+<main>
+	<ul id="todo-list">
+		<li data-template>
+			<input name="id" data-bind:value="@name" />
+			<input name="title" data-bind:value="@name" />
+			<button name="do" value="complete">Complete</button>		
+		</li>
+	</ul>
+</main>
+HTML;
+
+
 }
