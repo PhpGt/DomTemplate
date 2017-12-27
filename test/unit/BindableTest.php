@@ -60,4 +60,38 @@ class BindableTest extends TestCase {
 		self::assertEquals($name,$spanChildren[0]->innerText);
 		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
+
+	/**
+	 * @expectedException \Gt\DomTemplate\BoundAttributeDoesNotExistException
+	 */
+	public function testBindAttributeNoMatch() {
+		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES_BIND_ATTR);
+		$name = "Julia Dixon";
+		$age = 26;
+		$document->querySelector("[name=person_id]")->setAttribute(
+			"data-bind:text",
+			"@does-not-exist"
+		);
+		$document->bind([
+			"name" => $name,
+			"age" => $age,
+		]);
+	}
+
+	/**
+	 * @expectedException \Gt\DomTemplate\BoundDataNotSetException
+	 */
+	public function testBindDataNoMatch() {
+		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
+		$name = "Julia Dixon";
+		$age = 26;
+		$document->querySelector("span")->setAttribute(
+			"data-bind:text",
+			"nothing"
+		);
+		$document->bind([
+			"name" => $name,
+			"age" => $age,
+		]);
+	}
 }

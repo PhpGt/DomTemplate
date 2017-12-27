@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "e0b3a90dd0fcc3653a7cbd2545f0f0f74327e24a"
+                "reference": "4f0c0a62390b2df3e8b82cccd8e96bf25a5486ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/e0b3a90dd0fcc3653a7cbd2545f0f0f74327e24a",
-                "reference": "e0b3a90dd0fcc3653a7cbd2545f0f0f74327e24a",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/4f0c0a62390b2df3e8b82cccd8e96bf25a5486ae",
+                "reference": "4f0c0a62390b2df3e8b82cccd8e96bf25a5486ae",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "The modern DOM API for PHP 7 projects.",
-            "time": "2017-12-27T12:47:13+00:00"
+            "time": "2017-12-27T17:34:04+00:00"
         },
         {
             "name": "symfony/css-selector",

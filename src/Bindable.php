@@ -53,6 +53,9 @@ trait Bindable {
 			}
 
 			$key = $this->getKeyFromAttribute($element, $attr);
+			if(!isset($data[$key])) {
+				throw new BoundDataNotSetException($key);
+			}
 			$dataValue = $data[$key];
 
 			switch($matches[1]) {
@@ -72,7 +75,12 @@ trait Bindable {
 
 		if($key[0] === "@") {
 			$key = substr($key, 1);
-			return $element->getAttribute($key);
+			$attributeValue = $element->getAttribute($key);
+			if(is_null($attributeValue)) {
+				throw new BoundAttributeDoesNotExistException($attr->name);
+			}
+
+			return $attributeValue;
 		}
 
 		return $key;
