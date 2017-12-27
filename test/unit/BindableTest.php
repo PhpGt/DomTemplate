@@ -45,4 +45,19 @@ class BindableTest extends TestCase {
 		self::assertEquals($name,$spanChildren[0]->innerText);
 		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
+
+	public function testBindAttributeLookup() {
+		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES_BIND_ATTR);
+		$name = "Julia Dixon";
+		$age = 26;
+		$document->bind([
+			"name" => $name,
+			"age" => $age,
+		]);
+
+		$boundDataTestElement = $document->querySelector(".bound-data-test");
+		$spanChildren = $boundDataTestElement->querySelectorAll("span");
+		self::assertEquals($name,$spanChildren[0]->innerText);
+		self::assertEquals($age,$spanChildren[1]->innerText);
+	}
 }

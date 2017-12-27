@@ -22,6 +22,27 @@ class Helper {
 </main>
 HTML;
 
+	const HTML_NO_TEMPLATES_BIND_ATTR = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has no templates but does have bound attributes</title>
+<main>
+	<section>
+		<h1>Hello, World!</h1>
+		<p>
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aliquam animi 
+			deleniti distinctio dolore doloremque, eius et facilis iure maiores nihil 
+			nisi, nostrum optio perferendis perspiciatis, rerum vitae voluptates.
+		</p>
+		<p class="bound-data-test">
+			My name is <span id="name" name="person_id" data-bind:text="@id">Example</span> 
+			and I am <span name="age" data-bind:text="@name">0</span> years old. 	
+		</p>
+	</section>
+</main>
+HTML;
+
+
 	const HTML_TEMPLATES = <<<HTML
 <!doctype html>
 <meta charset="utf-8" />

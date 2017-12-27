@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Attr;
 use Gt\Dom\Element as BaseElement;
 
 trait Bindable {
@@ -51,7 +52,7 @@ trait Bindable {
 				continue;
 			}
 
-			$key = $attr->value;
+			$key = $this->getKeyFromAttribute($element, $attr);
 			$dataValue = $data[$key];
 
 			switch($matches[1]) {
@@ -64,5 +65,16 @@ trait Bindable {
 				break;
 			}
 		}
+	}
+
+	protected function getKeyFromAttribute(BaseElement $element, Attr $attr):string {
+		$key = $attr->value;
+
+		if($key[0] === "@") {
+			$key = substr($key, 1);
+			return $element->getAttribute($key);
+		}
+
+		return $key;
 	}
 }
