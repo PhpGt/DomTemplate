@@ -14,7 +14,7 @@ class Helper {
 			deleniti distinctio dolore doloremque, eius et facilis iure maiores nihil 
 			nisi, nostrum optio perferendis perspiciatis, rerum vitae voluptates.
 		</p>
-		<p>
+		<p class="bound-data-test">
 			My name is <span data-bind:text="name">Example</span> 
 			and I am <span data-bind:text="age">0</span> years old. 	
 		</p>

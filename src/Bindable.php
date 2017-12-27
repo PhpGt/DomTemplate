@@ -16,18 +16,17 @@ trait Bindable {
 	}
 
 	protected function bindExisting(
-		BaseElement $element,
+		BaseElement $parent,
 		iterable $data,
 		string $templateName = null
 	):void {
-		$elementsWithBindAttribute = $element->xPath(
-			"descendant-or-self::*/@*[starts-with(name(.), 'data-bind')]"
+		$elementsWithBindAttribute = $parent->xPath(
+			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
 		);
 
 		foreach($elementsWithBindAttribute as $element) {
-			// TODO: For some reason the XPath above is incorrect and doesn't match properly.
+			$this->setData($element, $data);
 		}
-		die("END");
 	}
 
 	protected function bindTemplates(
@@ -41,6 +40,29 @@ trait Bindable {
 				continue;
 			}
 
+		}
+	}
+
+	protected function setData(BaseElement $element, iterable $data):void {
+		foreach($element->attributes as $attr) {
+			$matches = [];
+			if(!preg_match("/(?:data-bind:)(.+)/",
+			$attr->name,$matches)) {
+				continue;
+			}
+
+			$key = $attr->value;
+			$dataValue = $data[$key];
+
+			switch($matches[1]) {
+			case "html":
+				$element->innerHTML = $dataValue;
+				break;
+
+			case "text":
+				$element->innerText = $dataValue;
+				break;
+			}
 		}
 	}
 }

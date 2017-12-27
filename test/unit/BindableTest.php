@@ -33,9 +33,16 @@ class BindableTest extends TestCase {
 
 	public function testBindExistingElements() {
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
+		$name = "Winston Smith";
+		$age = 39;
 		$document->bind([
-			"name" => "Winston Smith",
-			"age" => 39,
+			"name" => $name,
+			"age" => $age,
 		]);
+
+		$boundDataTestElement = $document->querySelector(".bound-data-test");
+		$spanChildren = $boundDataTestElement->querySelectorAll("span");
+		self::assertEquals($name,$spanChildren[0]->innerText);
+		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
 }
