@@ -152,4 +152,12 @@ class TemplateParentTest extends TestCase {
 		$fragment = $document->getTemplate("title-definition");
 		self::assertInstanceOf(DocumentFragment::class, $fragment);
 	}
+
+	public function testTemplateAttributeTidied() {
+		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
+		$document->extractTemplates();
+		$t = $document->getTemplate("list-item");
+		$inserted = $t->insertTemplate();
+		self::assertNull($inserted->getAttribute("data-template"));
+	}
 }
