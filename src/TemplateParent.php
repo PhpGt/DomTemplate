@@ -30,6 +30,9 @@ trait TemplateParent {
 				$previousSibling
 			);
 			$this->getRootDocument()->setNamedTemplate($name, $fragment);
+			if($templateElement->parentNode === $parentNode) {
+				$parentNode->removeChild($templateElement);
+			}
 		}
 
 		if(is_null($i)) {
