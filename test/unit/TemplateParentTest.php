@@ -87,17 +87,30 @@ class TemplateParentTest extends TestCase {
 			Helper::HTML_COMPONENTS,
 			$templateDir
 		);
-		self::assertInstanceOf(Element::class, $document->querySelector("title-definition-list"));
-		self::assertInstanceOf(Element::class, $document->querySelector("ordered-list"));
+		self::assertInstanceOf(
+			Element::class,
+			$document->querySelector("title-definition-list")
+		);
+		self::assertInstanceOf(
+			Element::class,
+			$document->querySelector("ordered-list")
+		);
 
 		$elementBeforeOrderedList = $document->querySelector("ordered-list")->previousElementSibling;
 
 		$count = $document->expandComponents($templateDir);
 		self::assertEquals(2, $count);
-		self::assertNull($document->querySelector("title-definition-list"));
-		self::assertNull($document->querySelector("ordered-list"));
+		self::assertNull(
+			$document->querySelector("title-definition-list")
+		);
+		self::assertNull(
+			$document->querySelector("ordered-list")
+		);
 
-		self::assertEquals("ol", $elementBeforeOrderedList->nextElementSibling->tagName);
+		self::assertEquals(
+			"ol",
+			$elementBeforeOrderedList->nextElementSibling->tagName
+		);
 	}
 
 	public function testNestedComponentsExpand() {
