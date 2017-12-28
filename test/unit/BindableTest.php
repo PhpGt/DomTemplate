@@ -46,6 +46,19 @@ class BindableTest extends TestCase {
 		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
 
+	/**
+	 * @expectedException \Gt\DomTemplate\InvalidBindProperty
+	 */
+	public function testBindOnUnknownProperty() {
+		$document = new HTMLDocument(Helper::HTML_BIND_UNKNOWN_PROPERTY);
+		$name = "Winston Smith";
+		$age = 39;
+		$document->bind([
+			"name" => $name,
+			"age" => $age,
+		]);
+	}
+
 	public function testBindAttributeLookup() {
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES_BIND_ATTR);
 		$name = "Julia Dixon";

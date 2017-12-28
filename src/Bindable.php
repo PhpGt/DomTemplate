@@ -82,6 +82,9 @@ trait Bindable {
 			case "value":
 				$element->value = $dataValue;
 				break;
+
+			default:
+				throw new InvalidBindProperty($matches[1]);
 			}
 		}
 	}
