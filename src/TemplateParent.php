@@ -6,8 +6,6 @@ use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
-	protected $templateFragmentMap = [];
-
 	public function extractTemplates():int {
 		$i = null;
 		/** @var HTMLCollection $templateElementList */
@@ -16,12 +14,25 @@ trait TemplateParent {
 		);
 
 		foreach($templateElementList as $i => $templateElement) {
-			$templateElement->remove();
 			$name = $this->getTemplateNameFromElement($templateElement);
 
-			$this->templateFragmentMap[$name] = $this->createTemplateFragment(
+			$parentNode = $templateElement->parentNode;
+			$nextSibling = $templateElement->nextSibling;
+			$previousSibling = $templateElement->previousSibling;
+
+			/** @var DocumentFragment $fragment */
+			$fragment = $this->createTemplateFragment(
 				$templateElement
 			);
+			$fragment->setTemplateProperties(
+				$parentNode,
+				$nextSibling,
+				$previousSibling
+			);
+			$this->getRootDocument()->setNamedTemplate($name, $fragment);
+			if($templateElement->parentNode === $parentNode) {
+				$parentNode->removeChild($templateElement);
+			}
 		}
 
 		if(is_null($i)) {
@@ -32,9 +43,11 @@ trait TemplateParent {
 	}
 
 	public function getTemplate(string $name, string $templateDirectory = null):DocumentFragment {
-		if(isset($this->templateFragmentMap[$name])) {
-			return $this->templateFragmentMap[$name];
+		$docTemplate = $this->getRootDocument()->getNamedTemplate($name);
+		if(!is_null($docTemplate)) {
+			return $docTemplate;
 		}
+
 		if(is_null($templateDirectory)) {
 			$templateDirectory = $this->templateDirectory;
 		}
@@ -130,10 +143,18 @@ trait TemplateParent {
 	protected function getTemplateNameFromElement(BaseElement $element):string {
 		switch($element->tagName) {
 		case "template":
-			return $element->id;
+			$name = $element->id;
+			break;
 
 		default:
-			return $element->getAttribute("data-template");
+			$name = $element->getAttribute("data-template");
+			break;
 		}
+
+		if(strlen($name) === 0) {
+			$name = $element->getNodePath();
+		}
+
+		return $name;
 	}
 }
