@@ -108,15 +108,30 @@ class BindableTest extends TestCase {
 		]);
 	}
 
-//	public function testTemplateList() {
-//		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
-//		$todoData = [
-//			["id" => 1, "title" => "Write tests", "complete" => true],
-//			["id" => 2, "title" => "Implement features", "complete" => false],
-//			["id" => 3, "title" => "Pass tests", "complete" => false],
-//		];
-//		$document->extractTemplates();
-//		$todoListElement = $document->getElementById("todo-list");
-//		$todoListElement->bind($todoData);
-//	}
+	public function testTemplateTodoList() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$todoData = [
+			["id" => 1, "title" => "Write tests", "complete" => true],
+			["id" => 2, "title" => "Implement features", "complete" => false],
+			["id" => 3, "title" => "Pass tests", "complete" => false],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+		$todoListElement->bind($todoData);
+
+		$liChildren = $todoListElement->querySelectorAll("li");
+
+		self::assertCount(
+			count($todoData),
+			$liChildren,
+			"There should be the same amount of li elements as there are rows of data"
+		);
+
+		foreach($todoData as $i => $row) {
+			self::assertContains(
+				$row["title"],
+				$liChildren[$i]->innerHTML
+			);
+		}
+	}
 }

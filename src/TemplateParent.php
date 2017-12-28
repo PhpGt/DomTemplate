@@ -15,10 +15,19 @@ trait TemplateParent {
 
 		foreach($templateElementList as $i => $templateElement) {
 			$name = $this->getTemplateNameFromElement($templateElement);
-			$templateElement->remove();
 
+			$parentNode = $templateElement->parentNode;
+			$nextSibling = $templateElement->nextSibling;
+			$previousSibling = $templateElement->previousSibling;
+
+			/** @var DocumentFragment $fragment */
 			$fragment = $this->createTemplateFragment(
 				$templateElement
+			);
+			$fragment->setTemplateProperties(
+				$parentNode,
+				$nextSibling,
+				$previousSibling
 			);
 			$this->getRootDocument()->setNamedTemplate($name, $fragment);
 		}

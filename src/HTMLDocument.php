@@ -25,18 +25,24 @@ class HTMLDocument extends BaseHTMLDocument {
 		$this->templateFragmentMap = [];
 	}
 
-	public function getNamedTemplate(string $name, bool $prefix = false):?BaseDocumentFragment {
-		if(!$prefix) {
-			return $this->templateFragmentMap[$name] ?? null;
-		}
+	public function getNamedTemplate(string $name):?BaseDocumentFragment {
+		return $this->templateFragmentMap[$name] ?? null;
+	}
+
+	/**
+	 * @return \Gt\Dom\DocumentFragment[]
+	 */
+	public function getNamedTemplateChildren(string $name):array {
+		$children = [];
 
 		foreach($this->templateFragmentMap as $templateName => $fragment) {
+// We want a match of any non-named templates that were originally children of the named path.
 			if(strpos($templateName, $name) === 0) {
-				return $fragment;
+				$children []= $fragment;
 			}
 		}
 
-		return null;
+		return $children;
 	}
 
 	public function setNamedTemplate(string $name, BaseDocumentFragment $fragment):void {

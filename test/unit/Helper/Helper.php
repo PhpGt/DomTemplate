@@ -139,7 +139,6 @@ HTML;
 </main>
 HTML;
 
-
 	const HTML_TODO_LIST = <<<HTML
 <!doctype html>
 <meta charset="utf-8" />

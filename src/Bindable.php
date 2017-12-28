@@ -1,11 +1,12 @@
 <?php
 namespace Gt\DomTemplate;
 
+use DOMNode;
 use Gt\Dom\Attr;
 use Gt\Dom\Element as BaseElement;
 
 trait Bindable {
-	public function bind(iterable $data, string $templateName = null):void {
+	public function bind(iterable $data):void {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -15,25 +16,14 @@ trait Bindable {
 		$data = $this->wrapData($data);
 
 		$this->bindExisting($element, $data);
-
-		if(is_null($templateName)) {
-			$templateName = $this->getRootDocument()->getNamedTemplate(
-				$this->getNodePath(),
-				true
-			);
-		}
-
-		if(!is_null($templateName)) {
-			$this->bindTemplates(
-				$element,
-				$data,
-				$templateName
-			);
-		}
+		$this->bindTemplates(
+			$element,
+			$data
+		);
 	}
 
 	protected function bindExisting(
-		BaseElement $parent,
+		DOMNode $parent,
 		iterable $data
 	):void {
 		$elementsWithBindAttribute = $parent->xPath(
@@ -47,11 +37,19 @@ trait Bindable {
 
 	protected function bindTemplates(
 		BaseElement $element,
-		iterable $data,
-		string $templateName
+		iterable $data
 	):void {
-		$template = $this->getRootDocument()->getNamedTemplate($templateName);
-		var_dump($templateName);die();
+		/** @var DocumentFragment[] $templateChildren */
+		$templateChildren = $this->getRootDocument()->getNamedTemplateChildren(
+			$element->getNodePath()
+		);
+
+		foreach($data as $rowNumber => $row) {
+			foreach($templateChildren as $childNumber => $fragment) {
+				$newNode = $fragment->insertTemplate();
+				$this->bindExisting($newNode, $row);
+			}
+		}
 	}
 
 	protected function setData(BaseElement $element, iterable $data):void {
