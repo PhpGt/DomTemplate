@@ -43,7 +43,7 @@ In this example, we will simply use an array to contain the data, but the data c
 
 ```html
 <ul id="shopping-list">
-	<li data-template="shopping-list-item" data-template-text="item-name">Item name</li>
+	<li data-template data-bind:text="title">Item name</li>
 </ul>
 ```
 
@@ -65,7 +65,7 @@ $data = [
 ];
 
 $outputTo = $document->getElementById("shopping-list");
-$outputTo->bind("shopping-list-item", $data);
+$outputTo->bind($data);
 ```
 
 ### Output:
