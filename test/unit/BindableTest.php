@@ -134,4 +134,19 @@ class BindableTest extends TestCase {
 			);
 		}
 	}
+
+	public function testBoundTemplatesCleanedUpAfterAdding() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$todoData = [
+			["id" => 1, "title" => "Write tests", "complete" => true],
+			["id" => 2, "title" => "Implement features", "complete" => false],
+			["id" => 3, "title" => "Pass tests", "complete" => false],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+		$todoListElement->bind($todoData);
+
+		self::assertContains("Implement features", $todoListElement->innerHTML);
+		self::assertNotContains("data-bind", $todoListElement->innerHTML);
+	}
 }

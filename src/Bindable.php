@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use DOMNode;
 use Gt\Dom\Attr;
 use Gt\Dom\Element as BaseElement;
+use Gt\Dom\HTMLCollection;
 
 trait Bindable {
 	public function bind(iterable $data):void {
@@ -20,17 +21,16 @@ trait Bindable {
 			$element,
 			$data
 		);
+		$this->cleanBindAttributes($element);
 	}
 
 	protected function bindExisting(
 		DOMNode $parent,
 		iterable $data
 	):void {
-		$elementsWithBindAttribute = $parent->xPath(
-			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
-		);
+		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($parent);
 
-		foreach($elementsWithBindAttribute as $element) {
+		foreach($childrenWithBindAttribute as $element) {
 			$this->setData($element, $data);
 		}
 	}
@@ -130,5 +130,27 @@ trait Bindable {
 		}
 
 		return $templateNames;
+	}
+
+	protected function getChildrenWithBindAttribute(BaseElement $parent):HTMLCollection {
+		return $parent->xPath(
+			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
+		);
+	}
+
+	protected function cleanBindAttributes(BaseElement $element):void {
+		$elementsToClean = [$element];
+		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($element);
+		foreach($childrenWithBindAttribute as $child) {
+			$elementsToClean []= $child;
+		}
+
+		foreach($elementsToClean as $cleanMe) {
+			foreach($cleanMe->attributes as $attr) {
+				if(strpos($attr->name, "data-bind") === 0) {
+					$cleanMe->removeAttribute($attr->name);
+				}
+			}
+		}
 	}
 }
