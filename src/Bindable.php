@@ -17,16 +17,13 @@ trait Bindable {
 		$this->bindExisting($element, $data);
 
 		if(is_null($templateName)) {
-			$templateNames = $this->getRootDocument()->getNamedTemplate(
+			$templateName = $this->getRootDocument()->getNamedTemplate(
 				$this->getNodePath(),
 				true
 			);
 		}
-		else {
-			$templateNames = [$templateName];
-		}
 
-		foreach($templateNames as $templateName) {
+		if(!is_null($templateName)) {
 			$this->bindTemplates(
 				$element,
 				$data,
