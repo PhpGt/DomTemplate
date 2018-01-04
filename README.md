@@ -34,7 +34,7 @@ In this example, we will simply use an array to contain the data, but the data c
 <!doctype html>
 <h1>Shopping list</h1>
 
-<shopping-list></shopping-list>
+<shopping-list id="groceries"></shopping-list>
 
 <p>The use of a custom element is more useful on more complex pages, but is shown here as an example.</p>
 ```
@@ -42,7 +42,7 @@ In this example, we will simply use an array to contain the data, but the data c
 ### Custom element HTML (`_template/shopping-list.html`)
 
 ```html
-<ul id="shopping-list">
+<ul>
 	<li data-template data-bind:text="title">Item name</li>
 </ul>
 ```
@@ -64,7 +64,7 @@ $data = [
 	["id" => 4, "title" => "Broccoli"],
 ];
 
-$outputTo = $document->getElementById("shopping-list");
+$outputTo = $document->getElementById("groceries");
 $outputTo->bind($data);
 ```
 
