@@ -168,4 +168,25 @@ HTML;
 	</ul>
 </main>
 HTML;
+
+	const HTML_TODO_LIST_INLINE_NAMED_TEMPLATE_DOUBLE = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Todo list</title>
+<main>
+	<ul id="todo-list">
+		<li data-template="todo-list-item">
+			<input name="id" data-bind:value="@name" />
+			<input name="title" data-bind:value="@name" />
+			<button name="do" value="complete">Complete</button>		
+		</li>
+	</ul>
+	
+	<ul id="todo-list-2">
+		<li data-template>
+			<p>Use the other template instead!</p>
+		</li>
+	</ul>
+</main>
+HTML;
 }

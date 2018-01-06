@@ -42,11 +42,13 @@ trait Bindable {
 	):void {
 		$namesToMatch = [];
 
-		if(!is_null($templateName)) {
+		if(is_null($templateName)) {
+			$namesToMatch []= $element->getNodePath();
+
+		}
+		else {
 			$namesToMatch []= $templateName;
 		}
-
-		$namesToMatch []= $element->getNodePath();
 
 		/** @var HTMLDocument $rootDocument */
 		$rootDocument = $this->getRootDocument();
@@ -57,7 +59,11 @@ trait Bindable {
 
 		foreach($data as $rowNumber => $row) {
 			foreach($templateChildren as $childNumber => $fragment) {
-				$newNode = $fragment->insertTemplate();
+				if($fragment->templateParentNode !== $element) {
+					$insertInto = $element;
+				}
+
+				$newNode = $fragment->insertTemplate($insertInto);
 				$this->bindExisting($newNode, $row);
 			}
 		}

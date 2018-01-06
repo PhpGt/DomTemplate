@@ -164,4 +164,19 @@ class BindableTest extends TestCase {
 		self::assertContains("Implement features", $todoListElement->innerHTML);
 		self::assertNotContains("data-bind", $todoListElement->innerHTML);
 	}
+
+	public function testBindWithInlineNamedTemplateWhenAnotherTemplateExists() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_INLINE_NAMED_TEMPLATE_DOUBLE);
+		$todoData = [
+			["id" => 1, "title" => "Write tests", "complete" => true],
+			["id" => 2, "title" => "Implement features", "complete" => false],
+			["id" => 3, "title" => "Pass tests", "complete" => false],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list-2");
+		$todoListElement->bind($todoData, "todo-list-item");
+
+		self::assertContains("Implement features", $todoListElement->innerHTML);
+		self::assertNotContains("Use the other template instead!", $todoListElement->innerHTML);
+	}
 }

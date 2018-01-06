@@ -26,17 +26,23 @@ class DocumentFragment extends BaseDocumentFragment {
 		$this->templatePreviousSibling = $previousSibling;
 	}
 
-	public function insertTemplate():BaseElement {
-		if(is_null($this->templateParentNode)) {
+	public function insertTemplate(DOMNode $insertInto = null):BaseElement {
+		$insertBefore = null;
+
+		if(is_null($insertInto)) {
+			$insertInto = $this->templateParentNode;
+			$insertBefore = $this->templateNextSibling;
+		}
+		if(is_null($insertInto)) {
 			throw new TemplateHasNoParentException();
 		}
 
 		$clone = $this->cloneNode(true);
 
 		/** @var BaseElement $inserted */
-		$inserted = $this->templateParentNode->insertBefore(
+		$inserted = $insertInto->insertBefore(
 			$clone,
-			$this->templateNextSibling
+			$insertBefore
 		);
 
 		return $inserted;
