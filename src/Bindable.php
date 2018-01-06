@@ -79,11 +79,8 @@ trait Bindable {
 				continue;
 			}
 
-			$key = $this->getKeyFromAttribute($element, $attr);
-			if(!isset($data[$key])) {
-				throw new BoundDataNotSetException($key);
-			}
-			$dataValue = $data[$key];
+			$dataKeyMatch = $this->getKeyFromAttribute($element, $attr);
+			$dataValue = $dataKeyMatch->getValue($data) ?? "";
 
 			switch($matches[1]) {
 			case "html":
@@ -104,8 +101,14 @@ trait Bindable {
 		}
 	}
 
-	protected function getKeyFromAttribute(BaseElement $element, Attr $attr):string {
+	protected function getKeyFromAttribute(BaseElement $element, Attr $attr):DataKeyMatch {
+		$required = true;
 		$key = $attr->value;
+
+		if($key[0] === "?") {
+			$required = false;
+			$key = substr($key, 1);
+		}
 
 		if($key[0] === "@") {
 			$key = substr($key, 1);
@@ -114,10 +117,10 @@ trait Bindable {
 				throw new BoundAttributeDoesNotExistException($attr->name);
 			}
 
-			return $attributeValue;
+			$key = $attributeValue;
 		}
 
-		return $key;
+		return new DataKeyMatch($key, $required);
 	}
 
 	protected function wrapData(iterable $data):iterable {

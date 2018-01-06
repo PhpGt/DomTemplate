@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
 use PHPUnit\Framework\TestCase;
@@ -184,5 +185,42 @@ class BindableTest extends TestCase {
 
 		self::assertContains("Implement features", $todoListElement->innerHTML);
 		self::assertNotContains("Use the other template instead!", $todoListElement->innerHTML);
+	}
+
+	public function testBindWithNonOptionalKey() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$todoData = [
+			["title" => "Write tests", "complete" => true],
+			["title" => "Implement features", "complete" => false],
+			["title" => "Pass tests", "complete" => false],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+
+		self::expectException(BoundDataNotSetException::class);
+		$todoListElement->bind($todoData);
+	}
+
+	public function testBindWithOptionalKey() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_OPTIONAL_ID);
+		$todoData = [
+			["title" => "Write tests", "complete" => true],
+			["title" => "Implement features", "complete" => false],
+			["title" => "Pass tests", "complete" => false],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+
+		$todoListElement->bind($todoData);
+		$items = $todoListElement->querySelectorAll("li");
+		self::assertCount(3, $items);
+
+		self::assertEquals(
+			"Implement features",
+			$items[1]->querySelector("input[name=title]")->value
+		);
+		self::assertNull(
+			$items[1]->querySelector("input[name=id]")->value
+		);
 	}
 }
