@@ -210,12 +210,14 @@ class BindableTest extends TestCase {
 		];
 		$document->extractTemplates();
 		$todoListElement = $document->getElementById("todo-list");
-		$items = $todoListElement->querySelectorAll("li");
 
 		$todoListElement->bind($todoData);
+		$items = $todoListElement->querySelectorAll("li");
+		self::assertCount(3, $items);
+
 		self::assertEquals(
 			"Implement features",
-			$items[1]->querySelector("input[name=title]")->innerText
+			$items[1]->querySelector("input[name=title]")->value
 		);
 		self::assertNull(
 			$items[1]->querySelector("input[name=id]")->value
