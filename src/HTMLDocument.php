@@ -7,6 +7,18 @@ use DOMDocumentFragment;
 use Gt\Dom\HTMLDocument as BaseHTMLDocument;
 use Gt\Dom\DocumentFragment as BaseDocumentFragment;
 
+/**
+ * @property-read Element $head
+ * @property-read Element $documentElement;
+ * @property-read Node $firstChild;
+ * @property-read Node $lastChild;
+ * @property-read Element $firstElementChild;
+ * @property-read Element $lastElementChild;
+ * @property-read Element $body;
+ * @method Node getElementById(string $id)
+ * @method Element createElement(string $name, string $value = null)
+ *
+ */
 class HTMLDocument extends BaseHTMLDocument {
 	use TemplateParent;
 	use Bindable;
