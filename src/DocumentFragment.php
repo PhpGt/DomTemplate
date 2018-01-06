@@ -9,9 +9,11 @@ class DocumentFragment extends BaseDocumentFragment {
 	use TemplateParent;
 	use Bindable;
 
-	/** @var DOMNode */
+	/** @var BaseElement */
 	protected $templateParentNode;
+	/** @var BaseElement */
 	protected $templateNextSibling;
+	/** @var BaseElement */
 	protected $templatePreviousSibling;
 
 	public function setTemplateProperties(
@@ -31,6 +33,7 @@ class DocumentFragment extends BaseDocumentFragment {
 
 		$clone = $this->cloneNode(true);
 
+		/** @var BaseElement $inserted */
 		$inserted = $this->templateParentNode->insertBefore(
 			$clone,
 			$this->templateNextSibling
@@ -40,14 +43,14 @@ class DocumentFragment extends BaseDocumentFragment {
 	}
 
 	public function prop_get_templateNextSibling():?BaseElement {
-		return $this->templateProperties["nextSibling"];
+		return $this->templateNextSibling;
 	}
 
 	public function prop_get_templatePreviousSibling():?BaseElement {
-		return $this->templateProperties["previousSibling"];
+		return $this->templatePreviousSibling;
 	}
 
 	public function prop_get_templateParentNode():?BaseElement {
-		return $this->templateProperties["parentNode"];
+		return $this->templateParentNode;
 	}
 }

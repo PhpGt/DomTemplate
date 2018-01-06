@@ -4,7 +4,6 @@ namespace Gt\DomTemplate;
 use DirectoryIterator;
 use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
-use Gt\Dom\Node;
 
 trait TemplateParent {
 
