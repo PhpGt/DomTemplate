@@ -24,7 +24,7 @@ class DocumentFragment extends BaseDocumentFragment {
 		$this->templatePreviousSibling = $previousSibling;
 	}
 
-	public function insertTemplate():DOMNode {
+	public function insertTemplate():BaseElement {
 		if(is_null($this->templateParentNode)) {
 			throw new TemplateHasNoParentException();
 		}

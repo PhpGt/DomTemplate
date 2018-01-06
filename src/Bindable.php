@@ -1,7 +1,6 @@
 <?php
 namespace Gt\DomTemplate;
 
-use DOMNode;
 use Gt\Dom\Attr;
 use Gt\Dom\Element as BaseElement;
 use Gt\Dom\HTMLCollection;
@@ -25,7 +24,7 @@ trait Bindable {
 	}
 
 	protected function bindExisting(
-		DOMNode $parent,
+		BaseElement $parent,
 		iterable $data
 	):void {
 		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($parent);
@@ -39,8 +38,10 @@ trait Bindable {
 		BaseElement $element,
 		iterable $data
 	):void {
+		/** @var HTMLDocument $rootDocument */
+		$rootDocument = $this->getRootDocument();
 		/** @var DocumentFragment[] $templateChildren */
-		$templateChildren = $this->getRootDocument()->getNamedTemplateChildren(
+		$templateChildren = $rootDocument->getNamedTemplateChildren(
 			$element->getNodePath()
 		);
 
