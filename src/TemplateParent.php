@@ -4,8 +4,10 @@ namespace Gt\DomTemplate;
 use DirectoryIterator;
 use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
+use Gt\Dom\Node;
 
 trait TemplateParent {
+
 	public function extractTemplates():int {
 		$i = null;
 		/** @var HTMLCollection $templateElementList */
@@ -29,7 +31,10 @@ trait TemplateParent {
 				$nextSibling,
 				$previousSibling
 			);
-			$this->getRootDocument()->setNamedTemplate($name, $fragment);
+
+			/** @var HTMLDocument $rootDocument */
+			$rootDocument = $this->getRootDocument();
+			$rootDocument->setNamedTemplate($name, $fragment);
 
 			if($templateElement->getAttribute("data-template")) {
 				$templateElement->removeAttribute("data-template");
@@ -48,7 +53,9 @@ trait TemplateParent {
 	}
 
 	public function getTemplate(string $name, string $templateDirectory = null):DocumentFragment {
-		$docTemplate = $this->getRootDocument()->getNamedTemplate($name);
+		/** @var HTMLDocument $rootDocument */
+		$rootDocument = $this->getRootDocument();
+		$docTemplate = $rootDocument->getNamedTemplate($name);
 		if(!is_null($docTemplate)) {
 			return $docTemplate;
 		}

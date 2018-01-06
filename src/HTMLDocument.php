@@ -25,7 +25,7 @@ class HTMLDocument extends BaseHTMLDocument {
 		$this->templateFragmentMap = [];
 	}
 
-	public function getNamedTemplate(string $name):?BaseDocumentFragment {
+	public function getNamedTemplate(string $name):?DocumentFragment {
 		return $this->templateFragmentMap[$name] ?? null;
 	}
 
