@@ -6,7 +6,7 @@ use Gt\Dom\Element as BaseElement;
 use Gt\Dom\HTMLCollection;
 
 trait Bindable {
-	public function bind(iterable $data):void {
+	public function bind(iterable $data, string $templateName = null):void {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -18,7 +18,8 @@ trait Bindable {
 		$this->bindExisting($element, $data);
 		$this->bindTemplates(
 			$element,
-			$data
+			$data,
+			$templateName
 		);
 		$this->cleanBindAttributes($element);
 	}
@@ -36,13 +37,22 @@ trait Bindable {
 
 	protected function bindTemplates(
 		BaseElement $element,
-		iterable $data
+		iterable $data,
+		string $templateName = null
 	):void {
+		$namesToMatch = [];
+
+		if(!is_null($templateName)) {
+			$namesToMatch []= $templateName;
+		}
+
+		$namesToMatch []= $element->getNodePath();
+
 		/** @var HTMLDocument $rootDocument */
 		$rootDocument = $this->getRootDocument();
 		/** @var DocumentFragment[] $templateChildren */
 		$templateChildren = $rootDocument->getNamedTemplateChildren(
-			$element->getNodePath()
+			...$namesToMatch
 		);
 
 		foreach($data as $rowNumber => $row) {

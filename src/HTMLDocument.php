@@ -44,13 +44,15 @@ class HTMLDocument extends BaseHTMLDocument {
 	/**
 	 * @return \Gt\Dom\DocumentFragment[]
 	 */
-	public function getNamedTemplateChildren(string $name):array {
+	public function getNamedTemplateChildren(string...$namesToMatch):array {
 		$children = [];
 
 		foreach($this->templateFragmentMap as $templateName => $fragment) {
 // We want a match of any non-named templates that were originally children of the named path.
-			if(strpos($templateName, $name) === 0) {
-				$children []= $fragment;
+			foreach($namesToMatch as $name) {
+				if(strpos($templateName, $name) === 0) {
+					$children []= $fragment;
+				}
 			}
 		}
 

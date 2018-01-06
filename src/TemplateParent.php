@@ -20,6 +20,7 @@ trait TemplateParent {
 			$parentNode = $templateElement->parentNode;
 			$nextSibling = $templateElement->nextSibling;
 			$previousSibling = $templateElement->previousSibling;
+			$templateNodePath = $templateElement->getNodePath();
 
 			/** @var DocumentFragment $fragment */
 			$fragment = $this->createTemplateFragment(
@@ -34,6 +35,11 @@ trait TemplateParent {
 			/** @var HTMLDocument $rootDocument */
 			$rootDocument = $this->getRootDocument();
 			$rootDocument->setNamedTemplate($name, $fragment);
+// Also set the template element with its path name.
+			$rootDocument->setNamedTemplate(
+				$templateNodePath,
+				$fragment
+			);
 
 			if($templateElement->getAttribute("data-template")) {
 				$templateElement->removeAttribute("data-template");
