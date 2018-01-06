@@ -173,6 +173,12 @@ class BindableTest extends TestCase {
 			["id" => 3, "title" => "Pass tests", "complete" => false],
 		];
 		$document->extractTemplates();
+
+		$todoListElement = $document->getElementById("todo-list");
+		$todoListElement->bind($todoData);
+		self::assertContains("Implement features", $todoListElement->innerHTML);
+		self::assertNotContains("Use the other template instead!", $todoListElement->innerHTML);
+
 		$todoListElement = $document->getElementById("todo-list-2");
 		$todoListElement->bind($todoData, "todo-list-item");
 
