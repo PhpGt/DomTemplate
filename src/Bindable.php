@@ -76,25 +76,83 @@ trait Bindable {
 			$attr->name,$matches)) {
 				continue;
 			}
+			$bindType = $matches[1];
 
-			$dataKeyMatch = $this->getKeyFromAttribute($element, $attr);
-			$dataValue = $dataKeyMatch->getValue($data) ?? "";
+			if($bindType === "class") {
+				$this->handleClassData(
+					$attr,
+					$element,
+					$data
+				);
+			}
+			else {
+				$this->handlePropertyData(
+					$attr,
+					$bindType,
+					$element,
+					$data
+				);
+			}
+		}
+	}
 
-			switch($matches[1]) {
-			case "html":
-				$element->innerHTML = $dataValue;
-				break;
+	protected function handlePropertyData(
+		Attr $attr,
+		string $bindType,
+		BaseElement $element,
+		iterable $data
+	):void {
+		$dataKeyMatch = $this->getKeyFromAttribute($element, $attr);
+		$dataValue = $dataKeyMatch->getValue($data) ?? "";
 
-			case "text":
-				$element->innerText = $dataValue;
-				break;
+		switch($bindType) {
+		case "html":
+			$element->innerHTML = $dataValue;
+			break;
 
-			case "value":
-				$element->value = $dataValue;
-				break;
+		case "text":
+			$element->innerText = $dataValue;
+			break;
 
-			default:
-				throw new InvalidBindProperty($matches[1]);
+		case "value":
+			$element->value = $dataValue;
+			break;
+
+		default:
+			throw new InvalidBindProperty($matches[1]);
+		}
+	}
+
+	protected function handleClassData(
+		Attr $attr,
+		BaseElement $element,
+		iterable $data
+	):void {
+		$classList = explode(" ", $attr->value);
+		$this->setClassFromData($element, $data, ...$classList);
+	}
+
+	protected function setClassFromData(
+		BaseElement $element,
+		iterable $data,
+		string...$classList
+	):void {
+		foreach($classList as $class) {
+			if(!strstr($class, ":")) {
+				$class = "$class:$class";
+			}
+
+			list($keyMatch, $className) = explode(":", $class);
+
+			if(!isset($data[$keyMatch])) {
+				continue;
+			}
+
+			if($data[$keyMatch]) {
+				$element->classList->add($className);
+			}
+			else {
+				$element->classList->remove($className);
 			}
 		}
 	}

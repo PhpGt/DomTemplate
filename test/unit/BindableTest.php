@@ -227,9 +227,9 @@ class BindableTest extends TestCase {
 	public function testBindClass() {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS);
 		$todoData = [
-			["title" => "Write tests", "complete" => true],
-			["title" => "Implement features", "complete" => false],
-			["title" => "Pass tests", "complete" => false],
+			["id" => 1, "title" => "Write tests", "complete" => true],
+			["id" => 2, "title" => "Implement features", "complete" => false],
+			["id" => 3, "title" => "Pass tests", "complete" => false],
 		];
 		$document->extractTemplates();
 		$todoListElement = $document->getElementById("todo-list");
@@ -250,9 +250,9 @@ class BindableTest extends TestCase {
 	public function testBindClassColon() {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON);
 		$todoData = [
-			["title" => "Write tests", "dateTimeCompleted" => "2018-07-01 19:46:00"],
-			["title" => "Implement features", "dateTimeCompleted" => null],
-			["title" => "Pass tests", "dateTimeCompleted" => "2018-07-01 19:49:00"],
+			["id" => 1, "title" => "Write tests", "dateTimeCompleted" => "2018-07-01 19:46:00"],
+			["id" => 2, "title" => "Implement features", "dateTimeCompleted" => null],
+			["id" => 3, "title" => "Pass tests", "dateTimeCompleted" => "2018-07-01 19:49:00"],
 		];
 		$document->extractTemplates();
 		$todoListElement = $document->getElementById("todo-list");
@@ -275,16 +275,19 @@ class BindableTest extends TestCase {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON);
 		$todoData = [
 			[
+				"id" => 1,
 				"title" => "Write tests",
 				"dateTimeCompleted" => "2018-07-01 19:46:00",
 				"dateTimeDeleted" => null,
 			],
 			[
+				"id" => 2,
 				"title" => "Implement features",
 				"dateTimeCompleted" => null,
 				"dateTimeDeleted" => "2018-07-01 19:54:00",
 			],
 			[
+				"id" => 3,
 				"title" => "Pass tests",
 				"dateTimeCompleted" => "2018-07-01 19:49:00",
 				"dateTimeDeleted" => null,
@@ -297,6 +300,8 @@ class BindableTest extends TestCase {
 		$items = $todoListElement->querySelectorAll("li");
 
 		foreach($todoData as $i => $todoDatum) {
+			self::assertTrue($items[$i]->classList->contains("existing-class"));
+
 			$completed = (bool)$todoDatum["dateTimeCompleted"];
 			self::assertEquals(
 				$completed,
@@ -305,11 +310,9 @@ class BindableTest extends TestCase {
 
 			$deleted = (bool)$todoDatum["dateTimeDeleted"];
 			self::assertEquals(
-				$completed,
+				$deleted,
 				$items[$i]->classList->contains("deleted")
 			);
-
-			self::assertTrue($items[$i]->classList->contains("existing-class"));
 		}
 	}
 }
