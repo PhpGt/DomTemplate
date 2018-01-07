@@ -272,7 +272,7 @@ class BindableTest extends TestCase {
 	}
 
 	public function testBindClassColonMultiple() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON);
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON_MULTIPLE);
 		$todoData = [
 			[
 				"id" => 1,
