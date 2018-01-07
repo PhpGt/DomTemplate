@@ -13,8 +13,6 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
-		$data = $this->wrapData($data);
-
 		$this->bindExisting($element, $data);
 		$this->bindTemplates(
 			$element,
@@ -59,6 +57,8 @@ trait Bindable {
 
 		foreach($data as $rowNumber => $row) {
 			foreach($templateChildren as $childNumber => $fragment) {
+				$insertInto = null;
+
 				if($fragment->templateParentNode !== $element) {
 					$insertInto = $element;
 				}
@@ -70,8 +70,6 @@ trait Bindable {
 	}
 
 	protected function setData(BaseElement $element, iterable $data):void {
-		$data = $this->unwrapData($data);
-
 		foreach($element->attributes as $attr) {
 			$matches = [];
 			if(!preg_match("/(?:data-bind:)(.+)/",
@@ -121,22 +119,6 @@ trait Bindable {
 		}
 
 		return new DataKeyMatch($key, $required);
-	}
-
-	protected function wrapData(iterable $data):iterable {
-		if(!isset($data[0])) {
-			$data = [$data];
-		}
-
-		return $data;
-	}
-
-	protected function unwrapData(iterable $data):iterable {
-		if(isset($data[0])) {
-			$data = $data[0];
-		}
-
-		return $data;
 	}
 
 	protected function getTemplateNamesForElement(BaseElement $element):array {
