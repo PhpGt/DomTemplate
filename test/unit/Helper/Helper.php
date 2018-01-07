@@ -219,4 +219,50 @@ HTML;
 	</ul>
 </main>
 HTML;
+
+	const HTML_TODO_LIST_BIND_CLASS = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Todo list</title>
+<main>
+	<ul id="todo-list">
+		<li data-template data-bind:class="complete" class="existing-class">
+			<input name="id" data-bind:value="@name" />
+			<input name="title" data-bind:value="@name" />
+			<button name="do" value="complete">Complete</button>		
+		</li>
+	</ul>
+</main>
+HTML;
+
+	const HTML_TODO_LIST_BIND_CLASS_COLON = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Todo list</title>
+<main>
+	<ul id="todo-list">
+		<li data-template data-bind:class="dateTimeCompleted:complete" class="existing-class">
+			<input name="id" data-bind:value="@name" />
+			<input name="title" data-bind:value="@name" />
+			<button name="do" value="complete">Complete</button>		
+		</li>
+	</ul>
+</main>
+HTML;
+
+	const HTML_TODO_LIST_BIND_CLASS_COLON_MULTIPLE = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Todo list</title>
+<main>
+	<ul id="todo-list">
+		<li data-template data-bind:class="dateTimeCompleted:complete dateTimeDeleted:deleted" class="existing-class">
+			<input name="id" data-bind:value="@name" />
+			<input name="title" data-bind:value="@name" />
+			<button name="do" value="complete">Complete</button>		
+		</li>
+	</ul>
+</main>
+HTML;
+
 }
