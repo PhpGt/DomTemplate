@@ -223,4 +223,96 @@ class BindableTest extends TestCase {
 			$items[1]->querySelector("input[name=id]")->value
 		);
 	}
+
+	public function testBindClass() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS);
+		$todoData = [
+			["id" => 1, "title" => "Write tests", "complete" => true],
+			["id" => 2, "title" => "Implement features", "complete" => false],
+			["id" => 3, "title" => "Pass tests", "complete" => false],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+
+		$todoListElement->bind($todoData);
+		$items = $todoListElement->querySelectorAll("li");
+
+		foreach($todoData as $i => $todoDatum) {
+			self::assertEquals(
+				$todoDatum["complete"],
+				$items[$i]->classList->contains("complete")
+			);
+
+			self::assertTrue($items[$i]->classList->contains("existing-class"));
+		}
+	}
+
+	public function testBindClassColon() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON);
+		$todoData = [
+			["id" => 1, "title" => "Write tests", "dateTimeCompleted" => "2018-07-01 19:46:00"],
+			["id" => 2, "title" => "Implement features", "dateTimeCompleted" => null],
+			["id" => 3, "title" => "Pass tests", "dateTimeCompleted" => "2018-07-01 19:49:00"],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+
+		$todoListElement->bind($todoData);
+		$items = $todoListElement->querySelectorAll("li");
+
+		foreach($todoData as $i => $todoDatum) {
+			$completed = (bool)$todoDatum["dateTimeCompleted"];
+			self::assertEquals(
+				$completed,
+				$items[$i]->classList->contains("complete")
+			);
+
+			self::assertTrue($items[$i]->classList->contains("existing-class"));
+		}
+	}
+
+	public function testBindClassColonMultiple() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON_MULTIPLE);
+		$todoData = [
+			[
+				"id" => 1,
+				"title" => "Write tests",
+				"dateTimeCompleted" => "2018-07-01 19:46:00",
+				"dateTimeDeleted" => null,
+			],
+			[
+				"id" => 2,
+				"title" => "Implement features",
+				"dateTimeCompleted" => null,
+				"dateTimeDeleted" => "2018-07-01 19:54:00",
+			],
+			[
+				"id" => 3,
+				"title" => "Pass tests",
+				"dateTimeCompleted" => "2018-07-01 19:49:00",
+				"dateTimeDeleted" => null,
+			],
+		];
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+
+		$todoListElement->bind($todoData);
+		$items = $todoListElement->querySelectorAll("li");
+
+		foreach($todoData as $i => $todoDatum) {
+			self::assertTrue($items[$i]->classList->contains("existing-class"));
+
+			$completed = (bool)$todoDatum["dateTimeCompleted"];
+			self::assertEquals(
+				$completed,
+				$items[$i]->classList->contains("complete")
+			);
+
+			$deleted = (bool)$todoDatum["dateTimeDeleted"];
+			self::assertEquals(
+				$deleted,
+				$items[$i]->classList->contains("deleted")
+			);
+		}
+	}
 }

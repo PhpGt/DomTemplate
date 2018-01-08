@@ -2,6 +2,9 @@
 namespace Gt\DomTemplate;
 
 class DataKeyMatch {
+	protected $key;
+	protected $required;
+
 	public function __construct(string $key, bool $required) {
 		$this->key = $key;
 		$this->required = $required;
