@@ -76,9 +76,9 @@ trait Bindable {
 			$attr->name,$matches)) {
 				continue;
 			}
-			$bindType = $matches[1];
+			$bindProperty = $matches[1];
 
-			if($bindType === "class") {
+			if($bindProperty === "class") {
 				$this->handleClassData(
 					$attr,
 					$element,
@@ -88,7 +88,7 @@ trait Bindable {
 			else {
 				$this->handlePropertyData(
 					$attr,
-					$bindType,
+					$bindProperty,
 					$element,
 					$data
 				);
@@ -98,14 +98,14 @@ trait Bindable {
 
 	protected function handlePropertyData(
 		Attr $attr,
-		string $bindType,
+		string $bindProperty,
 		BaseElement $element,
 		iterable $data
 	):void {
 		$dataKeyMatch = $this->getKeyFromAttribute($element, $attr);
 		$dataValue = $dataKeyMatch->getValue($data) ?? "";
 
-		switch($bindType) {
+		switch($bindProperty) {
 		case "html":
 			$element->innerHTML = $dataValue;
 			break;
@@ -119,7 +119,7 @@ trait Bindable {
 			break;
 
 		default:
-			throw new InvalidBindProperty($matches[1]);
+			throw new InvalidBindProperty($bindProperty);
 		}
 	}
 
