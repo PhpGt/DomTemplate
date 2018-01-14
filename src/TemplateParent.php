@@ -100,19 +100,24 @@ trait TemplateParent {
 		$componentList = $this->xPath(
 			"descendant-or-self::*[contains(local-name(), '-')]"
 		);
-
 		$count = 0;
 		foreach($componentList as $component) {
 			$name = $component->tagName;
 
 			try {
-				$fragment = $this->getTemplate($name, $templateDirectory);
+				$fragment = $this->getTemplate(
+					$name,
+					$templateDirectory
+				);
 			}
 			catch(TemplateComponentNotFoundException $exception) {
 				continue;
 			}
 
 			$fragment->expandComponents($templateDirectory);
+			foreach($fragment->children as $child) {
+				$child->classList->add("t-" . $name);
+			}
 			$component->replaceWith($fragment);
 			$count++;
 		}
