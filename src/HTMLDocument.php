@@ -37,6 +37,10 @@ class HTMLDocument extends BaseHTMLDocument {
 		$this->templateFragmentMap = [];
 	}
 
+	public function getTemplateDirectory():string {
+		return $this->templateDirectory;
+	}
+
 	public function getNamedTemplate(string $name):?DocumentFragment {
 		return $this->templateFragmentMap[$name] ?? null;
 	}

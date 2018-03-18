@@ -79,7 +79,7 @@ class TemplateParentTest extends TestCase {
 		);
 		file_put_contents(
 			"$templateDir/ordered-list.html",
-			Helper::COMPONENT_TITLE_ORDERED_LIST
+			Helper::COMPONENT_ORDERED_LIST
 		);
 
 		$document = new HTMLDocument(
@@ -138,7 +138,6 @@ class TemplateParentTest extends TestCase {
 		$document->expandComponents();
 
 		$document->getTemplate("title-definition-item")->insertTemplate();
-		$html = $document->documentElement->innerHTML;
 
 		$section = $document->querySelector("section");
 		$ol = $section->lastElementChild;
@@ -174,9 +173,5 @@ class TemplateParentTest extends TestCase {
 		$t = $document->getTemplate("list-item");
 		$inserted = $t->insertTemplate();
 		self::assertNull($inserted->getAttribute("data-template"));
-	}
-
-	public function testRecursiveLoadComponent() {
-
 	}
 }

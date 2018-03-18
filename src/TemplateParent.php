@@ -96,7 +96,12 @@ trait TemplateParent {
 
 	public function expandComponents(string $templateDirectory = null):int {
 		if(is_null($templateDirectory)) {
-			$templateDirectory = $this->templateDirectory;
+			if($this instanceof HTMLDocument) {
+				$templateDirectory = $this->templateDirectory;
+			}
+			else {
+				$templateDirectory = $this->ownerDocument->getTemplateDirectory();
+			}
 		}
 // Any HTML element is considered a "custom element" if it contains a hyphen in its name:
 // @see https://www.w3.org/TR/custom-elements/#valid-custom-element-name
