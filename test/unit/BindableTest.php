@@ -4,7 +4,6 @@ namespace Gt\DomTemplate\Test;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
-use PHPUnit\Framework\TestCase;
 
 class BindableTest extends TestCase {
 	public function testBindMethodAvailable() {

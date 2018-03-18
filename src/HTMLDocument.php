@@ -63,7 +63,8 @@ class HTMLDocument extends BaseHTMLDocument {
 		$this->templateFragmentMap[$name] = $fragment;
 	}
 
-	protected function createTemplateFragment(DOMElement $templateElement):BaseDocumentFragment {
+	public function createTemplateFragment(DOMElement $templateElement):BaseDocumentFragment {
+		/** @var BaseDocumentFragment $fragment */
 		$fragment = $this->createDocumentFragment();
 
 		if($templateElement->tagName === "template") {

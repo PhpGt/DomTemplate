@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate;
 
 use DirectoryIterator;
+use DOMDocument;
 use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
 
@@ -22,8 +23,11 @@ trait TemplateParent {
 			$previousSibling = $templateElement->previousSibling;
 			$templateNodePath = $templateElement->getNodePath();
 
+			$document = ($this instanceof DOMDocument)
+				? $this
+				: $this->ownerDocument;
 			/** @var DocumentFragment $fragment */
-			$fragment = $this->createTemplateFragment(
+			$fragment = $document->createTemplateFragment(
 				$templateElement
 			);
 			$fragment->setTemplateProperties(
@@ -140,6 +144,8 @@ trait TemplateParent {
 		}
 
 		$fragment->appendXML($html);
+		$fragment->extractTemplates();
+		$fragment->expandComponents();
 		return $fragment;
 	}
 

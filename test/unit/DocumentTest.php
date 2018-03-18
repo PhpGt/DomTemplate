@@ -5,8 +5,6 @@ use DOMDocument;
 use Gt\DomTemplate\Document;
 use Gt\DomTemplate\DocumentFragment;
 use Gt\DomTemplate\Element;
-use Gt\DomTemplate\Node;
-use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase {
 	public function testOverriddenClasses() {

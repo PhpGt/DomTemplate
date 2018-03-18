@@ -4,7 +4,6 @@ namespace Gt\DomTemplate\Test;
 use Gt\DomTemplate\DocumentFragment;
 use Gt\DomTemplate\Element;
 use Gt\DomTemplate\HTMLDocument;
-use PHPUnit\Framework\TestCase;
 
 class HTMLDocumentTest extends TestCase {
 	public function testOverriddenClasses() {

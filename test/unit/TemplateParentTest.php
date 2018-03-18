@@ -5,14 +5,13 @@ use Gt\Dom\DocumentFragment;
 use Gt\DomTemplate\Element;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
-use PHPUnit\Framework\TestCase;
 
 class TemplateParentTest extends TestCase {
 	const TEST_DIR = "/tmp/phpgt/domtemplate/test";
 	const TEMPLATE_PATH = "_template";
 
 	public function setUp() {
-		exec("rm -rf " . self::TEST_DIR);
+		$this->rrmdir(self::TEST_DIR);
 		mkdir(
 			self::TEST_DIR . "/" . self::TEMPLATE_PATH,
 			0775,
@@ -21,7 +20,7 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function tearDown() {
-		exec("rm -rf " . self::TEST_DIR);
+		$this->rrmdir(self::TEST_DIR);
 	}
 
 	public function testTemplateExtractWithNoTemplatesCount() {
@@ -159,5 +158,9 @@ class TemplateParentTest extends TestCase {
 		$t = $document->getTemplate("list-item");
 		$inserted = $t->insertTemplate();
 		self::assertNull($inserted->getAttribute("data-template"));
+	}
+
+	public function testRecursiveLoadComponent() {
+
 	}
 }
