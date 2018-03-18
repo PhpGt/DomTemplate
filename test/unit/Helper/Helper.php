@@ -113,11 +113,16 @@ HTML;
 <dd data-template-text="@definition">Definition</dd>
 HTML;
 
-	const COMPONENT_TITLE_ORDERED_LIST = <<<HTML
+	const COMPONENT_ORDERED_LIST = <<<HTML
 <ol>
-	<li data-template="ordered-list-item">This is an item in the second list</li>		
+	<ordered-list-item></ordered-list-item>		
 </ol>
 HTML;
+
+	const COMPONENT_ORDERED_LIST_ITEM = <<<HTML
+<li>This is an item in the list</li>
+HTML;
+
 
 	const HTML_BIND_UNKNOWN_PROPERTY = <<<HTML
 <!doctype html>

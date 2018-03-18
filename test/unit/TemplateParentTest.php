@@ -123,11 +123,27 @@ class TemplateParentTest extends TestCase {
 			"$templateDir/title-definition.html",
 			Helper::COMPONENT_TITLE_DEFINITION
 		);
+		file_put_contents(
+			"$templateDir/ordered-list.html",
+			Helper::COMPONENT_ORDERED_LIST
+		);
+		file_put_contents(
+			"$templateDir/ordered-list-item.html",
+			Helper::COMPONENT_ORDERED_LIST_ITEM
+		);
 		$document = new HTMLDocument(
 			Helper::HTML_COMPONENTS,
 			$templateDir
 		);
 		$document->expandComponents();
+
+		$document->getTemplate("title-definition-item")->insertTemplate();
+		$html = $document->documentElement->innerHTML;
+
+		$section = $document->querySelector("section");
+		$ol = $section->lastElementChild;
+		self::assertEquals("ol", $ol->tagName);
+		self::assertEquals("li", $ol->firstElementChild->tagName);
 
 		$expandedComponent = $document->querySelector("dl");
 		self::assertInstanceOf(Element::class, $expandedComponent);
