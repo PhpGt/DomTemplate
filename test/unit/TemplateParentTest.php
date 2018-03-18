@@ -116,6 +116,31 @@ class TemplateParentTest extends TestCase {
 		// While the count of the expandCompnents > 0, do it again on the expanded component...
 		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
 		file_put_contents(
+			"$templateDir/ordered-list.html",
+			Helper::COMPONENT_ORDERED_LIST
+		);
+		file_put_contents(
+			"$templateDir/ordered-list-item.html",
+			Helper::COMPONENT_ORDERED_LIST_ITEM
+		);
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$templateDir
+		);
+		$document->expandComponents();
+
+		$section = $document->querySelector("section");
+		self::assertEquals("ol", $section->lastElementChild->tagName);
+		self::assertEquals(
+			"li",
+			$section->lastElementChild->lastElementChild->tagName
+		);
+	}
+
+	public function testNestedComponentsExpandWhenTemplateInserted() {
+		// While the count of the expandCompnents > 0, do it again on the expanded component...
+		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		file_put_contents(
 			"$templateDir/title-definition-list.html",
 			Helper::COMPONENT_TITLE_DEFINITION_LIST
 		);
