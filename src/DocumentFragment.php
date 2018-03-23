@@ -38,7 +38,6 @@ class DocumentFragment extends BaseDocumentFragment {
 		}
 
 		$clone = $this->cloneNode(true);
-		$clone->expandComponents();
 
 		/** @var BaseElement $inserted */
 		$inserted = $insertInto->insertBefore(

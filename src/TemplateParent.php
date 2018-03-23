@@ -66,6 +66,7 @@ trait TemplateParent {
 		$rootDocument = $this->getRootDocument();
 		$docTemplate = $rootDocument->getNamedTemplate($name);
 		if(!is_null($docTemplate)) {
+			$docTemplate->expandComponents();
 			return $docTemplate;
 		}
 

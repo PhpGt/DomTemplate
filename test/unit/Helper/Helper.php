@@ -102,6 +102,27 @@ HTML;
 </main>
 HTML;
 
+	const HTML_TEMPLATE_WITH_COMPONENT = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has a template with a component inside</title>
+<main>
+	<section>
+		<ul>
+			<li data-template="list-item">
+				<nested-thing></nested-thing>			
+			</li>		
+		</ul>	
+	</section>
+</main>
+HTML;
+
+	const COMPONENT_NESTED_THING = <<<HTML
+<p>These two paragraphs are contained within a component, within a template!</p>
+<p>The iteration number is: <span class="number">X</span></p>
+HTML;
+
+
 	const COMPONENT_TITLE_DEFINITION_LIST = <<<HTML
 <dl>
 	<title-definition data-template="title-definition-item"></title-definition>

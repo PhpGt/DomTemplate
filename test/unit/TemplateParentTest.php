@@ -137,6 +137,57 @@ class TemplateParentTest extends TestCase {
 		);
 	}
 
+	public function testComponentWithinTemplate() {
+		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		file_put_contents(
+			"$templateDir/nested-thing.html",
+			Helper::COMPONENT_NESTED_THING
+		);
+		$document = new HTMLDocument(
+			Helper::HTML_TEMPLATE_WITH_COMPONENT,
+			$templateDir
+		);
+		$document->extractTemplates();
+		$document->expandComponents();
+
+		self::assertCount(
+			0,
+			$document->querySelectorAll("li")
+		);
+		self::assertCount(
+			0,
+			$document->querySelectorAll("nested-thing")
+		);
+
+		for($i = 0; $i < 10; $i++) {
+			$t = $document->getTemplate("list-item");
+//			self::assertCount(
+//				2,
+//				$t->querySelectorAll("p")
+//			);
+			$t->querySelector(".number")->innerText = $i + 1;
+			$t->insertTemplate();
+		}
+
+		self::assertCount(
+			$i,
+			$document->querySelectorAll("li")
+		);
+		self::assertCount(
+			0,
+			$document->querySelectorAll("nested-thing")
+		);
+		self::assertCount(
+			$i * 2,
+			$document->querySelectorAll("p")
+		);
+
+		for($i = 0; $i < 10; $i++) {
+			$numberElement = $document->querySelectorAll("p .number")[$i];
+			self::assertEquals($i + 1, $numberElement->innerText);
+		}
+	}
+
 	public function testNestedComponentsExpandWhenTemplateInserted() {
 		// While the count of the expandCompnents > 0, do it again on the expanded component...
 		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
