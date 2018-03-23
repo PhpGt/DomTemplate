@@ -35,6 +35,7 @@ trait TemplateParent {
 				$nextSibling,
 				$previousSibling
 			);
+			$fragment->expandComponents();
 
 			/** @var HTMLDocument $rootDocument */
 			$rootDocument = $this->getRootDocument();
@@ -66,7 +67,6 @@ trait TemplateParent {
 		$rootDocument = $this->getRootDocument();
 		$docTemplate = $rootDocument->getNamedTemplate($name);
 		if(!is_null($docTemplate)) {
-			$docTemplate->expandComponents();
 			return $docTemplate;
 		}
 
@@ -104,6 +104,7 @@ trait TemplateParent {
 				$templateDirectory = $this->ownerDocument->getTemplateDirectory();
 			}
 		}
+
 // Any HTML element is considered a "custom element" if it contains a hyphen in its name:
 // @see https://www.w3.org/TR/custom-elements/#valid-custom-element-name
 		/** @var HTMLCollection $componentList */
@@ -151,7 +152,6 @@ trait TemplateParent {
 
 		$fragment->appendXML($html);
 		$fragment->extractTemplates();
-		$fragment->expandComponents();
 		return $fragment;
 	}
 
