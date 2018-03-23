@@ -140,11 +140,15 @@ class TemplateParentTest extends TestCase {
 	public function testComponentWithinTemplate() {
 		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
 		file_put_contents(
-			"$templateDir/nested-thing.html",
-			Helper::COMPONENT_NESTED_THING
+			"$templateDir/outer-nested-thing.html",
+			Helper::COMPONENT_OUTER_NESTED_THING
+		);
+		file_put_contents(
+			"$templateDir/inner-nested-thing.html",
+			Helper::COMPONENT_INNER_NESTED_THING
 		);
 		$document = new HTMLDocument(
-			Helper::HTML_TEMPLATE_WITH_COMPONENT,
+			Helper::HTML_TEMPLATE_WITH_NESTED_COMPONENT,
 			$templateDir
 		);
 		$document->extractTemplates();
@@ -160,7 +164,7 @@ class TemplateParentTest extends TestCase {
 		);
 
 		for($i = 0; $i < 10; $i++) {
-			$t = $document->getTemplate("list-item");
+			$t = $document->getTemplate("inner-template-item");
 //			self::assertCount(
 //				2,
 //				$t->querySelectorAll("p")
