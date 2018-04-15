@@ -77,7 +77,7 @@ $outputTo->bind($data);
 <ul id="shopping-list">
 	<li data-id="1">Tomatoes</li>
 	<li data-id="2">Noodles</li>
-	<li data-id="3">Choose</li>
+	<li data-id="3">Cheese</li>
 	<li data-id="4">Broccoli</li>
 </ul>
 
