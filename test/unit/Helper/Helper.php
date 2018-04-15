@@ -161,8 +161,8 @@ HTML;
 			nisi, nostrum optio perferendis perspiciatis, rerum vitae voluptates.
 		</p>
 		<p class="bound-data-test">
-			My name is <span data-bind:unknown="name">Example</span> 
-			and I am <span data-bind:text="age">0</span> years old. 	
+			My name is <span class="test1" data-bind:unknown="name">Example</span> 
+			and I am <span class="test2" data-bind:text="age">0</span> years old. 	
 		</p>
 	</section>
 </main>
