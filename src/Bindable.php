@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Attr;
 use Gt\Dom\Element as BaseElement;
+use DOMNode;
 use Gt\Dom\HTMLCollection;
 
 trait Bindable {
@@ -23,7 +24,7 @@ trait Bindable {
 	}
 
 	protected function bindExisting(
-		BaseElement $parent,
+		DOMNode $parent,
 		iterable $data
 	):void {
 		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($parent);
@@ -34,7 +35,7 @@ trait Bindable {
 	}
 
 	protected function bindTemplates(
-		BaseElement $element,
+		DOMNode $element,
 		iterable $data,
 		string $templateName = null
 	):void {
@@ -107,10 +108,13 @@ trait Bindable {
 
 		switch($bindProperty) {
 		case "html":
+		case "innerhtml":
 			$element->innerHTML = $dataValue;
 			break;
 
 		case "text":
+		case "innertext":
+		case "textcontent":
 			$element->innerText = $dataValue;
 			break;
 
@@ -119,7 +123,8 @@ trait Bindable {
 			break;
 
 		default:
-			throw new InvalidBindProperty($bindProperty);
+			$element->setAttribute($bindProperty, $dataValue);
+			break;
 		}
 	}
 
@@ -192,13 +197,13 @@ trait Bindable {
 		return $templateNames;
 	}
 
-	protected function getChildrenWithBindAttribute(BaseElement $parent):HTMLCollection {
+	protected function getChildrenWithBindAttribute(DOMNode $parent):HTMLCollection {
 		return $parent->xPath(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
 		);
 	}
 
-	protected function cleanBindAttributes(BaseElement $element):void {
+	protected function cleanBindAttributes(DOMNode $element):void {
 		$elementsToClean = [$element];
 		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($element);
 		foreach($childrenWithBindAttribute as $child) {
@@ -206,6 +211,10 @@ trait Bindable {
 		}
 
 		foreach($elementsToClean as $cleanMe) {
+			if(!$cleanMe->attributes) {
+				continue;
+			}
+
 			foreach($cleanMe->attributes as $attr) {
 				if(strpos($attr->name, "data-bind") === 0) {
 					$cleanMe->removeAttribute($attr->name);
