@@ -36,14 +36,14 @@ In this example, we will simply use an array to contain the data, but the data c
 
 <shopping-list id="groceries"></shopping-list>
 
-<p>The use of a custom element is more useful on more complex pages, but is shown here as an example.</p>
+<p>The use of a custom element is more useful on more complex pages, but is shown above as an example.</p>
 ```
 
 ### Custom element HTML (`_template/shopping-list.html`)
 
 ```html
 <ul>
-	<li data-template data-bind:text="title">Item name</li>
+	<li data-template data-bind:text="title" data-bind:data-id="id">Item name</li>
 </ul>
 ```
 
@@ -75,11 +75,13 @@ $outputTo->bind($data);
 <h1>Shopping list</h1>
 
 <ul id="shopping-list">
-	<li>Tomatoes</li>
-	<li>Noodles</li>
-	<li>Choose</li>
-	<li>Broccoli</li>
+	<li data-id="1">Tomatoes</li>
+	<li data-id="2">Noodles</li>
+	<li data-id="3">Choose</li>
+	<li data-id="4">Broccoli</li>
 </ul>
+
+<p>The use of a custom element is more useful on more complex pages, but is shown above as an example.</p>
 ```
 
 [dom]: https://www.php.gt/dom
