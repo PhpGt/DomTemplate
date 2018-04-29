@@ -150,7 +150,7 @@ trait TemplateParent {
 			$fragment = $ownerDocument->createDocumentFragment();
 		}
 
-		$fragment->appendXML($html);
+		$fragment->appendHTML($html);
 		$fragment->extractTemplates();
 		return $fragment;
 	}
