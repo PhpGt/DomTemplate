@@ -289,6 +289,35 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function testComponentAndTemplatePrefixAddedToTemplateComponentElement() {
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDir/title-definition-list.html",
+			Helper::COMPONENT_TITLE_DEFINITION_LIST
+		);
+		file_put_contents(
+			"$componentDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+		file_put_contents(
+			"$componentDir/ordered-list.html",
+			Helper::COMPONENT_ORDERED_LIST
+		);
 
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$componentDir
+		);
+		$document->expandComponents();
+
+		$t = $document->getTemplate("title-definition-list");
+		self::assertInstanceOf(DocumentFragment::class, $t);
+		$inserted = $document->body->appendChild($t);
+
+		self::assertTrue(
+			$inserted->classList->contains("c-title-definition-list")
+		);
+		self::assertTrue(
+			$inserted->classList->contains("t-title-definition-list")
+		);
 	}
 }
