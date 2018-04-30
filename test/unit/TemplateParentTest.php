@@ -68,23 +68,23 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function testExpandComponents() {
-		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		file_put_contents(
-			"$templateDir/title-definition-list.html",
+			"$componentDir/title-definition-list.html",
 			Helper::COMPONENT_TITLE_DEFINITION_LIST
 		);
 		file_put_contents(
-			"$templateDir/title-definition.html",
+			"$componentDir/title-definition.html",
 			Helper::COMPONENT_TITLE_DEFINITION
 		);
 		file_put_contents(
-			"$templateDir/ordered-list.html",
+			"$componentDir/ordered-list.html",
 			Helper::COMPONENT_ORDERED_LIST
 		);
 
 		$document = new HTMLDocument(
 			Helper::HTML_COMPONENTS,
-			$templateDir
+			$componentDir
 		);
 		self::assertInstanceOf(
 			Element::class,
@@ -97,7 +97,7 @@ class TemplateParentTest extends TestCase {
 
 		$elementBeforeOrderedList = $document->querySelector("ordered-list")->previousElementSibling;
 
-		$count = $document->expandComponents($templateDir);
+		$count = $document->expandComponents($componentDir);
 		self::assertEquals(2, $count);
 		self::assertNull(
 			$document->querySelector("title-definition-list")
@@ -260,7 +260,32 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function testComponentPrefixAddedToComponentElements() {
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDir/title-definition-list.html",
+			Helper::COMPONENT_TITLE_DEFINITION_LIST
+		);
+		file_put_contents(
+			"$componentDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+		file_put_contents(
+			"$componentDir/ordered-list.html",
+			Helper::COMPONENT_ORDERED_LIST
+		);
 
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$componentDir
+		);
+		$document->expandComponents();
+
+		self::assertCount(
+			2,
+			$document->querySelectorAll(
+				".c-title-definition-list,.c-ordered-list"
+			)
+		);
 	}
 
 	public function testComponentAndTemplatePrefixAddedToTemplateComponentElement() {
