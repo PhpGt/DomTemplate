@@ -8,12 +8,12 @@ use Gt\DomTemplate\Test\Helper\Helper;
 
 class TemplateParentTest extends TestCase {
 	const TEST_DIR = "/tmp/phpgt/domtemplate/test";
-	const TEMPLATE_PATH = "_template";
+	const COMPONENT_PATH = "_component";
 
 	public function setUp() {
 		$this->rrmdir(self::TEST_DIR);
 		mkdir(
-			self::TEST_DIR . "/" . self::TEMPLATE_PATH,
+			self::TEST_DIR . "/" . self::COMPONENT_PATH,
 			0775,
 			true
 		);
@@ -61,30 +61,30 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function testExpandComponentsNoComponents() {
-		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
 		$count = $document->expandComponents($templateDir);
 		self::assertEquals(0, $count);
 	}
 
 	public function testExpandComponents() {
-		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		file_put_contents(
-			"$templateDir/title-definition-list.html",
+			"$componentDir/title-definition-list.html",
 			Helper::COMPONENT_TITLE_DEFINITION_LIST
 		);
 		file_put_contents(
-			"$templateDir/title-definition.html",
+			"$componentDir/title-definition.html",
 			Helper::COMPONENT_TITLE_DEFINITION
 		);
 		file_put_contents(
-			"$templateDir/ordered-list.html",
+			"$componentDir/ordered-list.html",
 			Helper::COMPONENT_ORDERED_LIST
 		);
 
 		$document = new HTMLDocument(
 			Helper::HTML_COMPONENTS,
-			$templateDir
+			$componentDir
 		);
 		self::assertInstanceOf(
 			Element::class,
@@ -97,7 +97,7 @@ class TemplateParentTest extends TestCase {
 
 		$elementBeforeOrderedList = $document->querySelector("ordered-list")->previousElementSibling;
 
-		$count = $document->expandComponents($templateDir);
+		$count = $document->expandComponents($componentDir);
 		self::assertEquals(2, $count);
 		self::assertNull(
 			$document->querySelector("title-definition-list")
@@ -114,7 +114,7 @@ class TemplateParentTest extends TestCase {
 
 	public function testNestedComponentsExpand() {
 		// While the count of the expandCompnents > 0, do it again on the expanded component...
-		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		file_put_contents(
 			"$templateDir/ordered-list.html",
 			Helper::COMPONENT_ORDERED_LIST
@@ -138,7 +138,7 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function testComponentWithinTemplate() {
-		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		file_put_contents(
 			"$templateDir/outer-nested-thing.html",
 			Helper::COMPONENT_OUTER_NESTED_THING
@@ -165,10 +165,6 @@ class TemplateParentTest extends TestCase {
 
 		for($i = 0; $i < 10; $i++) {
 			$t = $document->getTemplate("inner-template-item");
-//			self::assertCount(
-//				2,
-//				$t->querySelectorAll("p")
-//			);
 			$t->querySelector(".number")->innerText = $i + 1;
 			$t->insertTemplate();
 		}
@@ -194,7 +190,7 @@ class TemplateParentTest extends TestCase {
 
 	public function testNestedComponentsExpandWhenTemplateInserted() {
 		// While the count of the expandCompnents > 0, do it again on the expanded component...
-		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		file_put_contents(
 			"$templateDir/title-definition-list.html",
 			Helper::COMPONENT_TITLE_DEFINITION_LIST
@@ -233,7 +229,7 @@ class TemplateParentTest extends TestCase {
 	}
 
 	public function testGetTemplateFromFile() {
-		$templateDir = self::TEST_DIR . "/" . self::TEMPLATE_PATH;
+		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		file_put_contents(
 			"$templateDir/title-definition.html",
 			Helper::COMPONENT_TITLE_DEFINITION
@@ -253,5 +249,75 @@ class TemplateParentTest extends TestCase {
 		$t = $document->getTemplate("list-item");
 		$inserted = $t->insertTemplate();
 		self::assertNull($inserted->getAttribute("data-template"));
+	}
+
+	public function testTemplatePrefixAddedToTemplateElements() {
+		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
+		$document->extractTemplates();
+		$t = $document->getTemplate("list-item");
+		$inserted = $t->insertTemplate();
+		self::assertTrue($inserted->classList->contains("t-list-item"));
+	}
+
+	public function testComponentPrefixAddedToComponentElements() {
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDir/title-definition-list.html",
+			Helper::COMPONENT_TITLE_DEFINITION_LIST
+		);
+		file_put_contents(
+			"$componentDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+		file_put_contents(
+			"$componentDir/ordered-list.html",
+			Helper::COMPONENT_ORDERED_LIST
+		);
+
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$componentDir
+		);
+		$document->expandComponents();
+
+		self::assertCount(
+			2,
+			$document->querySelectorAll(
+				".c-title-definition-list,.c-ordered-list"
+			)
+		);
+	}
+
+	public function testComponentAndTemplatePrefixAddedToTemplateComponentElement() {
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDir/title-definition-list.html",
+			Helper::COMPONENT_TITLE_DEFINITION_LIST
+		);
+		file_put_contents(
+			"$componentDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+		file_put_contents(
+			"$componentDir/ordered-list.html",
+			Helper::COMPONENT_ORDERED_LIST
+		);
+
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$componentDir
+		);
+		$document->expandComponents();
+
+		$t = $document->getTemplate("title-definition-list");
+		self::assertInstanceOf(DocumentFragment::class, $t);
+		$inserted = $document->body->appendChild($t);
+
+		self::assertTrue(
+			$inserted->classList->contains("c-title-definition-list")
+		);
+		self::assertTrue(
+			$inserted->classList->contains("t-title-definition-list")
+		);
 	}
 }

@@ -53,6 +53,8 @@ trait TemplateParent {
 			if($templateElement->parentNode === $parentNode) {
 				$parentNode->removeChild($templateElement);
 			}
+
+			$templateElement->classList->add("t-$name");
 		}
 
 		if(is_null($i)) {
@@ -71,7 +73,7 @@ trait TemplateParent {
 		}
 
 		if(is_null($templateDirectory)) {
-			$templateDirectory = $this->templateDirectory;
+			$templateDirectory = $this->componentDirectory;
 		}
 
 		if(is_dir($templateDirectory)) {
@@ -84,10 +86,17 @@ trait TemplateParent {
 				$fileName = strtok($fileName, ".");
 
 				if($name === $fileName) {
-					return $this->loadComponent(
+					$component = $this->loadComponent(
 						$name,
 						dirname($fileInfo->getRealPath())
 					);
+
+					foreach($component->children as $child) {
+						$child->classList->add("c-$name");
+						$child->classList->add("t-$name");
+					}
+
+					return $component;
 				}
 			}
 		}
@@ -98,10 +107,10 @@ trait TemplateParent {
 	public function expandComponents(string $templateDirectory = null):int {
 		if(is_null($templateDirectory)) {
 			if($this instanceof HTMLDocument) {
-				$templateDirectory = $this->templateDirectory;
+				$templateDirectory = $this->componentDirectory;
 			}
 			else {
-				$templateDirectory = $this->ownerDocument->getTemplateDirectory();
+				$templateDirectory = $this->ownerDocument->getComponentDirectory();
 			}
 		}
 
@@ -127,7 +136,7 @@ trait TemplateParent {
 
 			$fragment->expandComponents($templateDirectory);
 			foreach($fragment->children as $child) {
-				$child->classList->add("t-" . $name);
+				$child->classList->add("c-$name");
 			}
 			$component->replaceWith($fragment);
 			$count++;
