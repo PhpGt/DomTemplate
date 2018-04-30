@@ -23,22 +23,22 @@ class HTMLDocument extends BaseHTMLDocument {
 	use TemplateParent;
 	use Bindable;
 
-	protected $templateDirectory;
+	protected $componentDirectory;
 	protected $templateFragmentMap;
 
-	public function __construct(string $document = "", string $templateDirectory = "") {
+	public function __construct(string $document = "", string $componentDirectory = "") {
 		parent::__construct($document);
 
 		$this->registerNodeClass(DOMDocument::class, Document::class);
 		$this->registerNodeClass(DOMElement::class, Element::class);
 		$this->registerNodeClass(DOMDocumentFragment::class, DocumentFragment::class);
 
-		$this->templateDirectory = $templateDirectory;
+		$this->componentDirectory = $componentDirectory;
 		$this->templateFragmentMap = [];
 	}
 
-	public function getTemplateDirectory():string {
-		return $this->templateDirectory;
+	public function getComponentDirectory():string {
+		return $this->componentDirectory;
 	}
 
 	public function getNamedTemplate(string $name):?DocumentFragment {
