@@ -64,7 +64,11 @@ trait TemplateParent {
 		return $i + 1;
 	}
 
-	public function getTemplate(string $name, string $templateDirectory = null):DocumentFragment {
+	public function getTemplate(
+		string $name,
+		string $templateDirectory = null,
+		bool $addTemplatePrefix = true
+	):DocumentFragment {
 		/** @var HTMLDocument $rootDocument */
 		$rootDocument = $this->getRootDocument();
 		$docTemplate = $rootDocument->getNamedTemplate($name);
@@ -93,7 +97,10 @@ trait TemplateParent {
 
 					foreach($component->children as $child) {
 						$child->classList->add("c-$name");
-						$child->classList->add("t-$name");
+
+						if($addTemplatePrefix) {
+							$child->classList->add("t-$name");
+						}
 					}
 
 					return $component;
@@ -127,7 +134,8 @@ trait TemplateParent {
 			try {
 				$fragment = $this->getTemplate(
 					$name,
-					$templateDirectory
+					$templateDirectory,
+					false
 				);
 			}
 			catch(TemplateComponentNotFoundException $exception) {

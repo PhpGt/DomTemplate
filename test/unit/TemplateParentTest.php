@@ -257,6 +257,7 @@ class TemplateParentTest extends TestCase {
 		$t = $document->getTemplate("list-item");
 		$inserted = $t->insertTemplate();
 		self::assertTrue($inserted->classList->contains("t-list-item"));
+		self::assertFalse($inserted->classList->contains("c-list-item"));
 	}
 
 	public function testComponentPrefixAddedToComponentElements() {
@@ -284,6 +285,12 @@ class TemplateParentTest extends TestCase {
 			2,
 			$document->querySelectorAll(
 				".c-title-definition-list,.c-ordered-list"
+			)
+		);
+		self::assertCount(
+			0,
+			$document->querySelectorAll(
+				".t-title-definition-list,.t-ordered-list"
 			)
 		);
 	}
