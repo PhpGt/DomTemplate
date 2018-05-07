@@ -327,4 +327,40 @@ class TemplateParentTest extends TestCase {
 			$inserted->classList->contains("t-title-definition-list")
 		);
 	}
+
+	public function testComponentAndTemplatePrefixAddedCorrectlyWithNamedTemplate() {
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDir/title-definition-list.html",
+			Helper::COMPONENT_TITLE_DEFINITION_LIST
+		);
+		file_put_contents(
+			"$componentDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+		file_put_contents(
+			"$componentDir/ordered-list.html",
+			Helper::COMPONENT_ORDERED_LIST
+		);
+
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS_WITH_NAMED_TEMPLATE,
+			$componentDir
+		);
+		$document->extractTemplates();
+		$document->expandComponents();
+
+		$t = $document->getTemplate("tdlist");
+		$inserted = $t->insertTemplate();
+
+		self::assertTrue(
+			$inserted->classList->contains("c-title-definition-list")
+		);
+		self::assertTrue(
+			$inserted->classList->contains("t-tdlist")
+		);
+		self::assertFalse(
+			$inserted->classList->contains("t-title-definition-list")
+		);
+	}
 }
