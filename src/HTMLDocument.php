@@ -42,7 +42,21 @@ class HTMLDocument extends BaseHTMLDocument {
 	}
 
 	public function getNamedTemplate(string $name):?DocumentFragment {
-		return $this->templateFragmentMap[$name] ?? null;
+		/** @var \Gt\DomTemplate\DocumentFragment $fragment */
+		$fragment = $this->templateFragmentMap[$name];
+
+		if($fragment) {
+			$clone = $fragment->cloneNode(true);
+			$clone->setTemplateProperties(
+				$fragment->templateParentNode,
+				$fragment->templateNextSibling,
+				$fragment->templatePreviousSibling
+			);
+
+			return $clone;
+		}
+
+		return null;
 	}
 
 	/**

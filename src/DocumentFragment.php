@@ -48,15 +48,15 @@ class DocumentFragment extends BaseDocumentFragment {
 		return $inserted;
 	}
 
-	public function prop_get_templateNextSibling():?BaseElement {
+	public function prop_get_templateNextSibling():?DOMNode {
 		return $this->templateNextSibling;
 	}
 
-	public function prop_get_templatePreviousSibling():?BaseElement {
+	public function prop_get_templatePreviousSibling():?DOMNode {
 		return $this->templatePreviousSibling;
 	}
 
-	public function prop_get_templateParentNode():?BaseElement {
+	public function prop_get_templateParentNode():?DOMNode {
 		return $this->templateParentNode;
 	}
 }
