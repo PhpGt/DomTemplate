@@ -362,5 +362,7 @@ class TemplateParentTest extends TestCase {
 		self::assertFalse(
 			$inserted->classList->contains("t-title-definition-list")
 		);
+		$classes = explode(" ", $inserted->className);
+		self::assertCount(2, $classes, print_r($classes));
 	}
 }

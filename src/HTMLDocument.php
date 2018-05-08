@@ -64,8 +64,10 @@ class HTMLDocument extends BaseHTMLDocument {
 	}
 
 	public function setNamedTemplate(string $name, BaseDocumentFragment $fragment):void {
-		foreach($fragment->children as $child) {
-			$child->classList->add("t-$name");
+		if($name[0] !== "/") {
+			foreach($fragment->children as $child) {
+				$child->classList->add("t-$name");
+			}
 		}
 
 		$this->templateFragmentMap[$name] = $fragment;
