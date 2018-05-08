@@ -363,6 +363,30 @@ class TemplateParentTest extends TestCase {
 			$inserted->classList->contains("t-title-definition-list")
 		);
 		$classes = explode(" ", $inserted->className);
-		self::assertCount(2, $classes, print_r($classes));
+		self::assertCount(2, $classes);
+	}
+
+	public function testExistingClassesAreAddedToComponents() {
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDir/title-definition-list.html",
+			Helper::COMPONENT_TITLE_DEFINITION_LIST
+		);
+		file_put_contents(
+			"$componentDir/title-definition.html",
+			Helper::COMPONENT_TITLE_DEFINITION
+		);
+
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENT_WITH_CLASS,
+			$componentDir
+		);
+		$document->extractTemplates();
+		$document->expandComponents();
+
+		$component = $document->querySelector(".c-title-definition-list");
+		self::assertTrue(
+			$component->classList->contains("source-class")
+		);
 	}
 }

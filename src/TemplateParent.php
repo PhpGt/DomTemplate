@@ -144,8 +144,10 @@ trait TemplateParent {
 
 			$fragment->expandComponents($templateDirectory);
 			foreach($fragment->children as $child) {
+				$child->className = $component->className ?? "";
 				$child->classList->add("c-$name");
 			}
+
 			$component->replaceWith($fragment);
 			$count++;
 		}

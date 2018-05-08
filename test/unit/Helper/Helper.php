@@ -129,6 +129,24 @@ HTML;
 </main>
 HTML;
 
+	const HTML_COMPONENT_WITH_CLASS = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has some components</title>
+<main>
+	<section>
+		<h1>Hello, World!</h1>
+		
+		<title-definition-list class="source-class"></title-definition-list>
+		
+		<p>
+			Above this paragraph is a custom component, which has a nested component within it.
+		</p>
+	</section>
+</main>
+HTML;
+
+
 	const HTML_TEMPLATE_WITH_NESTED_COMPONENT = <<<HTML
 <!doctype html>
 <meta charset="utf-8" />
