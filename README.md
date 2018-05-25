@@ -7,19 +7,19 @@ Directly manipulating the DOM in your code can lead to tightly coupling the logi
 ***
 
 <a href="https://circleci.com/gh/PhpGt/DomTemplate" target="_blank">
-	<img src="https://img.shields.io/circleci/project/PhpGt/DomTemplate/master.svg?style=flat-square" alt="Build status" />
+	<img src="https://badge.status.php.gt/domtemplate-build.svg" alt="Build status" />
 </a>
 <a href="https://scrutinizer-ci.com/g/PhpGt/DomTemplate" target="_blank">
-	<img src="https://img.shields.io/scrutinizer/g/PhpGt/DomTemplate/master.svg?style=flat-square" alt="Code quality" />
+	<img src="https://badge.status.php.gt/domtemplate-quality.svg" alt="Code quality" />
 </a>
 <a href="https://scrutinizer-ci.com/g/PhpGt/DomTemplate" target="_blank">
-	<img src="https://img.shields.io/scrutinizer/coverage/g/PhpGt/DomTemplate/master.svg?style=flat-square" alt="Code coverage" />
+	<img src="https://badge.status.php.gt/domtemplate-coverage.svg" alt="Code coverage" />
 </a>
 <a href="https://packagist.org/packages/PhpGt/DomTemplate" target="_blank">
-	<img src="https://img.shields.io/packagist/v/PhpGt/DomTemplate.svg?style=flat-square" alt="Current version" />
+	<img src="https://badge.status.php.gt/domtemplate-version.svg" alt="Current version" />
 </a>
 <a href="http://www.php.gt/domtemplate" target="_blank">
-	<img src="https://img.shields.io/badge/docs-www.php.gt/domtemplate-26a5e3.svg?style=flat-square" alt="PHP.G/DomTemplate documentation" />
+	<img src="https://badge.status.php.gt/domtemplate-docs.svg" alt="PHP.G/DomTemplate documentation" />
 </a>
 
 ## Example usage: Bind dynamic data to a template element
