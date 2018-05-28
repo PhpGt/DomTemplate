@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
+use stdClass;
 
 class BindableTest extends TestCase {
 	public function testBindMethodAvailable() {
@@ -311,6 +312,63 @@ class BindableTest extends TestCase {
 			);
 
 			$deleted = (bool)$todoDatum["dateTimeDeleted"];
+			self::assertEquals(
+				$deleted,
+				$items[$i]->classList->contains("deleted")
+			);
+		}
+	}
+
+	public function testBindWithObjectData() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON_MULTIPLE);
+		$todoData = [
+			[
+				"id" => 1,
+				"title" => "Write tests",
+				"dateTimeCompleted" => "2018-07-01 19:46:00",
+				"dateTimeDeleted" => null,
+			],
+			[
+				"id" => 2,
+				"title" => "Implement features",
+				"dateTimeCompleted" => null,
+				"dateTimeDeleted" => "2018-07-01 19:54:00",
+			],
+			[
+				"id" => 3,
+				"title" => "Pass tests",
+				"dateTimeCompleted" => "2018-07-01 19:49:00",
+				"dateTimeDeleted" => null,
+			],
+		];
+
+		$todoObjData = [];
+
+		foreach($todoData as $todo) {
+			$obj = new StdClass();
+			foreach($todo as $key => $value) {
+				$obj->$key = $value;
+			}
+
+			$todoObjData []= $obj;
+		}
+
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+
+		$todoListElement->bind($todoObjData);
+		$items = $todoListElement->querySelectorAll("li");
+
+		foreach($todoObjData as $i => $todo) {
+			self::assertTrue($items[$i]->classList->contains("existing-class"));
+
+			$completed = (bool)$todo->dateTimeCompleted;
+			self::assertEquals(
+				$completed,
+				$items[$i]->classList->contains("complete")
+			);
+
+			$deleted = (bool)$todo->dateTimeDeleted;
 			self::assertEquals(
 				$deleted,
 				$items[$i]->classList->contains("deleted")

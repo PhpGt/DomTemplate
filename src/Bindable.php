@@ -5,6 +5,7 @@ use Gt\Dom\Attr;
 use Gt\Dom\Element as BaseElement;
 use DOMNode;
 use Gt\Dom\HTMLCollection;
+use stdClass;
 
 trait Bindable {
 	public function bind(iterable $data, string $templateName = null):void {
@@ -14,18 +15,21 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
+		$this->injectDataIntoAttributeValues($element, $data);
+
 		$this->bindExisting($element, $data);
 		$this->bindTemplates(
 			$element,
 			$data,
 			$templateName
 		);
+
 		$this->cleanBindAttributes($element);
 	}
 
 	protected function bindExisting(
 		DOMNode $parent,
-		iterable $data
+		$data
 	):void {
 		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($parent);
 
@@ -66,11 +70,19 @@ trait Bindable {
 
 				$newNode = $fragment->insertTemplate($insertInto);
 				$this->bindExisting($newNode, $row);
+				$this->injectDataIntoAttributeValues(
+					$newNode,
+					$row
+				);
 			}
 		}
 	}
 
-	protected function setData(BaseElement $element, iterable $data):void {
+	protected function setData(BaseElement $element, $data):void {
+		if(is_array($data)) {
+			$data = $this->convertArrayToObject($data);
+		}
+
 		foreach($element->attributes as $attr) {
 			$matches = [];
 			if(!preg_match("/(?:data-bind:)(.+)/",
@@ -101,7 +113,7 @@ trait Bindable {
 		Attr $attr,
 		string $bindProperty,
 		BaseElement $element,
-		iterable $data
+		$data
 	):void {
 		$dataKeyMatch = $this->getKeyFromAttribute($element, $attr);
 		$dataValue = $dataKeyMatch->getValue($data) ?? "";
@@ -128,18 +140,50 @@ trait Bindable {
 		}
 	}
 
+	protected function injectDataIntoAttributeValues(
+		Element $element,
+		$data
+	):void {
+		foreach($element->xPath("//*[@*[contains(.,'{')]]")
+		as $elementWithBraceInAttributeValue) {
+			foreach($elementWithBraceInAttributeValue->attributes as $attr) {
+				if(!preg_match(
+				"/{([^}]+)}/",
+				$attr->value,
+				$matches)) {
+					continue;
+				}
+
+				$key = $matches[1];
+				if(!isset($data->{$matches[1]})) {
+					continue;
+				}
+
+				$attr->value = str_replace(
+					$matches[0],
+					$data->{$matches[1]},
+					$attr->value
+				);
+			}
+		}
+	}
+
 	protected function handleClassData(
 		Attr $attr,
 		BaseElement $element,
-		iterable $data
+		$data
 	):void {
 		$classList = explode(" ", $attr->value);
-		$this->setClassFromData($element, $data, ...$classList);
+		$this->setClassFromData(
+			$element,
+			$data, ...
+			$classList
+		);
 	}
 
 	protected function setClassFromData(
 		BaseElement $element,
-		iterable $data,
+		$data,
 		string...$classList
 	):void {
 		foreach($classList as $class) {
@@ -149,11 +193,11 @@ trait Bindable {
 
 			list($keyMatch, $className) = explode(":", $class);
 
-			if(!isset($data[$keyMatch])) {
+			if(!isset($data->{$keyMatch})) {
 				continue;
 			}
 
-			if($data[$keyMatch]) {
+			if($data->{$keyMatch}) {
 				$element->classList->add($className);
 			}
 			else {
@@ -221,5 +265,14 @@ trait Bindable {
 				}
 			}
 		}
+	}
+
+	protected function convertArrayToObject(array $array) {
+		$object = new StdClass();
+		foreach($array as $key => $value) {
+			$object->$key = $value;
+		}
+
+		return $object;
 	}
 }
