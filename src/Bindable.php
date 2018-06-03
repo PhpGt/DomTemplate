@@ -76,6 +76,13 @@ trait Bindable {
 				);
 			}
 		}
+
+		if(is_null($rowNumber)) {
+			$trimmed = trim($element->innerHTML);
+			if($trimmed === "") {
+				$element->innerHTML = "";
+			}
+		}
 	}
 
 	protected function setData(BaseElement $element, $data):void {
