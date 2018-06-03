@@ -259,10 +259,15 @@ trait Bindable {
 				continue;
 			}
 
+			$attributesToRemove = [];
 			foreach($cleanMe->attributes as $attr) {
 				if(strpos($attr->name, "data-bind") === 0) {
-					$cleanMe->removeAttribute($attr->name);
+					$attributesToRemove []= $attr->name;
 				}
+			}
+
+			foreach($attributesToRemove as $attrName) {
+				$cleanMe->removeAttribute($attrName);
 			}
 		}
 	}
