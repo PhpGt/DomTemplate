@@ -93,7 +93,7 @@ trait Bindable {
 		foreach($element->attributes as $attr) {
 			$matches = [];
 			if(!preg_match("/(?:data-bind:)(.+)/",
-			$attr->name,$matches)) {
+				$attr->name,$matches)) {
 				continue;
 			}
 			$bindProperty = $matches[1];
@@ -152,25 +152,33 @@ trait Bindable {
 		$data
 	):void {
 		foreach($element->xPath("//*[@*[contains(.,'{')]]")
-		as $elementWithBraceInAttributeValue) {
+			as $elementWithBraceInAttributeValue) {
 			foreach($elementWithBraceInAttributeValue->attributes as $attr) {
-				if(!preg_match(
-				"/{([^}]+)}/",
-				$attr->value,
-				$matches)) {
-					continue;
-				}
-
-				$key = $matches[1];
-				if(!isset($data->{$matches[1]})) {
-					continue;
-				}
-
-				$attr->value = str_replace(
-					$matches[0],
-					$data->{$matches[1]},
-					$attr->value
+				preg_match_all(
+					"/{([^}]+)}/",
+					$attr->value,
+					$matches
 				);
+
+				if(empty($matches[0])) {
+					continue;
+				}
+
+				foreach($matches[0] as $i => $match) {
+					$key = $matches[1][$i];
+
+					if(!isset($data->{$key})) {
+						continue;
+					}
+
+					$value = str_replace(
+						$match,
+						$data->{$key},
+						$attr->value
+					);
+
+					$attr->ownerElement->setAttribute($attr->name, $value);
+				}
 			}
 		}
 	}
