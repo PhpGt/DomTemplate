@@ -39,7 +39,7 @@ In this example, we will simply use an array to contain the data, but the data c
 <p>The use of a custom element is more useful on more complex pages, but is shown above as an example.</p>
 ```
 
-### Custom element HTML (`_template/shopping-list.html`)
+### Custom element HTML (`_component/shopping-list.html`)
 
 ```html
 <ul>
@@ -54,7 +54,7 @@ In this example, we will simply use an array to contain the data, but the data c
 require "vendor/autoload.php";
 
 $html = file_get_contents("example.html");
-$document = new \Gt\DomTemplate\HTMLDocument($html, "./_template");
+$document = new \Gt\DomTemplate\HTMLDocument($html, "./_component");
 $document->prepareTemplates();
 
 $data = [
