@@ -151,8 +151,12 @@ trait Bindable {
 		Element $element,
 		$data
 	):void {
+		if(is_array($data)) {
+			$data = (object)$data;
+		}
+
 		foreach($element->xPath("//*[@*[contains(.,'{')]]")
-			as $elementWithBraceInAttributeValue) {
+		as $elementWithBraceInAttributeValue) {
 			foreach($elementWithBraceInAttributeValue->attributes as $attr) {
 				preg_match_all(
 					"/{([^}]+)}/",
@@ -170,6 +174,7 @@ trait Bindable {
 					if(!isset($data->{$key})) {
 						continue;
 					}
+
 
 					$value = str_replace(
 						$match,
