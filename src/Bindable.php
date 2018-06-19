@@ -8,7 +8,7 @@ use Gt\Dom\HTMLCollection;
 use stdClass;
 
 trait Bindable {
-	public function bind(iterable $data, string $templateName = null):void {
+	public function bind($data, string $templateName = null):void {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -40,9 +40,13 @@ trait Bindable {
 
 	protected function bindTemplates(
 		DOMNode $element,
-		iterable $data,
+		$data,
 		string $templateName = null
 	):void {
+		if($element instanceof \DOMDocumentFragment) {
+			return;
+		}
+
 		$namesToMatch = [];
 
 		if(is_null($templateName)) {
@@ -60,7 +64,7 @@ trait Bindable {
 			...$namesToMatch
 		);
 
-		foreach($data as $rowNumber => $row) {
+		foreach($data as $rowIndex => $row) {
 			foreach($templateChildren as $childNumber => $fragment) {
 				$insertInto = null;
 
@@ -77,7 +81,7 @@ trait Bindable {
 			}
 		}
 
-		if(is_null($rowNumber)) {
+		if(is_null($rowIndex)) {
 			$trimmed = trim($element->innerHTML);
 			if($trimmed === "") {
 				$element->innerHTML = "";
@@ -148,7 +152,7 @@ trait Bindable {
 	}
 
 	protected function injectDataIntoAttributeValues(
-		Element $element,
+		DOMNode $element,
 		$data
 	):void {
 		if(is_array($data)) {

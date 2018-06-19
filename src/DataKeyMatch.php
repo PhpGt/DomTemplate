@@ -17,7 +17,9 @@ class DataKeyMatch {
 			return;
 		}
 
-		if(!isset($data->{$this->key})) {
+		$value = $data->{$this->key};
+
+		if(is_null($value)) {
 			throw new BoundDataNotSetException($this->key);
 		}
 	}
