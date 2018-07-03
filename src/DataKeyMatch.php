@@ -17,6 +17,12 @@ class DataKeyMatch {
 			return;
 		}
 
+		if(method_exists($data, "has")) {
+			if($data->has($this->key)) {
+				return;
+			}
+		}
+
 		$value = $data->{$this->key};
 
 		if(is_null($value)) {
@@ -26,7 +32,13 @@ class DataKeyMatch {
 
 	public function getValue($data):?string {
 		$this->checkDataExists($data);
-		$value = $data->{$this->key} ?? null;
+
+		if(method_exists($data, "get")) {
+			$value = $data->get($this->key);
+		}
+		else {
+			$value = $data->{$this->key} ?? null;
+		}
 
 		if($value instanceof DateTimeInterface) {
 			$value = $value->format("Y-m-d H:i:s");
