@@ -26,7 +26,7 @@ class DocumentFragment extends BaseDocumentFragment {
 		$this->templatePreviousSibling = $previousSibling;
 	}
 
-	public function insertTemplate(DOMNode $insertInto = null):BaseElement {
+	public function insertTemplate(DOMNode $insertInto = null):DOMNode {
 		$insertBefore = null;
 
 		if(is_null($insertInto)) {
