@@ -112,6 +112,26 @@ class TemplateParentTest extends TestCase {
 		);
 	}
 
+	public function testExistingClassPersistedToExpandedComponent() {
+		$componentDirectory = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDirectory/ordered-list.html",
+			Helper::HTML_COMPONENT_WITH_CLASS_ON_PARENT
+		);
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$componentDirectory
+		);
+		$document->expandComponents();
+
+		$expandedComponent = $document->querySelector(
+			".c-ordered-list"
+		);
+		self::assertTrue($expandedComponent->classList->contains(
+			"existing-class"
+		));
+	}
+
 	public function testNestedComponentsExpand() {
 		// While the count of the expandCompnents > 0, do it again on the expanded component...
 		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
