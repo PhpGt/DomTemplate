@@ -50,7 +50,9 @@ trait Bindable {
 		$namesToMatch = [];
 
 		if(is_null($templateName)) {
-			$namesToMatch []= $element->getNodePath();
+			$namesToMatch []=
+				$element->templateParentId
+				?? $element->getNodePath();
 
 		}
 		else {

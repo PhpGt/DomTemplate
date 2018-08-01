@@ -7,6 +7,7 @@ use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
+	public $templateParentId;
 
 	public function extractTemplates():int {
 		$i = null;
@@ -51,7 +52,7 @@ trait TemplateParent {
 			}
 
 			if($templateElement->parentNode === $parentNode) {
-				$parentNode->removeChild($templateElement);
+//				$parentNode->removeChild($templateElement);
 			}
 
 			$templateElement->classList->add("t-$name");
@@ -206,7 +207,11 @@ trait TemplateParent {
 		}
 
 		if(strlen($name) === 0) {
-			$name = $element->getNodePath();
+			if(!$element->parentNode->templateParentId) {
+				$element->parentNode->templateParentId = uniqid();
+			}
+
+			$name = $element->parentNode->templateParentId;
 		}
 
 		return $name;
