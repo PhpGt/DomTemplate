@@ -17,8 +17,8 @@ class DataKeyMatch {
 			return;
 		}
 
-		if(method_exists($data, "has")) {
-			if($data->has($this->key)) {
+		if(method_exists($data, "contains")) {
+			if($data->contains($this->key)) {
 				return;
 			}
 		}
