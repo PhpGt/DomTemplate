@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "af76370e5a0e9e5d8aec3037505e1fdb88c941fa"
+                "reference": "7aac964cba5d5ab53b5148cdb0d5bf4111e98677"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/af76370e5a0e9e5d8aec3037505e1fdb88c941fa",
-                "reference": "af76370e5a0e9e5d8aec3037505e1fdb88c941fa",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/7aac964cba5d5ab53b5148cdb0d5bf4111e98677",
+                "reference": "7aac964cba5d5ab53b5148cdb0d5bf4111e98677",
                 "shasum": ""
             },
             "require": {
@@ -81,7 +81,7 @@
                 }
             ],
             "description": "The modern DOM API for PHP 7 projects.",
-            "time": "2018-09-04T11:22:16+00:00"
+            "time": "2018-09-06T07:42:44+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -808,16 +808,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.3.4",
+            "version": "7.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0356331bf62896dc56e3a15030b23b73f38b2935"
+                "reference": "7b331efabbb628c518c408fdfcaf571156775de2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0356331bf62896dc56e3a15030b23b73f38b2935",
-                "reference": "0356331bf62896dc56e3a15030b23b73f38b2935",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7b331efabbb628c518c408fdfcaf571156775de2",
+                "reference": "7b331efabbb628c518c408fdfcaf571156775de2",
                 "shasum": ""
             },
             "require": {
@@ -888,7 +888,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-09-05T09:58:53+00:00"
+            "time": "2018-09-08T15:14:29+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
