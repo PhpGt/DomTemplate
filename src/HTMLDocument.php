@@ -43,7 +43,7 @@ class HTMLDocument extends BaseHTMLDocument {
 
 	public function getNamedTemplate(string $name):?DocumentFragment {
 		/** @var \Gt\DomTemplate\DocumentFragment $fragment */
-		$fragment = $this->templateFragmentMap[$name];
+		$fragment = $this->templateFragmentMap[$name] ?? null;
 
 		if($fragment) {
 			$clone = $fragment->cloneNode(true);
