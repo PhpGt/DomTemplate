@@ -23,7 +23,7 @@ class DataKeyMatch {
 			}
 		}
 
-		$value = $data->{$this->key};
+		$value = $data->{$this->key} ?? null;
 
 		if(is_null($value)) {
 			throw new BoundDataNotSetException($this->key);
