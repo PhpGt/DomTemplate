@@ -1,9 +1,11 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
+use stdClass;
 
 class BindableTest extends TestCase {
 	public function testBindMethodAvailable() {
@@ -77,10 +79,8 @@ class BindableTest extends TestCase {
 		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
 
-	/**
-	 * @expectedException \Gt\DomTemplate\BoundAttributeDoesNotExistException
-	 */
 	public function testBindAttributeNoMatch() {
+		self::expectException(BoundAttributeDoesNotExistException::class);
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES_BIND_ATTR);
 		$name = "Julia Dixon";
 		$age = 26;
@@ -94,10 +94,8 @@ class BindableTest extends TestCase {
 		]);
 	}
 
-	/**
-	 * @expectedException \Gt\DomTemplate\BoundDataNotSetException
-	 */
 	public function testBindDataNoMatch() {
+		self::expectException(BoundDataNotSetException::class);
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
 		$name = "Julia Dixon";
 		$age = 26;
@@ -131,7 +129,7 @@ class BindableTest extends TestCase {
 		);
 
 		foreach($todoData as $i => $row) {
-			self::assertContains(
+			self::assertStringContainsString(
 				$row["title"],
 				$liChildren[$i]->innerHTML
 			);
@@ -149,8 +147,14 @@ class BindableTest extends TestCase {
 		$todoListElement = $document->getElementById("todo-list");
 		$todoListElement->bind($todoData);
 
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("data-bind", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"data-bind",
+			$todoListElement->innerHTML
+		);
 	}
 
 	public function testBindWithInlineNamedTemplate() {
@@ -164,8 +168,14 @@ class BindableTest extends TestCase {
 		$todoListElement = $document->getElementById("todo-list");
 		$todoListElement->bind($todoData);
 
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("data-bind", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"data-bind",
+			$todoListElement->innerHTML
+		);
 	}
 
 	public function testBindWithInlineNamedTemplateWhenAnotherTemplateExists() {
@@ -179,14 +189,26 @@ class BindableTest extends TestCase {
 
 		$todoListElement = $document->getElementById("todo-list");
 		$todoListElement->bind($todoData);
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("Use the other template instead!", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"Use the other template instead!",
+			$todoListElement->innerHTML
+		);
 
 		$todoListElement = $document->getElementById("todo-list-2");
 		$todoListElement->bind($todoData, "todo-list-item");
 
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("Use the other template instead!", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"Use the other template instead!",
+			$todoListElement->innerHTML
+		);
 	}
 
 	public function testBindWithNonOptionalKey() {
@@ -311,6 +333,63 @@ class BindableTest extends TestCase {
 			);
 
 			$deleted = (bool)$todoDatum["dateTimeDeleted"];
+			self::assertEquals(
+				$deleted,
+				$items[$i]->classList->contains("deleted")
+			);
+		}
+	}
+
+	public function testBindWithObjectData() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON_MULTIPLE);
+		$todoData = [
+			[
+				"id" => 1,
+				"title" => "Write tests",
+				"dateTimeCompleted" => "2018-07-01 19:46:00",
+				"dateTimeDeleted" => null,
+			],
+			[
+				"id" => 2,
+				"title" => "Implement features",
+				"dateTimeCompleted" => null,
+				"dateTimeDeleted" => "2018-07-01 19:54:00",
+			],
+			[
+				"id" => 3,
+				"title" => "Pass tests",
+				"dateTimeCompleted" => "2018-07-01 19:49:00",
+				"dateTimeDeleted" => null,
+			],
+		];
+
+		$todoObjData = [];
+
+		foreach($todoData as $todo) {
+			$obj = new StdClass();
+			foreach($todo as $key => $value) {
+				$obj->$key = $value;
+			}
+
+			$todoObjData []= $obj;
+		}
+
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+
+		$todoListElement->bind($todoObjData);
+		$items = $todoListElement->querySelectorAll("li");
+
+		foreach($todoObjData as $i => $todo) {
+			self::assertTrue($items[$i]->classList->contains("existing-class"));
+
+			$completed = (bool)$todo->dateTimeCompleted;
+			self::assertEquals(
+				$completed,
+				$items[$i]->classList->contains("complete")
+			);
+
+			$deleted = (bool)$todo->dateTimeDeleted;
 			self::assertEquals(
 				$deleted,
 				$items[$i]->classList->contains("deleted")

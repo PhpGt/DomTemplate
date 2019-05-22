@@ -10,7 +10,7 @@ class TemplateParentTest extends TestCase {
 	const TEST_DIR = "/tmp/phpgt/domtemplate/test";
 	const COMPONENT_PATH = "_component";
 
-	public function setUp() {
+	public function setUp():void {
 		$this->rrmdir(self::TEST_DIR);
 		mkdir(
 			self::TEST_DIR . "/" . self::COMPONENT_PATH,
@@ -19,7 +19,7 @@ class TemplateParentTest extends TestCase {
 		);
 	}
 
-	public function tearDown() {
+	public function tearDown():void {
 		$this->rrmdir(self::TEST_DIR);
 	}
 
@@ -110,6 +110,26 @@ class TemplateParentTest extends TestCase {
 			"ol",
 			$elementBeforeOrderedList->nextElementSibling->tagName
 		);
+	}
+
+	public function testExistingClassPersistedToExpandedComponent() {
+		$componentDirectory = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDirectory/ordered-list.html",
+			Helper::HTML_COMPONENT_WITH_CLASS_ON_PARENT
+		);
+		$document = new HTMLDocument(
+			Helper::HTML_COMPONENTS,
+			$componentDirectory
+		);
+		$document->expandComponents();
+
+		$expandedComponent = $document->querySelector(
+			".c-ordered-list"
+		);
+		self::assertTrue($expandedComponent->classList->contains(
+			"existing-class"
+		));
 	}
 
 	public function testNestedComponentsExpand() {

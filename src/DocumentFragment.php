@@ -2,31 +2,43 @@
 namespace Gt\DomTemplate;
 
 use DOMNode;
+use Gt\Dom\Node as BaseNode;
 use Gt\Dom\Element as BaseElement;
 use Gt\Dom\DocumentFragment as BaseDocumentFragment;
 
+/**
+ * @method Node cloneNode(bool $deep)
+ */
 class DocumentFragment extends BaseDocumentFragment {
 	use TemplateParent;
 	use Bindable;
 
 	/** @var BaseElement */
-	protected $templateParentNode;
+	public $templateParentNode;
 	/** @var BaseElement */
-	protected $templateNextSibling;
+	public $templateNextSibling;
 	/** @var BaseElement */
-	protected $templatePreviousSibling;
+	public $templatePreviousSibling;
 
+	/**
+	 * @param BaseNode $parentNode
+	 * @param BaseNode $nextSibling
+	 * @param BaseNode $previousSibling
+	 */
 	public function setTemplateProperties(
-		DOMNode $parentNode = null,
-		DOMNode $nextSibling = null,
-		DOMNode $previousSibling = null
+		$parentNode = null,
+		$nextSibling = null,
+		$previousSibling = null
 	):void {
 		$this->templateParentNode = $parentNode;
 		$this->templateNextSibling = $nextSibling;
 		$this->templatePreviousSibling = $previousSibling;
 	}
 
-	public function insertTemplate(DOMNode $insertInto = null):BaseElement {
+	/**
+	 * @return Node|Element
+	 */
+	public function insertTemplate(DOMNode $insertInto = null) {
 		$insertBefore = null;
 
 		if(is_null($insertInto)) {
@@ -39,7 +51,7 @@ class DocumentFragment extends BaseDocumentFragment {
 
 		$clone = $this->cloneNode(true);
 
-		/** @var BaseElement $inserted */
+		/** @var Element $inserted */
 		$inserted = $insertInto->insertBefore(
 			$clone,
 			$insertBefore
@@ -48,15 +60,15 @@ class DocumentFragment extends BaseDocumentFragment {
 		return $inserted;
 	}
 
-	public function prop_get_templateNextSibling():?DOMNode {
+	public function prop_get_templateNextSibling() {
 		return $this->templateNextSibling;
 	}
 
-	public function prop_get_templatePreviousSibling():?DOMNode {
+	public function prop_get_templatePreviousSibling() {
 		return $this->templatePreviousSibling;
 	}
 
-	public function prop_get_templateParentNode():?DOMNode {
+	public function prop_get_templateParentNode() {
 		return $this->templateParentNode;
 	}
 }
