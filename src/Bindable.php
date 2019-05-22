@@ -36,6 +36,33 @@ trait Bindable {
 		foreach($childrenWithBindAttribute as $element) {
 			$this->setData($element, $data);
 		}
+
+		$this->bindAttributes($parent, $data);
+	}
+
+	protected function bindAttributes(BaseElement $element, $data):void {
+		foreach($element->attributes as $attr) {
+			preg_match(
+				"/{(.+)}/",
+				$attr->value,
+				$matches
+			);
+			if(empty($matches)) {
+				continue;
+			}
+
+			list($placeholder, $dataKey) = $matches;
+
+			if(!isset($data[$dataKey])) {
+				continue;
+			}
+
+			$attr->value = str_replace(
+				$placeholder,
+				$data[$dataKey],
+				$attr->value
+			);
+		}
 	}
 
 	protected function bindTemplates(
