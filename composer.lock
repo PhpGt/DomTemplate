@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0194115810aae27aa5f876bbcf9c8de7",
+    "content-hash": "2aecf5d12b580939d0efefc371726483",
     "packages": [
         {
             "name": "phpgt/dom",
@@ -1665,6 +1665,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-dom": "*"
+    },
     "platform-dev": []
 }
