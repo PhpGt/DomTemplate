@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
@@ -78,10 +79,8 @@ class BindableTest extends TestCase {
 		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
 
-	/**
-	 * @expectedException \Gt\DomTemplate\BoundAttributeDoesNotExistException
-	 */
 	public function testBindAttributeNoMatch() {
+		self::expectException(BoundAttributeDoesNotExistException::class);
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES_BIND_ATTR);
 		$name = "Julia Dixon";
 		$age = 26;
@@ -95,10 +94,8 @@ class BindableTest extends TestCase {
 		]);
 	}
 
-	/**
-	 * @expectedException \Gt\DomTemplate\BoundDataNotSetException
-	 */
 	public function testBindDataNoMatch() {
+		self::expectException(BoundDataNotSetException::class);
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
 		$name = "Julia Dixon";
 		$age = 26;
@@ -132,7 +129,7 @@ class BindableTest extends TestCase {
 		);
 
 		foreach($todoData as $i => $row) {
-			self::assertContains(
+			self::assertStringContainsString(
 				$row["title"],
 				$liChildren[$i]->innerHTML
 			);
@@ -150,8 +147,14 @@ class BindableTest extends TestCase {
 		$todoListElement = $document->getElementById("todo-list");
 		$todoListElement->bind($todoData);
 
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("data-bind", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"data-bind",
+			$todoListElement->innerHTML
+		);
 	}
 
 	public function testBindWithInlineNamedTemplate() {
@@ -165,8 +168,14 @@ class BindableTest extends TestCase {
 		$todoListElement = $document->getElementById("todo-list");
 		$todoListElement->bind($todoData);
 
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("data-bind", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"data-bind",
+			$todoListElement->innerHTML
+		);
 	}
 
 	public function testBindWithInlineNamedTemplateWhenAnotherTemplateExists() {
@@ -180,14 +189,26 @@ class BindableTest extends TestCase {
 
 		$todoListElement = $document->getElementById("todo-list");
 		$todoListElement->bind($todoData);
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("Use the other template instead!", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"Use the other template instead!",
+			$todoListElement->innerHTML
+		);
 
 		$todoListElement = $document->getElementById("todo-list-2");
 		$todoListElement->bind($todoData, "todo-list-item");
 
-		self::assertContains("Implement features", $todoListElement->innerHTML);
-		self::assertNotContains("Use the other template instead!", $todoListElement->innerHTML);
+		self::assertStringContainsString(
+			"Implement features",
+			$todoListElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"Use the other template instead!",
+			$todoListElement->innerHTML
+		);
 	}
 
 	public function testBindWithNonOptionalKey() {
