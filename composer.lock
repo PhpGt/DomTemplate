@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ccfa79d34ae3c41bf317cdbc4c3e91c",
+    "content-hash": "6f97b94242e6d134e9f931b72f613467",
     "packages": [
         {
             "name": "phpgt/dom",
-            "version": "dev-master",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "3e925f5192b45b7a7add149d7f77ce5da3ec1ab0"
+                "reference": "d50e8e00e1b21c62c0012155c2b51652a472b2c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/3e925f5192b45b7a7add149d7f77ce5da3ec1ab0",
-                "reference": "3e925f5192b45b7a7add149d7f77ce5da3ec1ab0",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/d50e8e00e1b21c62c0012155c2b51652a472b2c9",
+                "reference": "d50e8e00e1b21c62c0012155c2b51652a472b2c9",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-mbstring": "*",
-                "php": ">=7.2.0",
+                "php": ">=7.1.0",
                 "symfony/css-selector": "3.2.14"
             },
             "require-dev": {
-                "phpunit/phpunit": "8.*"
+                "phpunit/phpunit": "^7.0"
             },
             "type": "library",
             "autoload": {
@@ -83,7 +83,7 @@
                 }
             ],
             "description": "The modern DOM API for PHP 7 projects.",
-            "time": "2019-05-14T12:48:18+00:00"
+            "time": "2018-10-03T19:35:46+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -1616,9 +1616,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phpgt/dom": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
