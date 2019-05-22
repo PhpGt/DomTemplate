@@ -40,7 +40,7 @@ trait Bindable {
 		$this->bindAttributes($parent, $data);
 	}
 
-	protected function bindAttributes(BaseElement $element, iterable $data):void {
+	protected function bindAttributes(BaseElement $element, $data):void {
 		foreach($element->attributes as $attr) {
 			preg_match(
 				"/{(.+)}/",
