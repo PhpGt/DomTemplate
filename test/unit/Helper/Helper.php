@@ -340,4 +340,53 @@ HTML;
 </main>
 HTML;
 
+	const HTML_PARENT_HAS_DATA_BIND_ATTR = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has a parent element with a data bind attribute</title>
+<main>
+	<div class="parent">
+		<label>
+			<span data-bind:text="outside-scope">This node is outside the scope</span>
+	
+			<ul>
+				<li data-template="target-template">
+					<span data-bind:text="target-key">This node is the target</a>
+				</li>
+			</ul>
+		</label>
+	</div>
+</main>
+HTML;
+
+	const HTML_DOUBLE_BINDABLE_LIST = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has a two bindable lists and other bindable areas</title>
+<main>
+	<h1>Test document name: <span data-bind:text="name">name goes here</span></h1>
+	
+	<div class="area-1">
+		<p>Here is a list of numbers from 1 to 10:</p>
+		
+		<ul>
+			<li data-template>
+				<span data-bind:text="i">N</span>
+			</li>		
+		</ul>
+	</div>
+	
+	<div class="area-2">
+		<p>Here is another list, starting from <span data-bind:text="start">X</span></p>
+		
+		<ul>
+			<li data-template="dynamic-list-item">
+				<span data-bind:text="i">N</span>
+			</li>		
+		</ul>
+	</div>
+</main>
+HTML;
+
+
 }
