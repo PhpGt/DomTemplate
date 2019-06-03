@@ -1,18 +1,10 @@
 {
-	"repositories": [
-		{
-			"type": "path",
-			"url": "/home/g105b/Code/PhpGt/*"
-		}
-	],
-	"minimum-stability": "dev",
-
 	"name": "phpgt/domtemplate",
 	"description": "Bind dynamic data to reusable HTML components.",
 	"license": "MIT",
 
 	"require": {
-		"phpgt/dom": "dev-master",
+		"phpgt/dom": "1.*",
 		"ext-dom": "*"
 	},
 	"require-dev": {
