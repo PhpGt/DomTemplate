@@ -9,9 +9,13 @@ class TodoListExampleObject implements Iterator {
 	/** @var int */
 	protected $iteratorKey;
 
-	public function __construct() {
+	public function __construct(array $items = []) {
 		$this->iterator = [];
 		$this->iteratorKey = 0;
+
+		foreach($items as $i => $title) {
+			$this->iterator []= new TodoItemExampleObject($i, $title);
+		}
 	}
 
 	/** @link https://php.net/manual/en/iterator.current.php */

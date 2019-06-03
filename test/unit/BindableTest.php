@@ -6,6 +6,7 @@ use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\DomTemplateException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
+use Gt\DomTemplate\Test\Helper\TodoListExampleObject;
 use stdClass;
 
 class BindableTest extends TestCase {
@@ -498,6 +499,30 @@ class BindableTest extends TestCase {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
 		$document->extractTemplates();
 
-//		$list = new
+		$todoItems = [
+			"Go to shops",
+			"Buy pizza",
+			"Eat pizza",
+			"Sleep",
+		];
+
+		$list = new TodoListExampleObject($todoItems);
+
+		$container = $document->getElementById("todo-list");
+		$container->bind($list);
+
+		$liNodes = $container->querySelectorAll("li");
+		self::assertCount(4, $liNodes);
+
+		foreach($todoItems as $id => $name) {
+			self::assertEquals(
+				$id,
+				$liNodes[$id]->querySelector("[name='id']")->value
+			);
+			self::assertEquals(
+				$name,
+				$liNodes[$id]->querySelector("[name='title']")->value
+			);
+		}
 	}
 }
