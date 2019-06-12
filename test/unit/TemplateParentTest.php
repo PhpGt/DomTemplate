@@ -10,7 +10,7 @@ class TemplateParentTest extends TestCase {
 	const TEST_DIR = "/tmp/phpgt/domtemplate/test";
 	const COMPONENT_PATH = "_component";
 
-	public function setUp() {
+	public function setUp():void {
 		$this->rrmdir(self::TEST_DIR);
 		mkdir(
 			self::TEST_DIR . "/" . self::COMPONENT_PATH,
@@ -19,7 +19,7 @@ class TemplateParentTest extends TestCase {
 		);
 	}
 
-	public function tearDown() {
+	public function tearDown():void {
 		$this->rrmdir(self::TEST_DIR);
 	}
 
