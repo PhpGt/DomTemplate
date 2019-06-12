@@ -20,8 +20,8 @@ use Gt\Dom\DocumentFragment as BaseDocumentFragment;
  *
  */
 class HTMLDocument extends BaseHTMLDocument {
-	use TemplateParent;
-	use Bindable;
+	use ParentNode,
+		TemplateParent, Bindable;
 
 	protected $componentDirectory;
 	protected $templateFragmentMap;

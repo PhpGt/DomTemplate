@@ -3,7 +3,6 @@ namespace Gt\DomTemplate;
 
 use DirectoryIterator;
 use DOMDocument;
-use Gt\Dom\HTMLCollection;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
