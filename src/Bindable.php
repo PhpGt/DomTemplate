@@ -4,31 +4,99 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Attr;
 use Gt\Dom\Element as BaseElement;
 use DOMNode;
-use Gt\Dom\HTMLCollection;
-use stdClass;
+use StdClass;
+use Gt\Dom\HTMLCollection as BaseHTMLCollection;
 
+/**
+ * In WebEngine, all Elements in the DOM are Bindable by default. A Bindable
+ * Element is a ParentNode that can have data injected into it via this Trait's
+ * bind* functions.
+ */
 trait Bindable {
-	public function bind($data, string $templateName = null):void {
+	/**
+	 * Bind a single key-value-pair within $this Element.
+	 * Elements state their bindable key using the data-bind HTML attribute.
+	 * There may be multiple Elements with the matching attribute, in which
+	 * case they will all have their data set.
+	 */
+	public function bindKeyValue(
+		string $key,
+		string $value
+	):void {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
 			$element = $element->documentElement;
 		}
 
-		$this->injectDataIntoAttributeValues($element, $data);
+		$data = [
+			$key => $value,
+		];
 
-		$this->bindExisting($element, $data);
-		$this->bindTemplates(
-			$element,
-			$data,
-			$templateName
-		);
+		$this->injectDataIntoAttributeValues($element, $data);
+		$this->injectDataIntoBindProperties($element, $data);
 
 		$this->cleanBindAttributes($element);
 	}
 
-	protected function bindExisting(
-		DOMNode $parent,
+	/**
+	 * Bind multiple key-value-pairs within $this Element, calling
+	 * bindKeyValue for each key-value-pair in the iterable $kvp object.
+	 * @see self::bindKeyValue
+	 */
+	public function bindData(
+		iterable $kvp
+	):void {
+		foreach($kvp as $key => $value) {
+			$this->bindKeyValue($key, $value);
+		}
+	}
+
+	/**
+	 * $kvpList is a nested iterable object. The outer iterable contains
+	 * zero or more inner iterables. The inner iterables contain data in the
+	 * form of an iterable key-value-pair array (typically an associative
+	 * array or data object).
+	 *
+	 * For each iteration of the outer iterable object, a new clone will be
+	 * made of the template element with the given name. The cloned element
+	 * will have the inner iterable data bound to it before being added into
+	 * the DOM in the position that it was originally extracted.
+	 *
+	 * TODO: Enforce the following:
+	 * When $templateName is not provided, the data within $kvpList will be
+	 * bound to an element that has a data-template attribute with no value.
+	 * If there are multiple un-named template elements, an exception is
+	 * thrown - in this case, you will need to use bindNestedList
+	 *
+	 * @throws TODO: Name an exception
+	 * @see self::bindNestedList
+	 */
+	public function bindList(
+		iterable $kvpList,
+		string $templateName = null
+	):void {
+		/** @var BaseElement $element */
+		$element = $this;
+		if($element instanceof HTMLDocument) {
+			$element = $element->documentElement;
+		}
+
+		// TODO: Do the looping here.
+	}
+
+	/**
+	 * When data needs binding to a nested DOM structure, a BindIterator is
+	 * necessary to link each child list with the correct template.
+	 *
+	 * TODO: Implement.
+	 */
+	public function bindNestedList(BindIterator $iterator):void {
+
+	}
+
+	protected function injectDataIntoBindProperties(
+		Element $parent,
 		$data
 	):void {
 		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($parent);
@@ -100,7 +168,7 @@ trait Bindable {
 				}
 
 				$newNode = $fragment->insertTemplate($insertInto);
-				$this->bindExisting($newNode, $row);
+				$this->injectDataIntoBindProperties($newNode, $row);
 				$this->injectDataIntoAttributeValues(
 					$newNode,
 					$row
@@ -123,8 +191,11 @@ trait Bindable {
 
 		foreach($element->attributes as $attr) {
 			$matches = [];
-			if(!preg_match("/(?:data-bind:)(.+)/",
-				$attr->name,$matches)) {
+			if(!preg_match(
+				"/(?:data-bind:)(.+)/",
+				$attr->name,
+				$matches)
+			) {
 				continue;
 			}
 			$bindProperty = $matches[1];
@@ -179,7 +250,7 @@ trait Bindable {
 	}
 
 	protected function injectDataIntoAttributeValues(
-		DOMNode $element,
+		BaseElement $element,
 		$data
 	):void {
 		if(is_array($data)) {
@@ -292,7 +363,7 @@ trait Bindable {
 		return $templateNames;
 	}
 
-	protected function getChildrenWithBindAttribute(DOMNode $parent):HTMLCollection {
+	protected function getChildrenWithBindAttribute(BaseElement $parent):BaseHTMLCollection {
 		return $parent->xPath(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
 		);

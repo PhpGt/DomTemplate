@@ -6,7 +6,6 @@ use DOMDocument;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
-
 	public function extractTemplates():int {
 		$i = null;
 		/** @var HTMLCollection $templateElementList */
