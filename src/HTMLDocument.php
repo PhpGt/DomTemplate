@@ -6,6 +6,8 @@ use DOMElement;
 use DOMDocumentFragment;
 use Gt\Dom\HTMLDocument as BaseHTMLDocument;
 use Gt\Dom\DocumentFragment as BaseDocumentFragment;
+use Gt\Dom\Attr as BaseAttr;
+use Gt\Dom\HTMLCollection as BaseHTMLCollection;
 
 /**
  * @property-read Element $head
@@ -25,6 +27,7 @@ class HTMLDocument extends BaseHTMLDocument {
 
 	protected $componentDirectory;
 	protected $templateFragmentMap;
+	protected $boundAttributeList;
 
 	public function __construct(string $document = "", string $componentDirectory = "") {
 		parent::__construct($document);
@@ -35,6 +38,7 @@ class HTMLDocument extends BaseHTMLDocument {
 
 		$this->componentDirectory = $componentDirectory;
 		$this->templateFragmentMap = [];
+		$this->boundAttributeList = [];
 	}
 
 	public function getComponentDirectory():string {
@@ -103,5 +107,48 @@ class HTMLDocument extends BaseHTMLDocument {
 		}
 
 		return $fragment;
+	}
+
+	public function storeBoundAttribute(BaseAttr $attr) {
+		$this->boundAttributeList []= $attr;
+	}
+
+	public function validateBinds():void {
+		$allBindableElements = $this->getAllBindableElements();
+
+		foreach($allBindableElements as $element) {
+			foreach($element->attributes as $attr) {
+				if(strpos($attr->name, "data-bind") !== 0) {
+					continue;
+				}
+
+				if(in_array($attr, $this->boundAttributeList)) {
+					throw new BoundDataNotSetException(
+						$attr->value
+					);
+				}
+			}
+		}
+	}
+
+	public function removeBinds():void {
+		$allBindableElements = $this->getAllBindableElements();
+
+		foreach($allBindableElements as $element) {
+			foreach($element->attributes as $attr) {
+				/** @var \Gt\Dom\Attr $attr */
+				if(strpos($attr->name, "data-bind") !== 0) {
+					continue;
+				}
+
+				$attr->remove();
+			}
+		}
+	}
+
+	protected function getAllBindableElements():BaseHTMLCollection {
+		return $this->documentElement->xPath(
+			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
+		);
 	}
 }
