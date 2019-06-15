@@ -388,5 +388,19 @@ HTML;
 </main>
 HTML;
 
+	const HTML_ATTRIBUTE_PLACEHOLDERS = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has some elements with attribute placeholders</title>
+<main>
+	<h1>This is a test!</h1>
+	<p><a id="userType-{userType}" href="/user/{userId}">View your account</a></p>
+	
+	<p>You are logged in.</p>
+	<p>This is your profile picture:</p>
+	
+	<img src="/img/profile/{userId}.jpg" alt="{username}'s profile picture" />
+</main>
+HTML;
 
 }

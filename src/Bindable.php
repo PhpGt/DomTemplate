@@ -24,7 +24,7 @@ trait Bindable {
 		string $value
 	):void {
 		$this->injectBoundProperty($key, $value);
-//		$this->injectAttributePlaceholder($key, $value);
+		$this->injectAttributePlaceholder($key, $value);
 	}
 
 	/**
@@ -177,26 +177,28 @@ trait Bindable {
 		as $elementWithBraceInAttributeValue) {
 			foreach($elementWithBraceInAttributeValue->attributes
 			as $attr) {
+				/** @var Attr $attr */
 				preg_match_all(
-					"/{([^}]+)}/",
+					"/{(?P<bindProperties>[^}]+)}/",
 					$attr->value,
 					$matches
 				);
 
-				if(empty($matches[0])) {
+				$bindProperties = $matches["bindProperties"] ?? null;
+
+				if(!in_array($key, $bindProperties)) {
 					continue;
 				}
 
-				foreach($matches[0] as $i => $match) {
-					$value = str_replace(
-						$match,
-						"{$key}",
-						$value
-					);
+				if(is_null($bindProperties)) {
+					continue;
+				}
 
-					$attr->ownerElement->setAttribute(
-						$attr->name,
-						$value
+				foreach($bindProperties as $i => $bindProperty) {
+					$attr->value = str_replace(
+						"{" . "$key" . "}",
+						$value,
+						$attr->value
 					);
 				}
 			}

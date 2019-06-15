@@ -183,6 +183,22 @@ class BindableTest extends TestCase {
 		self::assertFalse($spanChildren[1]->hasAttribute("data-bind:text"));
 	}
 
+	public function testInjectAttributePlaceholder() {
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$userId = 101;
+		$username = "thoughtpolice";
+		$document->bindKeyValue("userId", $userId);
+		$document->bindKeyValue("username", $username);
+
+		$link = $document->querySelector("a");
+		$img = $document->querySelector("img");
+		self::assertEquals("/user/101", $link->href);
+		self::assertEquals("/img/profile/$userId.jpg", $img->src);
+		self::assertEquals("thoughtpolice's profile picture", $img->alt);
+	}
+
+
+
 //	public function testBindListTemplateTodoList() {
 //		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
 //		$todoData = [
