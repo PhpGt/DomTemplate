@@ -57,7 +57,7 @@ trait Bindable {
 	 * If there are multiple un-named template elements, an exception is
 	 * thrown - in this case, you will need to use bindNestedList
 	 *
-	 * @throws TODO: Name an exception
+	 * @throws NamelessTemplateSpecificityException
 	 * @see self::bindNestedList
 	 */
 	public function bindList(
