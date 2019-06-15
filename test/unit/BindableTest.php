@@ -7,6 +7,7 @@ use Gt\DomTemplate\DomTemplateException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\Helper;
 use Gt\DomTemplate\Test\Helper\TodoListExampleObject;
+use PHPUnit\TextUI\Help;
 use stdClass;
 
 class BindableTest extends TestCase {
@@ -195,5 +196,28 @@ class BindableTest extends TestCase {
 		self::assertEquals("/user/101", $link->href);
 		self::assertEquals("/img/profile/$userId.jpg", $img->src);
 		self::assertEquals("thoughtpolice's profile picture", $img->alt);
+	}
+
+	public function testBindClass() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS);
+		$isComplete = true;
+
+		$li = $document->querySelector(".existing-class");
+		$todoListElement = $document->getElementById("todo-list");
+		$todoListElement->bindKeyValue(
+			"complete",
+			$isComplete ? "task-complete" : "task-to-do"
+		);
+
+		$classList = $li->classList;
+		self::assertTrue($classList->contains("existing-class"));
+		self::assertTrue($classList->contains("task-complete"));
+
+// If there is already a class on the element, binding to it again will remove it.
+		$todoListElement->bindKeyValue(
+			"complete",
+			$isComplete ? "task-complete" : "task-to-do"
+		);
+		self::assertFalse($classList->contains("task-complete"));
 	}
 }

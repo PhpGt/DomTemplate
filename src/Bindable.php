@@ -109,26 +109,25 @@ trait Bindable {
 				}
 
 				$element = $attr->ownerElement;
-				$propertyToSet = $this->getPropertyToSet($attr);
+				$keyToSet = $this->getKeyToSet($attr);
 				$attr->ownerDocument->storeBoundAttribute($attr);
 
 // Skip attributes whose value does not equal the key that we are setting.
-				if($propertyToSet !== $key) {
+				if($keyToSet !== $key) {
 					continue;
 				}
 
+				$bindProperty = $matches["bindProperty"];
+
 // The "class" property behaves differently to others, as it is represented by
 // a StringMap rather than a single value.
-				if($propertyToSet === "class") {
-					$this->setClassValue(
-						$element,
-						$value
-					);
+				if($bindProperty === "class") {
+					$element->classList->toggle($value);
 				}
 				else {
 					$this->setPropertyValue(
 						$element,
-						$matches["bindProperty"],
+						$bindProperty,
 						$value
 					);
 				}
@@ -137,30 +136,30 @@ trait Bindable {
 	}
 
 	/**
-	 * The property that is to be bound can reference another property's
-	 * value, using the @ syntax. For example, data-bind:text="@id" will
-	 * bind the element's text content with the data value with the key
-	 * of the element's id attribute value.
+	 * The data-bind syntax can reference another attribute's value to use
+	 * as the key to set, using the @ syntax. For example,
+	 * data-bind:text="@id" will bind the element's text content with the
+	 * data value with the key of the element's id attribute value.
 	 */
-	protected function getPropertyToSet(
+	protected function getKeyToSet(
 		BaseAttr $attr
 	):string {
-		$propertyToSet = $attr->value;
+		$keyToSet = $attr->value;
 
-		if($propertyToSet[0] === "@") {
-			$lookupAttribute = substr($propertyToSet, 1);
-			$propertyToSet = $attr->ownerElement->getAttribute(
+		if($keyToSet[0] === "@") {
+			$lookupAttribute = substr($keyToSet, 1);
+			$keyToSet = $attr->ownerElement->getAttribute(
 				$lookupAttribute
 			);
 
-			if(is_null($propertyToSet)) {
+			if(is_null($keyToSet)) {
 				throw new BoundAttributeDoesNotExistException(
 					$lookupAttribute
 				);
 			}
 		}
 
-		return $propertyToSet;
+		return $keyToSet;
 	}
 
 	protected function injectAttributePlaceholder(
@@ -202,17 +201,6 @@ trait Bindable {
 					);
 				}
 			}
-		}
-	}
-
-	protected function setClassValue(
-		BaseElement $element,
-//		string $key, // TODO: Do we need this??? I Don't think so.
-		string $value
-	):void {
-		$classList = explode(" ", $attr->value);
-		foreach($classList as $class) {
-
 		}
 	}
 
