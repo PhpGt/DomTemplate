@@ -434,4 +434,80 @@ HTML;
 </main>
 HTML;
 
+	const HTML_MUSIC = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Music list</title>
+<main>
+	<h1>Music list!</h1>
+	
+	<ul class="artist-list">
+		<li data-template="artist" data-bind:data-artist-name="artistName">
+			<h2 data-bind:text"artistName">Artist name</h2>
+			
+			<ul class="album-list">
+				<li data-bind="album" data-bind:data-album-name="albumName">
+					<h3 data-bind:text="albumName">Album name</h3>
+					
+					<ol class="track-list">
+						<li data-bind="track" data-bind:data-track-name="trackName">
+							<span data-bind:text="trackName">Track name</span>						
+						</li>
+					</ol> 				
+				</li>			
+			</ul>		
+		</li>
+	</ul>
+</main>
+HTML;
+
+	const LIST_MUSIC = [
+		"A Band From Your Childhood" => [
+			"This Album is Good" => [
+				"The Best Song You've Ever Heard",
+				"Another Cracking Tune",
+				"Top Notch Music Here",
+				"The Best Is Left 'Till Last",
+			],
+			"Adequate Collection" => [
+				"Meh",
+				"'sok",
+				"Sounds Like Every Other Song",
+			],
+		],
+		"Bongo and The Bronks" => [
+			"Salad" => [
+				"Tomatoes",
+				"Song About Cucumber",
+				"Onions Make Me Cry (but I love them)",
+			],
+			"Meat" => [
+				"Steak",
+				"Is Chicken Really a Meat?",
+				"Don't Look in the Sausage Factory",
+				"Stop Horsing Around",
+			],
+			"SnaxX" => [
+				"Crispy Potatoes With Salt",
+				"Pretzel Song",
+				"Pork Scratchings Are Skin",
+				"The Peanut Is Not Actually A Nut",
+			],
+		],
+		"Crayons" => [
+			"Pastel Colours" => [
+				"Egg Shell",
+				"Cotton",
+				"Frost",
+				"Periwinkle",
+			],
+			"Different Shades of Blue" => [
+				"Cobalt",
+				"Slate",
+				"Indigo",
+				"Teal",
+			],
+		]
+	];
+
 }

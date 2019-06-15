@@ -292,4 +292,28 @@ class BindableTest extends TestCase {
 		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
 		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
 	}
+
+	public function testBindNestedList() {
+		$document = new HTMLDocument(Helper::HTML_MUSIC);
+		$document->extractTemplates();
+		$document->bindNestedList(Helper::LIST_MUSIC);
+
+		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
+			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
+			$h2 = $domArtist->querySelector("h2");
+			self::assertEquals($artistName, $h2->innerText);
+
+			foreach($albumList as $albumName => $trackList) {
+				$domAlbum = $domArtist->querySelector("[data-album-name='$albumName']");
+				$h3 = $domAlbum->querySelector("h3");
+				self::assertEquals($albumName, $h3->innerText);
+
+				foreach($trackList as $i => $trackName) {
+					$domTrack = $domAlbum->querySelector("[data-track-name='$trackName']");
+					self::assertSame($domTrack, $domAlbum->children[$i]);
+					self::assertEquals($trackName, $domTrack->innerText);
+				}
+			}
+		}
+	}
 }

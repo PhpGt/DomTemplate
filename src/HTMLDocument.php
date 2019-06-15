@@ -63,7 +63,10 @@ class HTMLDocument extends BaseHTMLDocument {
 		return null;
 	}
 
-	public function getUnnamedTemplate(Element $element):?DocumentFragment {
+	public function getUnnamedTemplate(
+		Element $element,
+		bool $throwIfMoreThanOneMatch = true
+	):?DocumentFragment {
 		$path = $element->getNodePath();
 		$matches = [];
 
@@ -73,7 +76,8 @@ class HTMLDocument extends BaseHTMLDocument {
 			}
 		}
 
-		if(count($matches) > 1) {
+		if(count($matches) > 1
+		&& $throwIfMoreThanOneMatch) {
 			throw new NamelessTemplateSpecificityException();
 		}
 

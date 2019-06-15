@@ -24,6 +24,7 @@ trait TemplateParent {
 			$document = ($this instanceof DOMDocument)
 				? $this
 				: $this->ownerDocument;
+
 			/** @var DocumentFragment $fragment */
 			$fragment = $document->createTemplateFragment(
 				$templateElement
