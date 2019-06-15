@@ -257,5 +257,8 @@ class BindableTest extends TestCase {
 
 		self::assertCount(count($stateList), $firstList->children);
 		self::assertCount(count($ministryList), $secondList->children);
+
+		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
+		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
 	}
 }
