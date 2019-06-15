@@ -403,6 +403,21 @@ HTML;
 </main>
 HTML;
 
+	const HTML_DOUBLE_NAMES_BIND_LIST = <<<HTML
+<!doctype html>
+<main>
+	<h1>List of totalitarian superstates:</h1>
+	<ul id="list-1">
+		<li data-template="state" data-bind:text="state-name"></li> 
+	</ul>
+
+	<h1>Ministries of Oceana:</h1>
+	<ul id="list-2">
+		<li data-template="ministry" data-bind:text="ministry-name"></li>
+	</ul>
+</main>
+HTML;
+
 
 	const HTML_ATTRIBUTE_PLACEHOLDERS = <<<HTML
 <!doctype html>

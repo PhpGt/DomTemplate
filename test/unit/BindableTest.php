@@ -234,6 +234,37 @@ class BindableTest extends TestCase {
 		$document->bindList([[]]);
 	}
 
+	public function testBindListMultipleDataTemplateElementsWithName() {
+		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMES_BIND_LIST);
+		$document->extractTemplates();
+		$stateList = [
+			["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
+			["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
+			["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
+		];
+		$ministryList = [
+			["ministry-name" => "Peace", "ministry-id" => 123],
+			["ministry-name" => "Plenty", "ministry-id" => 511],
+			["ministry-name" => "Truth", "ministry-id" => 141],
+			["ministry-name" => "Love", "ministry-id" => 610],
+		];
+
+		$firstList = $document->getElementById("list-1");
+		$secondList = $document->getElementById("list-2");
+
+// Note that the difference here to the test above and below this one is that
+// we're actually passing a template name, even though we're still binding to
+// the root document node.
+		$document->bindList($stateList, "state");
+		$document->bindList($ministryList, "ministry");
+
+		self::assertCount(count($stateList), $firstList->children);
+		self::assertCount(count($ministryList), $secondList->children);
+
+		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
+		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
+	}
+
 	public function testBindListMultipleDataTemplateElements() {
 		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMELESS_BIND_LIST);
 		$document->extractTemplates();
