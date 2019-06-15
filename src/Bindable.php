@@ -69,8 +69,19 @@ trait Bindable {
 		if($element instanceof HTMLDocument) {
 			$element = $element->documentElement;
 		}
+		/** @var HTMLDocument $document */
+		$document = $element->ownerDocument;
 
-		// TODO: Do the looping here.
+		foreach($kvpList as $data) {
+			if(is_null($templateName)) {
+				$t = $document->getUnnamedTemplate($element);
+			}
+			else {
+				$t = $document->getNamedTemplate($templateName);
+			}
+
+			$t->insertTemplate();
+		}
 	}
 
 	/**
@@ -226,85 +237,6 @@ trait Bindable {
 			$element->setAttribute($bindProperty, $value);
 		}
 	}
-
-//	protected function injectDataIntoBindProperties(
-//		Element $parent,
-//		$data
-//	):void {
-//		$childrenWithBindAttribute = $this->getChildrenWithBindAttribute($parent);
-//
-//		foreach($childrenWithBindAttribute as $element) {
-//			$this->setData($element, $data);
-//		}
-//
-//		$this->bindAttributes($parent, $data);
-//	}
-
-//	protected function injectDataIntoAttributeValues(
-//		BaseElement $element,
-//		$data
-//	):void {
-//		if(is_array($data)) {
-//			$data = (object)$data;
-//		}
-//
-//		foreach($element->xPath("//*[@*[contains(.,'{')]]")
-//			as $elementWithBraceInAttributeValue) {
-//			foreach($elementWithBraceInAttributeValue->attributes as $attr) {
-//				preg_match_all(
-//					"/{([^}]+)}/",
-//					$attr->value,
-//					$matches
-//				);
-//
-//				if(empty($matches[0])) {
-//					continue;
-//				}
-//
-//				foreach($matches[0] as $i => $match) {
-//					$key = $matches[1][$i];
-//
-//					if(!isset($data->{$key})) {
-//						continue;
-//					}
-//
-//
-//					$value = str_replace(
-//						$match,
-//						$data->{$key},
-//						$attr->value
-//					);
-//
-//					$attr->ownerElement->setAttribute($attr->name, $value);
-//				}
-//			}
-//		}
-//	}
-
-//	protected function bindAttributes(BaseElement $element, $data):void {
-//		foreach($element->attributes as $attr) {
-//			preg_match(
-//				"/{(.+)}/",
-//				$attr->value,
-//				$matches
-//			);
-//			if(empty($matches)) {
-//				continue;
-//			}
-//
-//			list($placeholder, $dataKey) = $matches;
-//
-//			if(!isset($data[$dataKey])) {
-//				continue;
-//			}
-//
-//			$attr->value = str_replace(
-//				$placeholder,
-//				$data[$dataKey],
-//				$attr->value
-//			);
-//		}
-//	}
 
 	protected function bindTemplates(
 		DOMNode $element,

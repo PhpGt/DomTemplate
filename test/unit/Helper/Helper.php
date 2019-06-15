@@ -371,7 +371,7 @@ HTML;
 		
 		<ul>
 			<li data-template>
-				<span data-bind:text="i">N</span>
+				<span data-bind:text="number">N</span>
 			</li>		
 		</ul>
 	</div>
@@ -381,12 +381,28 @@ HTML;
 		
 		<ul>
 			<li data-template="dynamic-list-item">
-				<span data-bind:text="i">N</span>
+				<span data-bind:text="number">N</span>
 			</li>		
 		</ul>
 	</div>
 </main>
 HTML;
+
+	const HTML_DOUBLE_NAMELESS_BIND_LIST = <<<HTML
+<!doctype html>
+<main>
+	<h1>List of totalitarian superstates:</h1>
+	<ul id="list-1">
+		<li data-template data-bind:text="state-name"></li> 
+	</ul>
+
+	<h1>Ministries of Oceana:</h1>
+	<ul id="list-2">
+		<li data-template data-bind:text="ministry-name"></li>
+	</ul>
+</main>
+HTML;
+
 
 	const HTML_ATTRIBUTE_PLACEHOLDERS = <<<HTML
 <!doctype html>

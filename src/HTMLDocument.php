@@ -63,6 +63,23 @@ class HTMLDocument extends BaseHTMLDocument {
 		return null;
 	}
 
+	public function getUnnamedTemplate(Element $element):?DocumentFragment {
+		$path = $element->getNodePath();
+		$matches = [];
+
+		foreach($this->templateFragmentMap as $name => $t) {
+			if(strpos($name, $path) === 0) {
+				$matches []= $t;
+			}
+		}
+
+		if(count($matches) > 1) {
+			throw new NamelessTemplateSpecificityException();
+		}
+
+		return $matches[0] ?? null;
+	}
+
 	/**
 	 * @return \Gt\Dom\DocumentFragment[]
 	 */

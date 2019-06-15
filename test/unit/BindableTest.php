@@ -5,6 +5,7 @@ use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\DomTemplateException;
 use Gt\DomTemplate\HTMLDocument;
+use Gt\DomTemplate\NamelessTemplateSpecificityException;
 use Gt\DomTemplate\Test\Helper\Helper;
 use Gt\DomTemplate\Test\Helper\TodoListExampleObject;
 use PHPUnit\TextUI\Help;
@@ -219,5 +220,42 @@ class BindableTest extends TestCase {
 			$isComplete ? "task-complete" : "task-to-do"
 		);
 		self::assertFalse($classList->contains("task-complete"));
+	}
+
+	public function testBindListMultipleDataTemplateElementsNoName() {
+		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMELESS_BIND_LIST);
+		$document->extractTemplates();
+// This will fail, because I am not passing a template name to bind to, and there
+// are more than one nameless template elements in the document.
+// Instead, I should either pass a template name, or bind to a more specific element,
+// such as the UL itself.
+		self::expectException(NamelessTemplateSpecificityException::class);
+// No need for any actual data during this test.
+		$document->bindList([[]]);
+	}
+
+	public function testBindListMultipleDataTemplateElements() {
+		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMELESS_BIND_LIST);
+		$document->extractTemplates();
+		$stateList = [
+			["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
+			["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
+			["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
+		];
+		$ministryList = [
+			["ministry-name" => "Peace", "ministry-id" => 123],
+			["ministry-name" => "Plenty", "ministry-id" => 511],
+			["ministry-name" => "Truth", "ministry-id" => 141],
+			["ministry-name" => "Love", "ministry-id" => 610],
+		];
+
+		$firstList = $document->getElementById("list-1");
+		$secondList = $document->getElementById("list-2");
+
+		$firstList->bindList($stateList);
+		$secondList->bindList($ministryList);
+
+		self::assertCount(count($stateList), $firstList->children);
+		self::assertCount(count($ministryList), $secondList->children);
 	}
 }
