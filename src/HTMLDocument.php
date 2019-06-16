@@ -81,7 +81,34 @@ class HTMLDocument extends BaseHTMLDocument {
 			throw new NamelessTemplateSpecificityException();
 		}
 
-		return $matches[0] ?? null;
+		if(!isset($matches[0])) {
+			return null;
+		}
+
+		return $matches[0]->cloneNode(true);
+	}
+
+	public function getParentOfUnnamedTemplate(Element $element):?Element {
+		$path = $element->getNodePath();
+// Unnamed templates can't have sibling elements of the same path, otherwise
+// they would need to be named. Remove any index from the path.
+		$path = preg_replace("/\[\d+\]/", "", $path);
+		$matches = [];
+
+		foreach($this->templateFragmentMap as $name => $t) {
+			if(strpos($name, $path) !== 0) {
+				continue;
+			}
+
+			$pathToReturn = substr(
+				$name,
+				0,
+				strrpos($name, "/")
+			);
+			return $this->xPath($pathToReturn)[0] ?? null;
+		}
+
+		return null;
 	}
 
 	/**

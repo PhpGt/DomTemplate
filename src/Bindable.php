@@ -18,11 +18,21 @@ trait Bindable {
 	 * case they will all have their data set.
 	 */
 	public function bindKeyValue(
-		string $key,
+		?string $key,
 		string $value
 	):void {
 		$this->injectBoundProperty($key, $value);
 		$this->injectAttributePlaceholder($key, $value);
+	}
+
+	/**
+	 * Bind a single value to a data-bind element that has no matching
+	 * attribute vale. For example, <p data-bind:text>Your text here</p>
+	 * does not have an addressable attribute value for data-bind:text.
+	 */
+	public function bindValue(string $value):void {
+		$this->bindKeyValue(null, $value);
+// Note, it's impossible to inject attribute placeholders without a key.
 	}
 
 	/**
@@ -88,7 +98,32 @@ trait Bindable {
 	 * correct template.
 	 */
 	public function bindNestedList(iterable $data):void {
+		/** @var BaseElement $element */
+		$element = $this;
+		if($element instanceof HTMLDocument) {
+			$element = $element->documentElement;
+		}
+		/** @var HTMLDocument $document */
+		$document = $element->ownerDocument;
 
+		$baseListElement = $document->getParentOfUnnamedTemplate($element);
+
+		foreach($data as $key => $value) {
+			$t = $document->getUnnamedTemplate(
+				$baseListElement,
+				false
+			);
+
+			if(is_string($key)) {
+				$t->bindValue($key);
+			}
+
+			$insertedTemplate = $baseListElement->appendChild($t);
+
+			if(is_iterable($value)) {
+				$insertedTemplate->bindNestedList($value);
+			}
+		}
 	}
 
 	/**
@@ -97,7 +132,7 @@ trait Bindable {
 	 * into the according property value.
 	 */
 	protected function injectBoundProperty(
-		string $key,
+		?string $key,
 		string $value
 	):void {
 		$children = $this->getChildrenWithBindAttribute();
@@ -151,8 +186,8 @@ trait Bindable {
 	 */
 	protected function getKeyToSet(
 		BaseAttr $attr
-	):string {
-		$keyToSet = $attr->value;
+	):?string {
+		$keyToSet = $attr->value ?: null;
 
 		if($keyToSet[0] === "@") {
 			$lookupAttribute = substr($keyToSet, 1);
@@ -171,7 +206,7 @@ trait Bindable {
 	}
 
 	protected function injectAttributePlaceholder(
-		string $key,
+		?string $key,
 		string $value
 	):void {
 		/** @var BaseElement $element */

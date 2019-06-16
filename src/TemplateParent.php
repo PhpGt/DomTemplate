@@ -6,20 +6,32 @@ use DOMDocument;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
-	public function extractTemplates():int {
+	public function extractTemplates(BaseElement $context = null):int {
+		if(is_null($context)) {
+			$context = $this;
+		}
+
 		$i = null;
 		/** @var HTMLCollection $templateElementList */
-		$templateElementList = $this->querySelectorAll(
+		$templateElementList = $context->querySelectorAll(
 			"template,[data-template]"
 		);
 
-		foreach($templateElementList as $i => $templateElement) {
+		for($i = count($templateElementList) - 1; $i >= 0; $i--) {
+			$templateElement = $templateElementList[$i];
 			$name = $this->getTemplateNameFromElement($templateElement);
 
 			$parentNode = $templateElement->parentNode;
 			$nextSibling = $templateElement->nextSibling;
 			$previousSibling = $templateElement->previousSibling;
 			$templateNodePath = $templateElement->getNodePath();
+
+			$nestedTemplateElementList = $templateElement->querySelectorAll(
+				"template,[data-template]"
+			);
+			foreach($nestedTemplateElementList as $nestedTemplateElement) {
+				$this->extractTemplates($nestedTemplateElement);
+			}
 
 			$document = ($this instanceof DOMDocument)
 				? $this
@@ -55,6 +67,8 @@ trait TemplateParent {
 
 			$templateElement->classList->add("t-$name");
 		}
+
+		ksort($this->templateFragmentMap);
 
 		if(is_null($i)) {
 			return 0;

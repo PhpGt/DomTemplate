@@ -298,6 +298,8 @@ class BindableTest extends TestCase {
 		$document->extractTemplates();
 		$document->bindNestedList(Helper::LIST_MUSIC);
 
+		echo $document;
+
 		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
 			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
 			$h2 = $domArtist->querySelector("h2");

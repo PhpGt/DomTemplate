@@ -442,16 +442,16 @@ HTML;
 	<h1>Music list!</h1>
 	
 	<ul class="artist-list">
-		<li data-template="artist" data-bind:data-artist-name="artistName">
-			<h2 data-bind:text"artistName">Artist name</h2>
+		<li data-template data-bind:data-artist-name>
+			<h2 data-bind:text>Artist name</h2>
 			
 			<ul class="album-list">
-				<li data-bind="album" data-bind:data-album-name="albumName">
-					<h3 data-bind:text="albumName">Album name</h3>
+				<li data-template data-bind:data-album-name>
+					<h3 data-bind:text>Album name</h3>
 					
 					<ol class="track-list">
-						<li data-bind="track" data-bind:data-track-name="trackName">
-							<span data-bind:text="trackName">Track name</span>						
+						<li data-template data-bind:data-track-name>
+							<span data-bind:text>Track name</span>						
 						</li>
 					</ol> 				
 				</li>			
