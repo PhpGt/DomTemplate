@@ -313,4 +313,33 @@ class BindableTest extends TestCase {
 			}
 		}
 	}
+
+	public function testBindNestedListWithBadData() {
+		$document = new HTMLDocument(Helper::HTML_MUSIC);
+		$document->extractTemplates();
+		$data = Helper::LIST_MUSIC;
+		$data["Bongo and The Bronks"] = 123;
+		$document->bindNestedList($data);
+
+		unset($data["Bongo and The Bronks"]);
+
+		foreach($data as $artistName => $albumList) {
+			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
+			$h2 = $domArtist->querySelector("h2");
+			self::assertEquals($artistName, $h2->innerText);
+
+			foreach($albumList as $albumName => $trackList) {
+				$domAlbum = $domArtist->querySelector("[data-album-name='$albumName']");
+				$h3 = $domAlbum->querySelector("h3");
+				self::assertEquals($albumName, $h3->innerText);
+
+				foreach($trackList as $i => $trackName) {
+					$domTrack = $domAlbum->querySelector("[data-track-name='$trackName']");
+					self::assertStringContainsString($trackName, $domTrack->innerText);
+					$child = $domAlbum->querySelector("ol")->children[$i];
+					self::assertSame($domTrack, $child);
+				}
+			}
+		}
+	}
 }
