@@ -3,13 +3,9 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
-use Gt\DomTemplate\DomTemplateException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\NamelessTemplateSpecificityException;
 use Gt\DomTemplate\Test\Helper\Helper;
-use Gt\DomTemplate\Test\Helper\TodoListExampleObject;
-use PHPUnit\TextUI\Help;
-use stdClass;
 
 class BindableTest extends TestCase {
 	public function testBindMethodAvailable() {
