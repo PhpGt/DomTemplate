@@ -26,7 +26,7 @@ Directly manipulating the DOM in your code can lead to tightly coupling the logi
 
 Consider a page with an unordered list (`<ul>`). Within the list there should be a list item (`<li>`) for every element of an array of data.
 
-In this example, we will simply use an array to contain the data, but the data can come from a data source such as a database.
+In this example, we will simply use an array to contain the data, but the data can come from a data source such as a database, as long as it is `iterable`.
 
 ### Source HTML (`example.html`)
 
@@ -53,9 +53,11 @@ In this example, we will simply use an array to contain the data, but the data c
 <?php
 require "vendor/autoload.php";
 
+use Gt\DomTemplate\HTMLDocument;
+
 $html = file_get_contents("example.html");
-$document = new \Gt\DomTemplate\HTMLDocument($html, "./_component");
-$document->prepareTemplates();
+$document = new HTMLDocument($html, "./_component");
+$document->extractTemplates();
 
 $data = [
 	["id" => 1, "title" => "Tomatoes"],
@@ -65,7 +67,7 @@ $data = [
 ];
 
 $outputTo = $document->getElementById("groceries");
-$outputTo->bind($data);
+$outputTo->bindList($data);
 ```
 
 ### Output:
@@ -83,5 +85,12 @@ $outputTo->bind($data);
 
 <p>The use of a custom element is more useful on more complex pages, but is shown above as an example.</p>
 ```
+
+Features at a glance
+--------------------
+
++ HTML components - organise and reuse DOM trees by storing separate components in their own HTML files, and including them using custom HTML tags.
++ Binding of dynamic data - bind key value pairs, associative arrays, lists of associative arrays and even nested lists.
++ Use standards compliant techniques for templates and components.
 
 [dom]: https://www.php.gt/dom
