@@ -124,29 +124,22 @@ trait Bindable {
 				false
 			);
 
-			if($t) {
 			if(is_string($key)) {
 				$t->bindValue($key);
 			}
 
-
-
-				if(is_string($value)) {
-					$t->bindValue($value);
-				}
-
-				$insertedTemplate = $templateParent->appendChild($t);
-
-				if(is_iterable($value)) {
-					$insertedTemplate->bindNestedList(
-						$value,
-						true
-					);
-				}
+			if(is_string($value)) {
+				$t->bindValue($value);
 			}
 
+			$insertedTemplate = $templateParent->appendChild($t);
 
-
+			if(is_iterable($value)) {
+				$insertedTemplate->bindNestedList(
+					$value,
+					true
+				);
+			}
 		}
 	}
 
