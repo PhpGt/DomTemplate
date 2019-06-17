@@ -50,6 +50,7 @@ class HTMLDocument extends BaseHTMLDocument {
 		$fragment = $this->templateFragmentMap[$name] ?? null;
 
 		if($fragment) {
+			/** @var DocumentFragment $clone */
 			$clone = $fragment->cloneNode(true);
 			$clone->setTemplateProperties(
 				$fragment->templateParentNode,
@@ -85,7 +86,17 @@ class HTMLDocument extends BaseHTMLDocument {
 			return null;
 		}
 
-		return $matches[0]->cloneNode(true);
+		/** @var DocumentFragment $fragment */
+		$fragment = $matches[0];
+		/** @var DocumentFragment $clone */
+		$clone = $fragment->cloneNode(true);
+		$clone->setTemplateProperties(
+			$fragment->templateParentNode,
+			$fragment->templateNextSibling,
+			$fragment->templatePreviousSibling
+		);
+
+		return $clone;
 	}
 
 	public function getParentOfUnnamedTemplate(Element $element):?Element {

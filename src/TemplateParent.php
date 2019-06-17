@@ -17,7 +17,9 @@ trait TemplateParent {
 			"template,[data-template]"
 		);
 
-		for($i = count($templateElementList) - 1; $i >= 0; $i--) {
+		$count = count($templateElementList) - 1;
+
+		for($i = $count; $i >= 0; $i--) {
 			$templateElement = $templateElementList[$i];
 			$name = $this->getTemplateNameFromElement($templateElement);
 
@@ -68,13 +70,15 @@ trait TemplateParent {
 			$templateElement->classList->add("t-$name");
 		}
 
-		ksort($this->templateFragmentMap);
+		if($this instanceof HTMLDocument) {
+			ksort($this->templateFragmentMap);
+		}
 
-		if(is_null($i)) {
+		if(is_null($count)) {
 			return 0;
 		}
 
-		return $i + 1;
+		return $count + 1;
 	}
 
 	public function getTemplate(
