@@ -4,7 +4,7 @@
 	"license": "MIT",
 
 	"require": {
-		"phpgt/dom": "1.*",
+		"phpgt/dom": "2.*",
 		"ext-dom": "*"
 	},
 	"require-dev": {
