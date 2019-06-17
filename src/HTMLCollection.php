@@ -1,4 +1,6 @@
 <?php
 namespace Gt\DomTemplate;
 
-class HTMLCollection extends NodeList {}
+use Gt\Dom\HTMLCollection as BaseHTMLCollection;
+
+class HTMLCollection extends BaseHTMLCollection {}

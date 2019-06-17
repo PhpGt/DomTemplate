@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use DOMAttr;
 use DOMNode;
 use Gt\Dom\Element as BaseElement;
+use Gt\Dom\PropertyAttribute;
 
 /**
  * @property-read Attr[] $attributes

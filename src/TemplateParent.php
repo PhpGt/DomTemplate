@@ -6,15 +6,21 @@ use DOMDocument;
 use Gt\Dom\Element as BaseElement;
 
 trait TemplateParent {
+	public function extractTemplates(BaseElement $context = null):int {
+		if(is_null($context)) {
+			$context = $this;
+		}
 
-	public function extractTemplates():int {
 		$i = null;
 		/** @var HTMLCollection $templateElementList */
-		$templateElementList = $this->querySelectorAll(
+		$templateElementList = $context->querySelectorAll(
 			"template,[data-template]"
 		);
 
-		foreach($templateElementList as $i => $templateElement) {
+		$count = count($templateElementList) - 1;
+
+		for($i = $count; $i >= 0; $i--) {
+			$templateElement = $templateElementList[$i];
 			$name = $this->getTemplateNameFromElement($templateElement);
 
 			$parentNode = $templateElement->parentNode;
@@ -22,9 +28,17 @@ trait TemplateParent {
 			$previousSibling = $templateElement->previousSibling;
 			$templateNodePath = $templateElement->getNodePath();
 
+			$nestedTemplateElementList = $templateElement->querySelectorAll(
+				"template,[data-template]"
+			);
+			foreach($nestedTemplateElementList as $nestedTemplateElement) {
+				$this->extractTemplates($nestedTemplateElement);
+			}
+
 			$document = ($this instanceof DOMDocument)
 				? $this
 				: $this->ownerDocument;
+
 			/** @var DocumentFragment $fragment */
 			$fragment = $document->createTemplateFragment(
 				$templateElement
@@ -56,11 +70,15 @@ trait TemplateParent {
 			$templateElement->classList->add("t-$name");
 		}
 
-		if(is_null($i)) {
+		if($this instanceof HTMLDocument) {
+			ksort($this->templateFragmentMap);
+		}
+
+		if(is_null($count)) {
 			return 0;
 		}
 
-		return $i + 1;
+		return $count + 1;
 	}
 
 	public function getTemplate(

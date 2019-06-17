@@ -371,7 +371,7 @@ HTML;
 		
 		<ul>
 			<li data-template>
-				<span data-bind:text="i">N</span>
+				<span data-bind:text="number">N</span>
 			</li>		
 		</ul>
 	</div>
@@ -381,12 +381,133 @@ HTML;
 		
 		<ul>
 			<li data-template="dynamic-list-item">
-				<span data-bind:text="i">N</span>
+				<span data-bind:text="number">N</span>
 			</li>		
 		</ul>
 	</div>
 </main>
 HTML;
 
+	const HTML_DOUBLE_NAMELESS_BIND_LIST = <<<HTML
+<!doctype html>
+<main>
+	<h1>List of totalitarian superstates:</h1>
+	<ul id="list-1">
+		<li data-template data-bind:text="state-name"></li> 
+	</ul>
+
+	<h1>Ministries of Oceana:</h1>
+	<ul id="list-2">
+		<li data-template data-bind:text="ministry-name"></li>
+	</ul>
+</main>
+HTML;
+
+	const HTML_DOUBLE_NAMES_BIND_LIST = <<<HTML
+<!doctype html>
+<main>
+	<h1>List of totalitarian superstates:</h1>
+	<ul id="list-1">
+		<li data-template="state" data-bind:text="state-name"></li> 
+	</ul>
+
+	<h1>Ministries of Oceana:</h1>
+	<ul id="list-2">
+		<li data-template="ministry" data-bind:text="ministry-name"></li>
+	</ul>
+</main>
+HTML;
+
+
+	const HTML_ATTRIBUTE_PLACEHOLDERS = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has some elements with attribute placeholders</title>
+<main>
+	<h1>This is a test!</h1>
+	<p><a id="userType-{userType}" href="/user/{userId}">View your account</a></p>
+	
+	<p>You are logged in.</p>
+	<p>This is your profile picture:</p>
+	
+	<img src="/img/profile/{userId}.jpg" alt="{username}'s profile picture" />
+</main>
+HTML;
+
+	const HTML_MUSIC = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Music list</title>
+<main>
+	<h1>Music list!</h1>
+	
+	<ul class="artist-list">
+		<li data-template data-bind:data-artist-name>
+			<h2 data-bind:text>Artist name</h2>
+			
+			<ul class="album-list">
+				<li data-template data-bind:data-album-name>
+					<h3 data-bind:text>Album name</h3>
+					
+					<ol class="track-list">
+						<li data-template data-bind:data-track-name>
+							<span data-bind:text>Track name</span>						
+						</li>
+					</ol> 				
+				</li>			
+			</ul>		
+		</li>
+	</ul>
+</main>
+HTML;
+
+	const LIST_MUSIC = [
+		"A Band From Your Childhood" => [
+			"This Album is Good" => [
+				"The Best Song You‘ve Ever Heard",
+				"Another Cracking Tune",
+				"Top Notch Music Here",
+				"The Best Is Left ‘Til Last",
+			],
+			"Adequate Collection" => [
+				"Meh",
+				"‘sok",
+				"Sounds Like Every Other Song",
+			],
+		],
+		"Bongo and The Bronks" => [
+			"Salad" => [
+				"Tomatoes",
+				"Song About Cucumber",
+				"Onions Make Me Cry (but I love them)",
+			],
+			"Meat" => [
+				"Steak",
+				"Is Chicken Really a Meat?",
+				"Don‘t Look in the Sausage Factory",
+				"Stop Horsing Around",
+			],
+			"SnaxX" => [
+				"Crispy Potatoes With Salt",
+				"Pretzel Song",
+				"Pork Scratchings Are Skin",
+				"The Peanut Is Not Actually A Nut",
+			],
+		],
+		"Crayons" => [
+			"Pastel Colours" => [
+				"Egg Shell",
+				"Cotton",
+				"Frost",
+				"Periwinkle",
+			],
+			"Different Shades of Blue" => [
+				"Cobalt",
+				"Slate",
+				"Indigo",
+				"Teal",
+			],
+		]
+	];
 
 }

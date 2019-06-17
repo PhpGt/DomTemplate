@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate;
 
 use DOMNode;
+use Gt\Dom\HTMLCollection;
 
 /**
  * @property-read HTMLCollection $children A live HTMLCollection containing all
@@ -22,9 +23,9 @@ use DOMNode;
  * @method Node|Element replaceChild(DOMNode $newNode, DOMNode $oldNode)
  *
  * @method Element|null querySelector(string $selector)
- * @method Element[] querySelectorAll(string $selector)
- * @method Element[] css(string $selector, string $prefix = "descendant-or-self::")
- * @method Element[] xPath(string $selector)
- * @method Element[] getElementsByTagName(string $tag)
+ * @method HTMLCollection querySelectorAll(string $selector)
+ * @method HTMLCollection css(string $selector, string $prefix = "descendant-or-self::")
+ * @method HTMLCollection xPath(string $selector)
+ * @method HTMLCollection getElementsByTagName(string $tag)
  */
 trait ParentNode {}

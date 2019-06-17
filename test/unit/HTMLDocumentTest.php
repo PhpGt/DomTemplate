@@ -12,4 +12,6 @@ class HTMLDocumentTest extends TestCase {
 		$fragment = $document->createDocumentFragment();
 		self::assertInstanceOf(DocumentFragment::class, $fragment);
 	}
+
+
 }

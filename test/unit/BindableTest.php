@@ -3,11 +3,9 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
-use Gt\DomTemplate\DomTemplateException;
 use Gt\DomTemplate\HTMLDocument;
+use Gt\DomTemplate\NamelessTemplateSpecificityException;
 use Gt\DomTemplate\Test\Helper\Helper;
-use Gt\DomTemplate\Test\Helper\TodoListExampleObject;
-use stdClass;
 
 class BindableTest extends TestCase {
 	public function testBindMethodAvailable() {
@@ -15,11 +13,35 @@ class BindableTest extends TestCase {
 		$outputTo = $document->querySelector("dl");
 
 		self::assertTrue(
-			method_exists($document, "bind"),
+			method_exists($document, "bindKeyValue"),
 			"HTMLDocument is not bindable"
 		);
 		self::assertTrue(
-			method_exists($outputTo, "bind"),
+			method_exists($document, "bindData"),
+			"HTMLDocument is not bindable"
+		);
+		self::assertTrue(
+			method_exists($document, "bindList"),
+			"HTMLDocument is not bindable"
+		);
+		self::assertTrue(
+			method_exists($document, "bindNestedList"),
+			"HTMLDocument is not bindable"
+		);
+		self::assertTrue(
+			method_exists($outputTo, "bindKeyValue"),
+			"Template container element (dl) is not bindable"
+		);
+		self::assertTrue(
+			method_exists($outputTo, "bindData"),
+			"Template container element (dl) is not bindable"
+		);
+		self::assertTrue(
+			method_exists($outputTo, "bindList"),
+			"Template container element (dl) is not bindable"
+		);
+		self::assertTrue(
+			method_exists($outputTo, "bindNestedList"),
 			"Template container element (dl) is not bindable"
 		);
 	}
@@ -30,16 +52,41 @@ class BindableTest extends TestCase {
 		$template = $document->getTemplate("title-definition");
 
 		self::assertTrue(
-			method_exists($template, "bind"),
+			method_exists($template, "bindKeyValue"),
+			"Template element is not bindable"
+		);
+		self::assertTrue(
+			method_exists($template, "bindData"),
+			"Template element is not bindable"
+		);
+		self::assertTrue(
+			method_exists($template, "bindList"),
+			"Template element is not bindable"
+		);
+		self::assertTrue(
+			method_exists($template, "bindNestedList"),
 			"Template element is not bindable"
 		);
 	}
 
-	public function testBindExistingElements() {
+	public function testBindKeyValueExistingElements() {
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
 		$name = "Winston Smith";
 		$age = 39;
-		$document->bind([
+		$document->bindKeyValue("name", $name);
+		$document->bindKeyValue("age", $age);
+
+		$boundDataTestElement = $document->querySelector(".bound-data-test");
+		$spanChildren = $boundDataTestElement->querySelectorAll("span");
+		self::assertEquals($name, $spanChildren[0]->innerText);
+		self::assertEquals($age, $spanChildren[1]->innerText);
+	}
+
+	public function testBindDataExistingElements() {
+		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
+		$name = "Winston Smith";
+		$age = 39;
+		$document->bindData([
 			"name" => $name,
 			"age" => $age,
 		]);
@@ -50,11 +97,11 @@ class BindableTest extends TestCase {
 		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
 
-	public function testBindOnUnknownProperty() {
+	public function testBindDataOnUnknownProperty() {
 		$document = new HTMLDocument(Helper::HTML_BIND_UNKNOWN_PROPERTY);
 		$name = "Winston Smith";
 		$age = 39;
-		$document->bind([
+		$document->bindData([
 			"name" => $name,
 			"age" => $age,
 		]);
@@ -66,11 +113,11 @@ class BindableTest extends TestCase {
 		self::assertEquals($age, $test2->textContent);
 	}
 
-	public function testBindAttributeLookup() {
+	public function testBindDataAttributeLookup() {
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES_BIND_ATTR);
 		$name = "Julia Dixon";
 		$age = 26;
-		$document->bind([
+		$document->bindData([
 			"name" => $name,
 			"age" => $age,
 		]);
@@ -81,7 +128,7 @@ class BindableTest extends TestCase {
 		self::assertEquals($age,$spanChildren[1]->innerText);
 	}
 
-	public function testBindAttributeNoMatch() {
+	public function testBindDataAttributeNoMatch() {
 		self::expectException(BoundAttributeDoesNotExistException::class);
 		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES_BIND_ATTR);
 		$name = "Julia Dixon";
@@ -90,7 +137,7 @@ class BindableTest extends TestCase {
 			"data-bind:text",
 			"@does-not-exist"
 		);
-		$document->bind([
+		$document->bindData([
 			"name" => $name,
 			"age" => $age,
 		]);
@@ -105,424 +152,194 @@ class BindableTest extends TestCase {
 			"data-bind:text",
 			"nothing"
 		);
-		$document->bind([
+		$document->bindData([
 			"name" => $name,
 			"age" => $age,
 		]);
+
+		$document->validateBinds();
 	}
 
-	public function testTemplateTodoList() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
-		$todoData = [
-			["id" => 1, "title" => "Write tests", "complete" => true],
-			["id" => 2, "title" => "Implement features", "complete" => false],
-			["id" => 3, "title" => "Pass tests", "complete" => false],
-		];
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-		$todoListElement->bind($todoData);
-
-		$liChildren = $todoListElement->querySelectorAll("li");
-
-		self::assertCount(
-			count($todoData),
-			$liChildren,
-			"There should be the same amount of li elements as there are rows of data"
+	public function testBindDataRemoved() {
+		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
+		$name = "Julia Dixon";
+		$age = 26;
+		$document->querySelector("span")->setAttribute(
+			"data-bind:text",
+			"nothing"
 		);
+		$document->bindData([
+			"name" => $name,
+			"age" => $age,
+		]);
 
-		foreach($todoData as $i => $row) {
-			self::assertStringContainsString(
-				$row["title"],
-				$liChildren[$i]->innerHTML
-			);
-		}
+		$document->removeBinds();
+
+		$boundDataTestElement = $document->querySelector(".bound-data-test");
+		$spanChildren = $boundDataTestElement->querySelectorAll("span");
+		self::assertFalse($spanChildren[0]->hasAttribute("data-bind:text"));
+		self::assertFalse($spanChildren[1]->hasAttribute("data-bind:text"));
 	}
 
-	public function testBoundTemplatesCleanedUpAfterAdding() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
-		$todoData = [
-			["id" => 1, "title" => "Write tests", "complete" => true],
-			["id" => 2, "title" => "Implement features", "complete" => false],
-			["id" => 3, "title" => "Pass tests", "complete" => false],
-		];
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-		$todoListElement->bind($todoData);
+	public function testInjectAttributePlaceholder() {
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$userId = 101;
+		$username = "thoughtpolice";
+		$document->bindKeyValue("userId", $userId);
+		$document->bindKeyValue("username", $username);
 
-		self::assertStringContainsString(
-			"Implement features",
-			$todoListElement->innerHTML
-		);
-		self::assertStringNotContainsString(
-			"data-bind",
-			$todoListElement->innerHTML
-		);
-	}
-
-	public function testBindWithInlineNamedTemplate() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST_INLINE_NAMED_TEMPLATE);
-		$todoData = [
-			["id" => 1, "title" => "Write tests", "complete" => true],
-			["id" => 2, "title" => "Implement features", "complete" => false],
-			["id" => 3, "title" => "Pass tests", "complete" => false],
-		];
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-		$todoListElement->bind($todoData);
-
-		self::assertStringContainsString(
-			"Implement features",
-			$todoListElement->innerHTML
-		);
-		self::assertStringNotContainsString(
-			"data-bind",
-			$todoListElement->innerHTML
-		);
-	}
-
-	public function testBindWithInlineNamedTemplateWhenAnotherTemplateExists() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST_INLINE_NAMED_TEMPLATE_DOUBLE);
-		$todoData = [
-			["id" => 1, "title" => "Write tests", "complete" => true],
-			["id" => 2, "title" => "Implement features", "complete" => false],
-			["id" => 3, "title" => "Pass tests", "complete" => false],
-		];
-		$document->extractTemplates();
-
-		$todoListElement = $document->getElementById("todo-list");
-		$todoListElement->bind($todoData);
-		self::assertStringContainsString(
-			"Implement features",
-			$todoListElement->innerHTML
-		);
-		self::assertStringNotContainsString(
-			"Use the other template instead!",
-			$todoListElement->innerHTML
-		);
-
-		$todoListElement = $document->getElementById("todo-list-2");
-		$todoListElement->bind($todoData, "todo-list-item");
-
-		self::assertStringContainsString(
-			"Implement features",
-			$todoListElement->innerHTML
-		);
-		self::assertStringNotContainsString(
-			"Use the other template instead!",
-			$todoListElement->innerHTML
-		);
-	}
-
-	public function testBindWithNonOptionalKey() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
-		$todoData = [
-			["title" => "Write tests", "complete" => true],
-			["title" => "Implement features", "complete" => false],
-			["title" => "Pass tests", "complete" => false],
-		];
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-
-		self::expectException(BoundDataNotSetException::class);
-		$todoListElement->bind($todoData);
-	}
-
-	public function testBindWithOptionalKey() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST_OPTIONAL_ID);
-		$todoData = [
-			["title" => "Write tests", "complete" => true],
-			["title" => "Implement features", "complete" => false],
-			["title" => "Pass tests", "complete" => false],
-		];
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-
-		$todoListElement->bind($todoData);
-		$items = $todoListElement->querySelectorAll("li");
-		self::assertCount(3, $items);
-
-		self::assertEquals(
-			"Implement features",
-			$items[1]->querySelector("input[name=title]")->value
-		);
-		self::assertNull(
-			$items[1]->querySelector("input[name=id]")->value
-		);
+		$link = $document->querySelector("a");
+		$img = $document->querySelector("img");
+		self::assertEquals("/user/101", $link->href);
+		self::assertEquals("/img/profile/$userId.jpg", $img->src);
+		self::assertEquals("thoughtpolice's profile picture", $img->alt);
 	}
 
 	public function testBindClass() {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS);
-		$todoData = [
-			["id" => 1, "title" => "Write tests", "complete" => true],
-			["id" => 2, "title" => "Implement features", "complete" => false],
-			["id" => 3, "title" => "Pass tests", "complete" => false],
-		];
-		$document->extractTemplates();
+		$isComplete = true;
+
+		$li = $document->querySelector(".existing-class");
 		$todoListElement = $document->getElementById("todo-list");
-
-		$todoListElement->bind($todoData);
-		$items = $todoListElement->querySelectorAll("li");
-
-		foreach($todoData as $i => $todoDatum) {
-			self::assertEquals(
-				$todoDatum["complete"],
-				$items[$i]->classList->contains("complete")
-			);
-
-			self::assertTrue($items[$i]->classList->contains("existing-class"));
-		}
-	}
-
-	public function testBindClassColon() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON);
-		$todoData = [
-			["id" => 1, "title" => "Write tests", "dateTimeCompleted" => "2018-07-01 19:46:00"],
-			["id" => 2, "title" => "Implement features", "dateTimeCompleted" => null],
-			["id" => 3, "title" => "Pass tests", "dateTimeCompleted" => "2018-07-01 19:49:00"],
-		];
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-
-		$todoListElement->bind($todoData);
-		$items = $todoListElement->querySelectorAll("li");
-
-		foreach($todoData as $i => $todoDatum) {
-			$completed = (bool)$todoDatum["dateTimeCompleted"];
-			self::assertEquals(
-				$completed,
-				$items[$i]->classList->contains("complete")
-			);
-
-			self::assertTrue($items[$i]->classList->contains("existing-class"));
-		}
-	}
-
-	public function testBindClassColonMultiple() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON_MULTIPLE);
-		$todoData = [
-			[
-				"id" => 1,
-				"title" => "Write tests",
-				"dateTimeCompleted" => "2018-07-01 19:46:00",
-				"dateTimeDeleted" => null,
-			],
-			[
-				"id" => 2,
-				"title" => "Implement features",
-				"dateTimeCompleted" => null,
-				"dateTimeDeleted" => "2018-07-01 19:54:00",
-			],
-			[
-				"id" => 3,
-				"title" => "Pass tests",
-				"dateTimeCompleted" => "2018-07-01 19:49:00",
-				"dateTimeDeleted" => null,
-			],
-		];
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-
-		$todoListElement->bind($todoData);
-		$items = $todoListElement->querySelectorAll("li");
-
-		foreach($todoData as $i => $todoDatum) {
-			self::assertTrue($items[$i]->classList->contains("existing-class"));
-
-			$completed = (bool)$todoDatum["dateTimeCompleted"];
-			self::assertEquals(
-				$completed,
-				$items[$i]->classList->contains("complete")
-			);
-
-			$deleted = (bool)$todoDatum["dateTimeDeleted"];
-			self::assertEquals(
-				$deleted,
-				$items[$i]->classList->contains("deleted")
-			);
-		}
-	}
-
-	public function testBindWithObjectData() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS_COLON_MULTIPLE);
-		$todoData = [
-			[
-				"id" => 1,
-				"title" => "Write tests",
-				"dateTimeCompleted" => "2018-07-01 19:46:00",
-				"dateTimeDeleted" => null,
-			],
-			[
-				"id" => 2,
-				"title" => "Implement features",
-				"dateTimeCompleted" => null,
-				"dateTimeDeleted" => "2018-07-01 19:54:00",
-			],
-			[
-				"id" => 3,
-				"title" => "Pass tests",
-				"dateTimeCompleted" => "2018-07-01 19:49:00",
-				"dateTimeDeleted" => null,
-			],
-		];
-
-		$todoObjData = [];
-
-		foreach($todoData as $todo) {
-			$obj = new StdClass();
-			foreach($todo as $key => $value) {
-				$obj->$key = $value;
-			}
-
-			$todoObjData []= $obj;
-		}
-
-		$document->extractTemplates();
-		$todoListElement = $document->getElementById("todo-list");
-
-		$todoListElement->bind($todoObjData);
-		$items = $todoListElement->querySelectorAll("li");
-
-		foreach($todoObjData as $i => $todo) {
-			self::assertTrue($items[$i]->classList->contains("existing-class"));
-
-			$completed = (bool)$todo->dateTimeCompleted;
-			self::assertEquals(
-				$completed,
-				$items[$i]->classList->contains("complete")
-			);
-
-			$deleted = (bool)$todo->dateTimeDeleted;
-			self::assertEquals(
-				$deleted,
-				$items[$i]->classList->contains("deleted")
-			);
-		}
-	}
-
-// For issue #52:
-	public function testBindingDataWithBindableParentElement() {
-		$document = new HTMLDocument(Helper::HTML_PARENT_HAS_DATA_BIND_ATTR);
-		$document->extractTemplates();
-
-		$data = [
-			["example-key" => "example-value-1","target-key" => "target-value-1"],
-			["example-key" => "example-value-2","target-key" => "target-value-2"],
-			["example-key" => "example-value-3","target-key" => "target-value-3"],
-		];
-
-		$exception = null;
-
-		foreach($data as $row) {
-			$t = $document->getTemplate("target-template");
-			try {
-				$t->bind($row);
-			}
-			catch(DomTemplateException $exception) {}
-
-			$t->insertTemplate();
-		}
-
-		self::assertNull($exception);
-	}
-
-	public function testBindingDataWithBindableParentElementDoesNotAddMoreNodes() {
-		$document = new HTMLDocument(Helper::HTML_PARENT_HAS_DATA_BIND_ATTR);
-		$document->extractTemplates();
-
-		$document->querySelector("label>span")->bind(
-			["outside-scope" => "example content"]
+		$todoListElement->bindKeyValue(
+			"complete",
+			$isComplete ? "task-complete" : "task-to-do"
 		);
 
-		$data = [
-			["example-key" => "example-value-1","target-key" => "target-value-1"],
-			["example-key" => "example-value-2","target-key" => "target-value-2"],
-			["example-key" => "example-value-3","target-key" => "target-value-3"],
-		];
+		$classList = $li->classList;
+		self::assertTrue($classList->contains("existing-class"));
+		self::assertTrue($classList->contains("task-complete"));
 
-		$exception = null;
-
-		try {
-			$document->querySelector("ul")->bind($data);
-		}
-		catch(DomTemplateException $exception) {}
-		self::assertNull($exception);
-
-		self::assertCount(3, $document->querySelectorAll("ul li"));
-		self::assertEquals(
-			"example content",
-			$document->querySelector("label>span")->textContent
+// If there is already a class on the element, binding to it again will remove it.
+		$todoListElement->bindKeyValue(
+			"complete",
+			$isComplete ? "task-complete" : "task-to-do"
 		);
+		self::assertFalse($classList->contains("task-complete"));
 	}
 
-	public function testMultipleListBindSameDocument() {
-		$document = new HTMLDocument(Helper::HTML_DOUBLE_BINDABLE_LIST);
+	public function testBindListMultipleDataTemplateElementsNoName() {
+		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMELESS_BIND_LIST);
 		$document->extractTemplates();
-
-		$oneToTen = [];
-		for($i = 1; $i <= 10; $i++) {
-			$oneToTen []= [
-				"i" => $i,
-			];
-		}
-
-		$document->querySelector(".area-1 ul")->bind($oneToTen);
-		$document->querySelector("h1")->bind([
-			"name" => "Example Name",
-		]);
-
-		$startingNumber = rand(100, 1000);
-		$document->querySelector(".area-2 p")->bind([
-			"start" => $startingNumber,
-		]);
-
-		for($i = $startingNumber; $i <= $startingNumber + 10; $i++) {
-			$t = $document->getTemplate("dynamic-list-item");
-			$t->bind(["i" => $i]);
-			$t->insertTemplate();
-		}
-
-		foreach($document->querySelectorAll(".area-1 ul li") as $i => $li) {
-			$number = $i + 1;
-			self::assertStringContainsString($number, $li->textContent);
-		}
-
-		foreach($document->querySelectorAll(".area-2 ul li") as $i => $li) {
-			$number = $i + $startingNumber;
-			self::assertStringContainsString($number, $li->textContent);
-		}
-
-		self::assertStringContainsString("Example Name", $document->querySelector("h1")->textContent);
-		self::assertStringContainsString($startingNumber, $document->querySelector(".area-2 p")->textContent);
+// This will fail, because I am not passing a template name to bind to, and there
+// are more than one nameless template elements in the document.
+// Instead, I should either pass a template name, or bind to a more specific element,
+// such as the UL itself.
+		self::expectException(NamelessTemplateSpecificityException::class);
+// No need for any actual data during this test.
+		$document->bindList([[]]);
 	}
 
-	public function testBindingTodoListFromObject() {
-		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+	public function testBindListMultipleDataTemplateElementsWithName() {
+		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMES_BIND_LIST);
 		$document->extractTemplates();
-
-		$todoItems = [
-			"Go to shops",
-			"Buy pizza",
-			"Eat pizza",
-			"Sleep",
+		$stateList = [
+			["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
+			["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
+			["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
+		];
+		$ministryList = [
+			["ministry-name" => "Peace", "ministry-id" => 123],
+			["ministry-name" => "Plenty", "ministry-id" => 511],
+			["ministry-name" => "Truth", "ministry-id" => 141],
+			["ministry-name" => "Love", "ministry-id" => 610],
 		];
 
-		$list = new TodoListExampleObject($todoItems);
+		$firstList = $document->getElementById("list-1");
+		$secondList = $document->getElementById("list-2");
 
-		$container = $document->getElementById("todo-list");
-		$container->bind($list);
+// Note that the difference here to the test above and below this one is that
+// we're actually passing a template name, even though we're still binding to
+// the root document node.
+		$document->bindList($stateList, "state");
+		$document->bindList($ministryList, "ministry");
 
-		$liNodes = $container->querySelectorAll("li");
-		self::assertCount(4, $liNodes);
+		self::assertCount(count($stateList), $firstList->children);
+		self::assertCount(count($ministryList), $secondList->children);
 
-		foreach($todoItems as $id => $name) {
-			self::assertEquals(
-				$id,
-				$liNodes[$id]->querySelector("[name='id']")->value
-			);
-			self::assertEquals(
-				$name,
-				$liNodes[$id]->querySelector("[name='title']")->value
-			);
+		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
+		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
+	}
+
+	public function testBindListMultipleDataTemplateElements() {
+		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMELESS_BIND_LIST);
+		$document->extractTemplates();
+		$stateList = [
+			["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
+			["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
+			["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
+		];
+		$ministryList = [
+			["ministry-name" => "Peace", "ministry-id" => 123],
+			["ministry-name" => "Plenty", "ministry-id" => 511],
+			["ministry-name" => "Truth", "ministry-id" => 141],
+			["ministry-name" => "Love", "ministry-id" => 610],
+		];
+
+		$firstList = $document->getElementById("list-1");
+		$secondList = $document->getElementById("list-2");
+
+		$secondList->bindList($ministryList);
+		$firstList->bindList($stateList);
+
+		self::assertCount(count($stateList), $firstList->children);
+		self::assertCount(count($ministryList), $secondList->children);
+
+		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
+		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
+	}
+
+	public function testBindNestedList() {
+		$document = new HTMLDocument(Helper::HTML_MUSIC);
+		$document->extractTemplates();
+		$document->bindNestedList(Helper::LIST_MUSIC);
+
+		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
+			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
+			$h2 = $domArtist->querySelector("h2");
+			self::assertEquals($artistName, $h2->innerText);
+
+			foreach($albumList as $albumName => $trackList) {
+				$domAlbum = $domArtist->querySelector("[data-album-name='$albumName']");
+				$h3 = $domAlbum->querySelector("h3");
+				self::assertEquals($albumName, $h3->innerText);
+
+				foreach($trackList as $i => $trackName) {
+					$domTrack = $domAlbum->querySelector("[data-track-name='$trackName']");
+					self::assertStringContainsString($trackName, $domTrack->innerText);
+					$child = $domAlbum->querySelector("ol")->children[$i];
+					self::assertSame($domTrack, $child);
+				}
+			}
+		}
+	}
+
+	public function testBindNestedListWithBadData() {
+		$document = new HTMLDocument(Helper::HTML_MUSIC);
+		$document->extractTemplates();
+		$data = Helper::LIST_MUSIC;
+		$data["Bongo and The Bronks"] = 123;
+		$document->bindNestedList($data);
+
+		unset($data["Bongo and The Bronks"]);
+
+		foreach($data as $artistName => $albumList) {
+			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
+			$h2 = $domArtist->querySelector("h2");
+			self::assertEquals($artistName, $h2->innerText);
+
+			foreach($albumList as $albumName => $trackList) {
+				$domAlbum = $domArtist->querySelector("[data-album-name='$albumName']");
+				$h3 = $domAlbum->querySelector("h3");
+				self::assertEquals($albumName, $h3->innerText);
+
+				foreach($trackList as $i => $trackName) {
+					$domTrack = $domAlbum->querySelector("[data-track-name='$trackName']");
+					self::assertStringContainsString($trackName, $domTrack->innerText);
+					$child = $domAlbum->querySelector("ol")->children[$i];
+					self::assertSame($domTrack, $child);
+				}
+			}
 		}
 	}
 }
