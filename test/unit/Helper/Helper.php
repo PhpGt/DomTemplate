@@ -464,14 +464,14 @@ HTML;
 	const LIST_MUSIC = [
 		"A Band From Your Childhood" => [
 			"This Album is Good" => [
-				"The Best Song You've Ever Heard",
+				"The Best Song You‘ve Ever Heard",
 				"Another Cracking Tune",
 				"Top Notch Music Here",
-				"The Best Is Left 'Till Last",
+				"The Best Is Left ‘Til Last",
 			],
 			"Adequate Collection" => [
 				"Meh",
-				"'sok",
+				"‘sok",
 				"Sounds Like Every Other Song",
 			],
 		],
@@ -484,7 +484,7 @@ HTML;
 			"Meat" => [
 				"Steak",
 				"Is Chicken Really a Meat?",
-				"Don't Look in the Sausage Factory",
+				"Don‘t Look in the Sausage Factory",
 				"Stop Horsing Around",
 			],
 			"SnaxX" => [

@@ -81,7 +81,11 @@ trait Bindable {
 
 		foreach($kvpList as $data) {
 			if(is_null($templateName)) {
-				$t = $document->getUnnamedTemplate($element);
+				$t = $document->getUnnamedTemplate(
+					$element,
+					true,
+					false
+				);
 			}
 			else {
 				$t = $document->getNamedTemplate($templateName);
@@ -97,7 +101,10 @@ trait Bindable {
 	 * BindIterator is necessary to link each child list with the
 	 * correct template.
 	 */
-	public function bindNestedList(iterable $data):void {
+	public function bindNestedList(
+		iterable $data,
+		bool $requireMatchingTemplatePath = false
+	):void {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -106,23 +113,40 @@ trait Bindable {
 		/** @var HTMLDocument $document */
 		$document = $element->ownerDocument;
 
-		$baseListElement = $document->getParentOfUnnamedTemplate($element);
+		$templateParent = $document->getParentOfUnnamedTemplate(
+			$element,
+			$requireMatchingTemplatePath
+		);
 
 		foreach($data as $key => $value) {
 			$t = $document->getUnnamedTemplate(
-				$baseListElement,
+				$templateParent,
 				false
 			);
 
+			if($t) {
 			if(is_string($key)) {
 				$t->bindValue($key);
 			}
 
-			$insertedTemplate = $baseListElement->appendChild($t);
 
-			if(is_iterable($value)) {
-				$insertedTemplate->bindNestedList($value);
+
+				if(is_string($value)) {
+					$t->bindValue($value);
+				}
+
+				$insertedTemplate = $templateParent->appendChild($t);
+
+				if(is_iterable($value)) {
+					$insertedTemplate->bindNestedList(
+						$value,
+						true
+					);
+				}
 			}
+
+
+
 		}
 	}
 

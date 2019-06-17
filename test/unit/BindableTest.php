@@ -279,8 +279,8 @@ class BindableTest extends TestCase {
 		$firstList = $document->getElementById("list-1");
 		$secondList = $document->getElementById("list-2");
 
-		$firstList->bindList($stateList);
 		$secondList->bindList($ministryList);
+		$firstList->bindList($stateList);
 
 		self::assertCount(count($stateList), $firstList->children);
 		self::assertCount(count($ministryList), $secondList->children);
@@ -294,8 +294,6 @@ class BindableTest extends TestCase {
 		$document->extractTemplates();
 		$document->bindNestedList(Helper::LIST_MUSIC);
 
-		echo $document;
-
 		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
 			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
 			$h2 = $domArtist->querySelector("h2");
@@ -308,8 +306,9 @@ class BindableTest extends TestCase {
 
 				foreach($trackList as $i => $trackName) {
 					$domTrack = $domAlbum->querySelector("[data-track-name='$trackName']");
-					self::assertSame($domTrack, $domAlbum->children[$i]);
-					self::assertEquals($trackName, $domTrack->innerText);
+					self::assertStringContainsString($trackName, $domTrack->innerText);
+					$child = $domAlbum->querySelector("ol")->children[$i];
+					self::assertSame($domTrack, $child);
 				}
 			}
 		}

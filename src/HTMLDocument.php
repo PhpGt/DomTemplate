@@ -66,9 +66,15 @@ class HTMLDocument extends BaseHTMLDocument {
 
 	public function getUnnamedTemplate(
 		Element $element,
-		bool $throwIfMoreThanOneMatch = true
+		bool $throwIfMoreThanOneMatch = true,
+		bool $stripArraySyntax = true
 	):?DocumentFragment {
 		$path = $element->getNodePath();
+// Unnamed templates can't have sibling elements of the same path, otherwise
+// they would need to be named. Remove any index from the path.
+		if($stripArraySyntax) {
+			$path = preg_replace("/\[\d+\]/", "", $path);
+		}
 		$matches = [];
 
 		foreach($this->templateFragmentMap as $name => $t) {
@@ -99,12 +105,16 @@ class HTMLDocument extends BaseHTMLDocument {
 		return $clone;
 	}
 
-	public function getParentOfUnnamedTemplate(Element $element):?Element {
+	public function getParentOfUnnamedTemplate(
+		Element $element,
+		bool $requireMatchingPath = false
+	):?Element {
 		$path = $element->getNodePath();
 // Unnamed templates can't have sibling elements of the same path, otherwise
 // they would need to be named. Remove any index from the path.
 		$path = preg_replace("/\[\d+\]/", "", $path);
 		$matches = [];
+		$pathToReturn = null;
 
 		foreach($this->templateFragmentMap as $name => $t) {
 			if(strpos($name, $path) !== 0) {
@@ -116,10 +126,24 @@ class HTMLDocument extends BaseHTMLDocument {
 				0,
 				strrpos($name, "/")
 			);
-			return $this->xPath($pathToReturn)[0] ?? null;
+
+			if($requireMatchingPath) {
+				if(strpos($name, $path) === 0
+				&& $path !== $name) {
+					break;
+				}
+			}
+			else {
+				break;
+			}
 		}
 
-		return null;
+		if(!$pathToReturn) {
+			return null;
+		}
+
+		$matchingElements =  $this->xPath($pathToReturn);
+		return $matchingElements[count($matchingElements) - 1];
 	}
 
 	/**
