@@ -41,7 +41,7 @@ trait Bindable {
 	 * @see self::bindKeyValue
 	 */
 	public function bindData(
-		iterable $kvp
+		$kvp
 	):void {
 		foreach($kvp as $key => $value) {
 			$this->bindKeyValue($key, $value);
