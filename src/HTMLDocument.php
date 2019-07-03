@@ -17,7 +17,7 @@ use Gt\Dom\HTMLCollection as BaseHTMLCollection;
  * @property-read Element $firstElementChild;
  * @property-read Element $lastElementChild;
  * @property-read Element $body;
- * @method Node getElementById(string $id)
+ * @method Element getElementById(string $id)
  * @method Element createElement(string $name, string $value = null)
  *
  */
