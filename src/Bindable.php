@@ -91,8 +91,8 @@ trait Bindable {
 				$t = $document->getNamedTemplate($templateName);
 			}
 
-			$t->bindData($data);
-			$t->insertTemplate();
+			$inserted = $t->insertTemplate();
+			$inserted->bindData($data);
 		}
 	}
 
