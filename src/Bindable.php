@@ -12,6 +12,13 @@ use Gt\Dom\HTMLCollection as BaseHTMLCollection;
  */
 trait Bindable {
 	/**
+	 * Alias of bindKeyValue.
+	 */
+	public function bind(?string $key, string $value):void {
+		$this->bindKeyValue($key, $value);
+	}
+
+	/**
 	 * Bind a single key-value-pair within $this Element.
 	 * Elements state their bindable key using the data-bind HTML attribute.
 	 * There may be multiple Elements with the matching attribute, in which
