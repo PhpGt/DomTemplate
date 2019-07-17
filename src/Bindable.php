@@ -14,7 +14,7 @@ trait Bindable {
 	/**
 	 * Alias of bindKeyValue.
 	 */
-	public function bind(?string $key, string $value):void {
+	public function bind(?string $key, ?string $value):void {
 		$this->bindKeyValue($key, $value);
 	}
 
@@ -26,8 +26,12 @@ trait Bindable {
 	 */
 	public function bindKeyValue(
 		?string $key,
-		string $value
+		?string $value
 	):void {
+		if(is_null($value)) {
+			$value = "";
+		}
+
 		$this->injectBoundProperty($key, $value);
 		$this->injectAttributePlaceholder($key, $value);
 	}
@@ -37,7 +41,7 @@ trait Bindable {
 	 * attribute vale. For example, <p data-bind:text>Your text here</p>
 	 * does not have an addressable attribute value for data-bind:text.
 	 */
-	public function bindValue(string $value):void {
+	public function bindValue(?string $value):void {
 		$this->bindKeyValue(null, $value);
 // Note, it's impossible to inject attribute placeholders without a key.
 	}
@@ -157,7 +161,7 @@ trait Bindable {
 	 */
 	protected function injectBoundProperty(
 		?string $key,
-		string $value
+		?string $value
 	):void {
 		$children = $this->getChildrenWithBindAttribute();
 
