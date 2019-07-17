@@ -28,6 +28,10 @@ trait Bindable {
 		?string $key,
 		?string $value
 	):void {
+		if(is_null($value)) {
+			$value = "";
+		}
+
 		$this->injectBoundProperty($key, $value);
 		$this->injectAttributePlaceholder($key, $value);
 	}
@@ -157,7 +161,7 @@ trait Bindable {
 	 */
 	protected function injectBoundProperty(
 		?string $key,
-		string $value
+		?string $value
 	):void {
 		$children = $this->getChildrenWithBindAttribute();
 
