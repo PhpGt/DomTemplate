@@ -17,8 +17,13 @@ use Gt\Dom\HTMLCollection as BaseHTMLCollection;
  * @property-read Element $firstElementChild;
  * @property-read Element $lastElementChild;
  * @property-read Element $body;
- * @method Element getElementById(string $id)
- * @method Element createElement(string $name, string $value = null)
+ *
+ * @method Attr createAttribute(string $name)
+ * @method Comment createComment(string $data)
+ * @method DocumentFragment createDocumentFragment()
+ * @method Element createElement(string $name)
+ * @method Element createTextNode(string $content)
+ * @method ?Element getElementById(string $id)
  *
  */
 class HTMLDocument extends BaseHTMLDocument {
