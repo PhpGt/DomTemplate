@@ -11,7 +11,7 @@ use Gt\Dom\Attr as BaseAttr;
  * @property-read Node|Element|null $lastChild
  * @property-read Node|Element|null $previousSibling
  * @property-read Node|Element|null $nextSibling
- * @property-read Document $ownerDocument
+ * @property-read HTMLDocument $ownerDocument
  *
  * @method Element appendChild(DOMNode $newnode)
  * @method Element cloneNode(bool $deep = false)

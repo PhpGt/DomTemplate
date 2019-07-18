@@ -12,6 +12,13 @@ use Gt\Dom\HTMLCollection as BaseHTMLCollection;
  */
 trait Bindable {
 	/**
+	 * Alias of bindKeyValue.
+	 */
+	public function bind(?string $key, ?string $value):void {
+		$this->bindKeyValue($key, $value);
+	}
+
+	/**
 	 * Bind a single key-value-pair within $this Element.
 	 * Elements state their bindable key using the data-bind HTML attribute.
 	 * There may be multiple Elements with the matching attribute, in which
@@ -19,8 +26,12 @@ trait Bindable {
 	 */
 	public function bindKeyValue(
 		?string $key,
-		string $value
+		?string $value
 	):void {
+		if(is_null($value)) {
+			$value = "";
+		}
+
 		$this->injectBoundProperty($key, $value);
 		$this->injectAttributePlaceholder($key, $value);
 	}
@@ -30,7 +41,7 @@ trait Bindable {
 	 * attribute vale. For example, <p data-bind:text>Your text here</p>
 	 * does not have an addressable attribute value for data-bind:text.
 	 */
-	public function bindValue(string $value):void {
+	public function bindValue(?string $value):void {
 		$this->bindKeyValue(null, $value);
 // Note, it's impossible to inject attribute placeholders without a key.
 	}
@@ -91,8 +102,8 @@ trait Bindable {
 				$t = $document->getNamedTemplate($templateName);
 			}
 
-			$t->bindData($data);
-			$t->insertTemplate();
+			$inserted = $t->insertTemplate();
+			$inserted->bindData($data);
 		}
 	}
 
@@ -150,7 +161,7 @@ trait Bindable {
 	 */
 	protected function injectBoundProperty(
 		?string $key,
-		string $value
+		?string $value
 	):void {
 		$children = $this->getChildrenWithBindAttribute();
 
