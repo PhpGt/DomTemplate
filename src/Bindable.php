@@ -319,6 +319,20 @@ trait Bindable {
 		case "innerText":
 			$element->innerText = $value;
 			break;
+
+		case "value":
+			$tagName = strtoupper($element->tagName);
+			switch($tagName) {
+			case "SELECT":
+			case "INPUT":
+			case "TEXTAREA":
+				$element->value = $value;
+				break;
+			default:
+				$element->setAttribute($bindProperty, $value);
+			}
+			break;
+
 		default:
 			$element->setAttribute($bindProperty, $value);
 		}

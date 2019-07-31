@@ -13,5 +13,9 @@ class HTMLDocumentTest extends TestCase {
 		self::assertInstanceOf(DocumentFragment::class, $fragment);
 	}
 
-
+	public function testGetElementById() {
+		$document = new HTMLDocument("<!doctype html><h1 id='test'>Test</h1>");
+		$element = $document->getElementById("test");
+		self::assertInstanceOf(Element::class, $element);
+	}
 }
