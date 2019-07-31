@@ -54,7 +54,33 @@ trait Bindable {
 	public function bindData(
 		$kvp
 	):void {
-		foreach($kvp as $key => $value) {
+		$iterable = $kvp;
+
+		if(!is_iterable($kvp)) {
+			if($kvp instanceof BindDataMapper) {
+				$iterable = $kvp->bindDataMap();
+			}
+			elseif($kvp instanceof BindDataGetter) {
+				$iterable = [];
+
+				foreach(get_class_methods($kvp) as $method) {
+					if(strpos($method, "get") !== 0) {
+						continue;
+					}
+
+					$key = lcfirst(substr($method, 3));
+					$value = $kvp->$method();
+					$iterable[$key] = $value;
+				}
+			}
+			else {
+				throw new UnbindableObjectException(
+					get_class($kvp)
+				);
+			}
+		}
+
+		foreach($iterable as $key => $value) {
 			$this->bindKeyValue($key, $value);
 		}
 	}
