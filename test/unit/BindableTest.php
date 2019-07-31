@@ -173,7 +173,7 @@ class BindableTest extends TestCase {
 			"age" => $age,
 		]);
 
-		$document->removeBinds();
+		$document->removeTemplateAttributes();
 
 		$boundDataTestElement = $document->querySelector(".bound-data-test");
 		$spanChildren = $boundDataTestElement->querySelectorAll("span");

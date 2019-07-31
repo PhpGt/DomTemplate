@@ -202,7 +202,7 @@ class HTMLDocument extends BaseHTMLDocument {
 	}
 
 	public function validateBinds():void {
-		$allBindableElements = $this->getAllBindableElements();
+		$allBindableElements = $this->getAllDomTemplateElements();
 
 		foreach($allBindableElements as $element) {
 			foreach($element->attributes as $attr) {
@@ -219,24 +219,23 @@ class HTMLDocument extends BaseHTMLDocument {
 		}
 	}
 
-	public function removeBinds():void {
-		$allBindableElements = $this->getAllBindableElements();
+	public function removeTemplateAttributes():void {
+		$allBindableElements = $this->getAllDomTemplateElements();
 
 		foreach($allBindableElements as $element) {
 			foreach($element->attributes as $attr) {
 				/** @var \Gt\Dom\Attr $attr */
-				if(strpos($attr->name, "data-bind") !== 0) {
-					continue;
+				if(strpos($attr->name, "data-bind") === 0
+				|| strpos($attr->name, "data-template") === 0) {
+					$attr->remove();
 				}
-
-				$attr->remove();
 			}
 		}
 	}
 
-	protected function getAllBindableElements():BaseHTMLCollection {
+	protected function getAllDomTemplateElements():BaseHTMLCollection {
 		return $this->documentElement->xPath(
-			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
+			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]|descendant-or-self::*[@*[starts-with(name(), 'data-template')]]"
 		);
 	}
 }
