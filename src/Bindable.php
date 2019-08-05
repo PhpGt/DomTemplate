@@ -116,21 +116,32 @@ trait Bindable {
 		/** @var HTMLDocument $document */
 		$document = $element->ownerDocument;
 
+		$fragment = $document->createDocumentFragment();
+		$templateParent = null;
+
+		if(is_null($templateName)) {
+			$templateElement = $document->getUnnamedTemplate(
+				$element,
+				true,
+				false
+			);
+		}
+		else {
+			$templateElement = $document->getNamedTemplate($templateName);
+		}
+
 		foreach($kvpList as $data) {
-			if(is_null($templateName)) {
-				$t = $document->getUnnamedTemplate(
-					$element,
-					true,
-					false
-				);
-			}
-			else {
-				$t = $document->getNamedTemplate($templateName);
+			$t = $templateElement->cloneNode(true);
+
+			if(!$templateParent) {
+				$templateParent = $templateElement->templateParentNode;
 			}
 
-			$inserted = $t->insertTemplate();
+			$inserted = $fragment->appendChild($t);
 			$inserted->bindData($data);
 		}
+
+		$templateParent->appendChild($fragment);
 	}
 
 	/**
