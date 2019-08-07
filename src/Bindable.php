@@ -281,10 +281,8 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
-		foreach($element->xPath("//*[@*[contains(.,'{')]]")
-		as $elementWithBraceInAttributeValue) {
-			foreach($elementWithBraceInAttributeValue->attributes
-				as $attr) {
+		foreach($element->xPath(".//*[@data-bind-parameters]") as $elementToBindAttributes) {
+			foreach($elementToBindAttributes->attributes as $attr) {
 				/** @var Attr $attr */
 				preg_match_all(
 					"/{(?P<bindProperties>[^}]+)}/",
