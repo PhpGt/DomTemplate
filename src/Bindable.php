@@ -141,7 +141,9 @@ trait Bindable {
 			$fragment->appendChild($t);
 		}
 
-		$templateParent->appendChild($fragment);
+		if(!is_null($templateParent)) {
+			$templateParent->appendChild($fragment);
+		}
 	}
 
 	/**
