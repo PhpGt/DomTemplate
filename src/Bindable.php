@@ -116,20 +116,33 @@ trait Bindable {
 		/** @var HTMLDocument $document */
 		$document = $element->ownerDocument;
 
+		$fragment = $document->createDocumentFragment();
+		$templateParent = null;
+
+		if(is_null($templateName)) {
+			$templateElement = $document->getUnnamedTemplate(
+				$element,
+				true,
+				false
+			);
+		}
+		else {
+			$templateElement = $document->getNamedTemplate($templateName);
+		}
+
 		foreach($kvpList as $data) {
-			if(is_null($templateName)) {
-				$t = $document->getUnnamedTemplate(
-					$element,
-					true,
-					false
-				);
-			}
-			else {
-				$t = $document->getNamedTemplate($templateName);
+			$t = $templateElement->cloneNode(true);
+
+			if(!$templateParent) {
+				$templateParent = $templateElement->templateParentNode;
 			}
 
-			$inserted = $t->insertTemplate();
-			$inserted->bindData($data);
+			$t->bindData($data);
+			$fragment->appendChild($t);
+		}
+
+		if(!is_null($templateParent)) {
+			$templateParent->appendChild($fragment);
 		}
 	}
 
@@ -189,13 +202,11 @@ trait Bindable {
 		?string $key,
 		?string $value
 	):void {
-		$children = $this->getChildrenWithBindAttribute();
-
-		foreach($children as $child) {
+		foreach($this->getChildrenWithBindAttribute() as $child) {
 			foreach($child->attributes as $attr) {
 				/** @var Attr $attr */
-// Skip attributes that do not have a bindProperty set (the text that comes after
-// the colon in data-bind:*
+// Skip attributes that do not have a bindProperty set (the text that
+// comes after the colon in data-bind:*
 				$matches = [];
 				if(!preg_match(
 					"/(?:data-bind:)(?P<bindProperty>.+)/",
@@ -216,9 +227,10 @@ trait Bindable {
 
 				$bindProperty = $matches["bindProperty"];
 
-// The "class" property behaves differently to others, as it is represented by
-// a StringMap rather than a single value.
-				if($bindProperty === "class") {
+				if($bindProperty === "property") {
+					continue;
+				}
+				elseif($bindProperty === "class") {
 					$element->classList->toggle($value);
 				}
 				else {
@@ -269,10 +281,8 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
-		foreach($element->xPath("//*[@*[contains(.,'{')]]")
-		as $elementWithBraceInAttributeValue) {
-			foreach($elementWithBraceInAttributeValue->attributes
-			as $attr) {
+		foreach($element->xPath(".//*[@data-bind-parameters]") as $elementToBindAttributes) {
+			foreach($elementToBindAttributes->attributes as $attr) {
 				/** @var Attr $attr */
 				preg_match_all(
 					"/{(?P<bindProperties>[^}]+)}/",
