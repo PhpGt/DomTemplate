@@ -6,6 +6,7 @@ use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\NamelessTemplateSpecificityException;
 use Gt\DomTemplate\Test\Helper\Helper;
+use NumberFormatter;
 
 class BindableTest extends TestCase {
 	public function testBindMethodAvailable() {
@@ -361,6 +362,52 @@ class BindableTest extends TestCase {
 					self::assertSame($domTrack, $child);
 				}
 			}
+		}
+	}
+
+	public function testBindListAttributeWithNoValue() {
+		$document = new HTMLDocument(Helper::HTML_SELECT);
+		$document->extractTemplates();
+		$sut = $document->getElementById("sut");
+		$data = [];
+
+		$formatter = new NumberFormatter(
+			"en_GB",
+			NumberFormatter::SPELLOUT
+		);
+
+		for($i = 0; $i < 10; $i++) {
+			$data []= [
+				"optionText" => $formatter->format($i),
+				"optionValue" => $i,
+				"optionDisabled" => (bool)($i % 2),
+			];
+		}
+
+		$sut->bindList($data);
+
+		foreach($sut->querySelectorAll("option") as $i => $option) {
+			$shouldBeDisabled = !(bool)($i % 2);
+			$text = $option->innerText;
+			$value = $option->value;
+
+			if($shouldBeDisabled) {
+				self::assertTrue(
+					$option->hasAttribute("disabled"),
+					"Option should have 'disabled' attribute"
+				);
+			}
+			else {
+				var_dump($option->outerHTML);die();
+				self::assertFalse(
+					$option->hasAttribute("disabled"),
+					"Option should not have 'disabled' attribute"
+				);
+			}
+
+			$expectedText = $formatter->format($i);
+			self::assertEquals($expectedText, $text);
+			self::assertEquals($i, $value);
 		}
 	}
 }
