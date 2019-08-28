@@ -237,7 +237,8 @@ trait Bindable {
 					$this->setPropertyValue(
 						$element,
 						$bindProperty,
-						$value
+						$value,
+						$this->shouldIgnoreFalsey($attr)
 					);
 				}
 			}
@@ -267,8 +268,19 @@ trait Bindable {
 				);
 			}
 		}
+		elseif($keyToSet[0] === "?") {
+			$keyToSet = substr($keyToSet, 1);
+		}
 
 		return $keyToSet;
+	}
+
+	protected function shouldIgnoreFalsey(BaseAttr $attr):bool {
+		if(strlen($attr->value) === 0) {
+			return false;
+		}
+
+		return $attr->value[0] === "?";
 	}
 
 	protected function injectAttributePlaceholder(
@@ -314,8 +326,15 @@ trait Bindable {
 	protected function setPropertyValue(
 		BaseElement $element,
 		string $bindProperty,
-		string $value
+		string $value,
+		bool $ignoreFalsey = false
 	):void {
+		if($ignoreFalsey) {
+			if(!$value) {
+				return;
+			}
+		}
+
 		switch($bindProperty) {
 		case "html":
 		case "innerhtml":

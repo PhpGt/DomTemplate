@@ -377,17 +377,27 @@ class BindableTest extends TestCase {
 		);
 
 		for($i = 0; $i < 10; $i++) {
-			$data []= [
-				"optionText" => $formatter->format($i),
-				"optionValue" => $i,
-				"optionDisabled" => (bool)($i % 2),
+			$row = [
+				"text" => $formatter->format($i),
+				"value" => $i,
+				"isDisabled" => (bool)($i % 2),
 			];
+
+			if($i === 5) {
+				$row["isDisabled"] = true;
+			}
+
+			$data []= $row;
 		}
 
 		$sut->bindList($data);
 
 		foreach($sut->querySelectorAll("option") as $i => $option) {
-			$shouldBeDisabled = !(bool)($i % 2);
+			$shouldBeDisabled = (bool)($i % 2);
+			if($i === 5) {
+				$shouldBeDisabled = true;
+			}
+
 			$text = $option->innerText;
 			$value = $option->value;
 
@@ -398,7 +408,6 @@ class BindableTest extends TestCase {
 				);
 			}
 			else {
-				var_dump($option->outerHTML);die();
 				self::assertFalse(
 					$option->hasAttribute("disabled"),
 					"Option should not have 'disabled' attribute"
