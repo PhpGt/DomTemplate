@@ -181,15 +181,36 @@ class BindableTest extends TestCase {
 		self::assertFalse($spanChildren[1]->hasAttribute("data-bind:text"));
 	}
 
+	public function testInjectAttributePlaceholderNoDataBindParameters() {
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$userId = 101;
+		$username = "thoughtpolice";
+		$link = $document->querySelector("a");
+		$img = $document->querySelector("img");
+		$originalHref = $link->href;
+		$originalSrc = $img->src;
+		$originalAlt = $img->alt;
+
+		$document->bindKeyValue("userId", $userId);
+		$document->bindKeyValue("username", $username);
+
+		self::assertEquals($originalHref, $link->href);
+		self::assertEquals($originalSrc, $img->src);
+		self::assertEquals($originalAlt, $img->alt);
+	}
+
 	public function testInjectAttributePlaceholder() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
 		$userId = 101;
 		$username = "thoughtpolice";
+		$link = $document->querySelector("a");
+		$img = $document->querySelector("img");
+		$link->setAttribute("data-bind-parameters", true);
+		$img->setAttribute("data-bind-parameters", true);
+
 		$document->bindKeyValue("userId", $userId);
 		$document->bindKeyValue("username", $username);
 
-		$link = $document->querySelector("a");
-		$img = $document->querySelector("img");
 		self::assertEquals("/user/101", $link->href);
 		self::assertEquals("/img/profile/$userId.jpg", $img->src);
 		self::assertEquals("thoughtpolice's profile picture", $img->alt);
