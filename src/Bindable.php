@@ -107,7 +107,7 @@ trait Bindable {
 	public function bindList(
 		iterable $kvpList,
 		string $templateName = null
-	):void {
+	):int {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -130,7 +130,9 @@ trait Bindable {
 			$templateElement = $document->getNamedTemplate($templateName);
 		}
 
+		$i = 0;
 		foreach($kvpList as $data) {
+			$i++;
 			$t = $templateElement->cloneNode(true);
 
 			if(!$templateParent) {
@@ -141,9 +143,16 @@ trait Bindable {
 			$fragment->appendChild($t);
 		}
 
+		global $test;
+		if($test) {
+			var_dump($templateParent->getNodePath());die();
+		}
+
 		if(!is_null($templateParent)) {
 			$templateParent->appendChild($fragment);
 		}
+
+		return $i;
 	}
 
 	/**
