@@ -510,4 +510,17 @@ HTML;
 		]
 	];
 
+	const HTML_SELECT = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Select test</title>
+
+<body>
+	<select id="sut">
+		<option data-template data-bind:text="text" data-bind:value="value" data-bind:disabled="?isDisabled">Test</option>
+	</select>
+</body>
+HTML;
+
+
 }

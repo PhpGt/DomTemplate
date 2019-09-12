@@ -107,7 +107,7 @@ trait Bindable {
 	public function bindList(
 		iterable $kvpList,
 		string $templateName = null
-	):void {
+	):int {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -130,7 +130,9 @@ trait Bindable {
 			$templateElement = $document->getNamedTemplate($templateName);
 		}
 
+		$i = 0;
 		foreach($kvpList as $data) {
+			$i++;
 			$t = $templateElement->cloneNode(true);
 
 			if(!$templateParent) {
@@ -141,9 +143,16 @@ trait Bindable {
 			$fragment->appendChild($t);
 		}
 
+		global $test;
+		if($test) {
+			var_dump($templateParent->getNodePath());die();
+		}
+
 		if(!is_null($templateParent)) {
 			$templateParent->appendChild($fragment);
 		}
+
+		return $i;
 	}
 
 	/**
@@ -237,7 +246,8 @@ trait Bindable {
 					$this->setPropertyValue(
 						$element,
 						$bindProperty,
-						$value
+						$value,
+						$this->shouldIgnoreFalsey($attr)
 					);
 				}
 			}
@@ -267,8 +277,19 @@ trait Bindable {
 				);
 			}
 		}
+		elseif($keyToSet[0] === "?") {
+			$keyToSet = substr($keyToSet, 1);
+		}
 
 		return $keyToSet;
+	}
+
+	protected function shouldIgnoreFalsey(BaseAttr $attr):bool {
+		if(strlen($attr->value) === 0) {
+			return false;
+		}
+
+		return $attr->value[0] === "?";
 	}
 
 	protected function injectAttributePlaceholder(
@@ -314,8 +335,15 @@ trait Bindable {
 	protected function setPropertyValue(
 		BaseElement $element,
 		string $bindProperty,
-		string $value
+		string $value,
+		bool $ignoreFalsey = false
 	):void {
+		if($ignoreFalsey) {
+			if(!$value) {
+				return;
+			}
+		}
+
 		switch($bindProperty) {
 		case "html":
 		case "innerhtml":
