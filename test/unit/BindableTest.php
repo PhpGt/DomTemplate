@@ -314,7 +314,7 @@ class BindableTest extends TestCase {
 	public function testBindNestedList() {
 		$document = new HTMLDocument(Helper::HTML_MUSIC);
 		$document->extractTemplates();
-		$document->bindNestedList(Helper::LIST_MUSIC);
+		$document->bindList(Helper::LIST_MUSIC);
 
 		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
 			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
@@ -341,7 +341,7 @@ class BindableTest extends TestCase {
 		$document->extractTemplates();
 		$data = Helper::LIST_MUSIC;
 		$data["Bongo and The Bronks"] = 123;
-		$document->bindNestedList($data);
+		$document->bindList($data);
 
 		unset($data["Bongo and The Bronks"]);
 
