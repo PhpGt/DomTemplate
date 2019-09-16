@@ -108,6 +108,9 @@ trait Bindable {
 		iterable $kvpList,
 		string $templateName = null
 	):int {
+		if(is_array($kvpList) && is_string(key($kvpList))) {
+			return $this->bindNestedList($kvpList);
+		}
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -163,7 +166,7 @@ trait Bindable {
 	public function bindNestedList(
 		iterable $data,
 		bool $requireMatchingTemplatePath = false
-	):void {
+	):int {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -177,7 +180,9 @@ trait Bindable {
 			$requireMatchingTemplatePath
 		);
 
+		$i = 0;
 		foreach($data as $key => $value) {
+			$i++;
 			$t = $document->getUnnamedTemplate(
 				$templateParent,
 				false
@@ -194,12 +199,14 @@ trait Bindable {
 			$insertedTemplate = $templateParent->appendChild($t);
 
 			if(is_iterable($value)) {
-				$insertedTemplate->bindNestedList(
+				$i += $insertedTemplate->bindNestedList(
 					$value,
 					true
 				);
 			}
 		}
+
+		return $i;
 	}
 
 	/**
