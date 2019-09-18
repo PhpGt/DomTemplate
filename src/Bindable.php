@@ -62,21 +62,19 @@ trait Bindable {
 			}
 			elseif($kvp instanceof BindDataGetter) {
 				$iterable = [];
+				$prefixes = ["bind", "get"];
 
-				foreach(get_class_methods($kvp) as $method) {
-					if(strpos($method, "get") !== 0) {
-						continue;
+				foreach($prefixes as $prefix) {
+					foreach(get_class_methods($kvp) as $method) {
+						if(strpos($method, $prefix) !== 0) {
+							continue;
+						}
+
+						$key = lcfirst(substr($method, strlen($prefix)));
+						$value = $kvp->$method();
+						$iterable[$key] = $value;
 					}
-
-					$key = lcfirst(substr($method, 3));
-					$value = $kvp->$method();
-					$iterable[$key] = $value;
 				}
-			}
-			else {
-				throw new UnbindableObjectException(
-					get_class($kvp)
-				);
 			}
 		}
 
