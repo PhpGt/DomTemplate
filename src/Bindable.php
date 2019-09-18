@@ -73,11 +73,6 @@ trait Bindable {
 					$iterable[$key] = $value;
 				}
 			}
-			else {
-				throw new UnbindableObjectException(
-					get_class($kvp)
-				);
-			}
 		}
 
 		foreach($iterable as $key => $value) {
