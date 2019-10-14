@@ -76,6 +76,9 @@ trait Bindable {
 					}
 				}
 			}
+			else {
+				$this->bindValue($kvp);
+			}
 		}
 
 		foreach($iterable as $key => $value) {
