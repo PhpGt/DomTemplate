@@ -200,7 +200,7 @@ class BindableTest extends TestCase {
 		self::assertEquals($originalAlt, $img->alt);
 	}
 
-	public function testInjectAttributePlaceholder() {
+	public function testBindParametersPlaceholder() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
 		$userId = 101;
 		$username = "thoughtpolice";
@@ -217,7 +217,7 @@ class BindableTest extends TestCase {
 		self::assertEquals("thoughtpolice's profile picture", $img->alt);
 	}
 
-	public function testInjectAttributePlaceholderMultiple() {
+	public function testBindParametersMultiple() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
 		$userId = 101;
 		$userType = "thinkpol";
