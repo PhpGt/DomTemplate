@@ -432,6 +432,9 @@ HTML;
 	
 	<img src="/img/profile/{userId}.jpg" alt="{username}'s profile picture" />
 </main>
+<footer>
+	<a href="/user.php?id={userId}&type={userType}">Another link in the footer</a>
+</footer>
 HTML;
 
 	const HTML_MUSIC = <<<HTML
