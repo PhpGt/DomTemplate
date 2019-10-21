@@ -329,13 +329,14 @@ trait Bindable {
 					continue;
 				}
 
-				foreach($bindProperties as $i => $bindProperty) {
-					$attr->value = str_replace(
-						"{" . "$key" . "}",
-						$value,
-						$attr->value
-					);
-				}
+				$attrValue = $attr->value;
+				$attrValue = str_replace(
+					"{" . $key . "}",
+					$value,
+					$attrValue
+				);
+
+				$elementToBindAttributes->setAttribute($attr->name, $attrValue);
 			}
 		}
 	}
