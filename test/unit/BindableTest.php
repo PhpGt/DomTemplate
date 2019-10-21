@@ -217,6 +217,18 @@ class BindableTest extends TestCase {
 		self::assertEquals("thoughtpolice's profile picture", $img->alt);
 	}
 
+	public function testInjectAttributePlaceholderMultiple() {
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$userId = 101;
+		$userType = "thinkpol";
+		$h1 = $document->querySelector("h1");
+		$h1->setAttribute("data-bind-parameters", true);
+		$document->bindKeyValue("userId", $userId);
+		$document->bindKeyValue("userType", $userType);
+
+		self::assertEquals("heading-thinkpol-101", $h1->id);
+	}
+
 	public function testBindClass() {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS);
 		$isComplete = true;
