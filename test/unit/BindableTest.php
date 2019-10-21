@@ -229,6 +229,24 @@ class BindableTest extends TestCase {
 		self::assertEquals("heading-thinkpol-101", $h1->id);
 	}
 
+	public function testBindParametersMultipleInHref() {
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$userId = 101;
+		$userType = "thinkpol";
+		$footer = $document->querySelector("footer");
+
+		$link = $footer->querySelector("a");
+		$link->setAttribute("data-bind-parameters", true);
+		$footer->bindKeyValue("userId", $userId);
+		self::assertNotNull($link->href);
+		$footer->bindKeyValue("userType", $userType);
+		self::assertNotNull($link->href);
+		self::assertEquals(
+			"/user.php?id=101&type=thinkpol",
+			$link->href
+		);
+	}
+
 	public function testBindClass() {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST_BIND_CLASS);
 		$isComplete = true;
