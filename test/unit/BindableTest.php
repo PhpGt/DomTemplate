@@ -200,7 +200,7 @@ class BindableTest extends TestCase {
 		self::assertEquals($originalAlt, $img->alt);
 	}
 
-	public function testInjectAttributePlaceholder() {
+	public function testBindParametersPlaceholder() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
 		$userId = 101;
 		$username = "thoughtpolice";
@@ -215,6 +215,36 @@ class BindableTest extends TestCase {
 		self::assertEquals("/user/101", $link->href);
 		self::assertEquals("/img/profile/$userId.jpg", $img->src);
 		self::assertEquals("thoughtpolice's profile picture", $img->alt);
+	}
+
+	public function testBindParametersMultiple() {
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$userId = 101;
+		$userType = "thinkpol";
+		$h1 = $document->querySelector("h1");
+		$h1->setAttribute("data-bind-parameters", true);
+		$document->bindKeyValue("userId", $userId);
+		$document->bindKeyValue("userType", $userType);
+
+		self::assertEquals("heading-thinkpol-101", $h1->id);
+	}
+
+	public function testBindParametersMultipleInHref() {
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$userId = 101;
+		$userType = "thinkpol";
+		$footer = $document->querySelector("footer");
+
+		$link = $footer->querySelector("a");
+		$link->setAttribute("data-bind-parameters", true);
+		$footer->bindKeyValue("userId", $userId);
+		self::assertNotNull($link->href);
+		$footer->bindKeyValue("userType", $userType);
+		self::assertNotNull($link->href);
+		self::assertEquals(
+			"/user.php?id=101&type=thinkpol",
+			$link->href
+		);
 	}
 
 	public function testBindClass() {
@@ -314,7 +344,7 @@ class BindableTest extends TestCase {
 	public function testBindNestedList() {
 		$document = new HTMLDocument(Helper::HTML_MUSIC);
 		$document->extractTemplates();
-		$document->bindNestedList(Helper::LIST_MUSIC);
+		$document->bindList(Helper::LIST_MUSIC);
 
 		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
 			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
@@ -341,7 +371,7 @@ class BindableTest extends TestCase {
 		$document->extractTemplates();
 		$data = Helper::LIST_MUSIC;
 		$data["Bongo and The Bronks"] = 123;
-		$document->bindNestedList($data);
+		$document->bindList($data);
 
 		unset($data["Bongo and The Bronks"]);
 

@@ -424,7 +424,7 @@ HTML;
 <meta charset="utf-8" />
 <title>This document has some elements with attribute placeholders</title>
 <main>
-	<h1>This is a test!</h1>
+	<h1 id="heading-{userType}-{userId}">This is a test!</h1>
 	<p><a id="userType-{userType}" href="/user/{userId}">View your account</a></p>
 	
 	<p>You are logged in.</p>
@@ -432,6 +432,9 @@ HTML;
 	
 	<img src="/img/profile/{userId}.jpg" alt="{username}'s profile picture" />
 </main>
+<footer>
+	<a href="/user.php?id={userId}&type={userType}">Another link in the footer</a>
+</footer>
 HTML;
 
 	const HTML_MUSIC = <<<HTML

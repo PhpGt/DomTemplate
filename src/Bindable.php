@@ -62,21 +62,22 @@ trait Bindable {
 			}
 			elseif($kvp instanceof BindDataGetter) {
 				$iterable = [];
+				$prefixes = ["bind", "get"];
 
-				foreach(get_class_methods($kvp) as $method) {
-					if(strpos($method, "get") !== 0) {
-						continue;
+				foreach($prefixes as $prefix) {
+					foreach(get_class_methods($kvp) as $method) {
+						if(strpos($method, $prefix) !== 0) {
+							continue;
+						}
+
+						$key = lcfirst(substr($method, strlen($prefix)));
+						$value = $kvp->$method();
+						$iterable[$key] = $value;
 					}
-
-					$key = lcfirst(substr($method, 3));
-					$value = $kvp->$method();
-					$iterable[$key] = $value;
 				}
 			}
 			else {
-				throw new UnbindableObjectException(
-					get_class($kvp)
-				);
+				$this->bindValue($kvp);
 			}
 		}
 
@@ -108,6 +109,9 @@ trait Bindable {
 		iterable $kvpList,
 		string $templateName = null
 	):int {
+		if(is_array($kvpList) && is_string(key($kvpList))) {
+			return $this->bindNestedList($kvpList);
+		}
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -163,7 +167,7 @@ trait Bindable {
 	public function bindNestedList(
 		iterable $data,
 		bool $requireMatchingTemplatePath = false
-	):void {
+	):int {
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -177,7 +181,9 @@ trait Bindable {
 			$requireMatchingTemplatePath
 		);
 
+		$i = 0;
 		foreach($data as $key => $value) {
+			$i++;
 			$t = $document->getUnnamedTemplate(
 				$templateParent,
 				false
@@ -194,12 +200,14 @@ trait Bindable {
 			$insertedTemplate = $templateParent->appendChild($t);
 
 			if(is_iterable($value)) {
-				$insertedTemplate->bindNestedList(
+				$i += $insertedTemplate->bindNestedList(
 					$value,
 					true
 				);
 			}
 		}
+
+		return $i;
 	}
 
 	/**
@@ -321,13 +329,14 @@ trait Bindable {
 					continue;
 				}
 
-				foreach($bindProperties as $i => $bindProperty) {
-					$attr->value = str_replace(
-						"{" . "$key" . "}",
-						$value,
-						$attr->value
-					);
-				}
+				$attrValue = $attr->value;
+				$attrValue = str_replace(
+					"{" . $key . "}",
+					$value,
+					$attrValue
+				);
+
+				$elementToBindAttributes->setAttribute($attr->name, $attrValue);
 			}
 		}
 	}
