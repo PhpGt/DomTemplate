@@ -184,7 +184,7 @@ class BindableTest extends TestCase {
 	}
 
 	public function testInjectAttributePlaceholderNoDataBindParameters() {
-		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$username = "thoughtpolice";
 		$link = $document->querySelector("a");
@@ -202,7 +202,7 @@ class BindableTest extends TestCase {
 	}
 
 	public function testBindParametersPlaceholder() {
-		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$username = "thoughtpolice";
 		$link = $document->querySelector("a");
@@ -219,7 +219,7 @@ class BindableTest extends TestCase {
 	}
 
 	public function testBindParametersMultiple() {
-		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$userType = "thinkpol";
 		$h1 = $document->querySelector("h1");
@@ -231,7 +231,7 @@ class BindableTest extends TestCase {
 	}
 
 	public function testBindParametersMultipleInHref() {
-		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$userType = "thinkpol";
 		$footer = $document->querySelector("footer");
@@ -462,5 +462,24 @@ class BindableTest extends TestCase {
 		$spans = $document->querySelectorAll(".bound-data-test span");
 		self::assertEquals($dataObj->name, $spans[0]->innerText);
 		self::assertEquals($dataObj->age, $spans[1]->innerText);
+	}
+
+	public function testBindObjectValueParameter() {
+		$dataObj = new StdClass();
+		$dataObj->userId = 123;
+		$dataObj->username = "Testname";
+
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$document->bindData($dataObj);
+
+		$img = $document->querySelector("img");
+		self::assertStringContainsString(
+			"{$dataObj->userId}.jpg",
+			$img->src
+		);
+		self::assertEquals(
+			"{$dataObj->username}'s profile picture",
+			$img->alt
+		);
 	}
 }
