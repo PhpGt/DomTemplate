@@ -40,8 +40,10 @@ trait Bindable {
 	 * Bind a single value to a data-bind element that has no matching
 	 * attribute vale. For example, <p data-bind:text>Your text here</p>
 	 * does not have an addressable attribute value for data-bind:text.
+	 *
+	 * @param mixed $value
 	 */
-	public function bindValue(?string $value):void {
+	public function bindValue($value):void {
 		$this->bindKeyValue(null, $value);
 // Note, it's impossible to inject attribute placeholders without a key.
 	}
