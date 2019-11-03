@@ -14,7 +14,7 @@ trait Bindable {
 	/**
 	 * Alias of bindKeyValue.
 	 */
-	public function bind(?string $key, ?string $value):void {
+	public function bind(?string $key, $value):void {
 		$this->bindKeyValue($key, $value);
 	}
 
@@ -26,7 +26,7 @@ trait Bindable {
 	 */
 	public function bindKeyValue(
 		?string $key,
-		?string $value
+		$value
 	):void {
 		if(is_null($value)) {
 			$value = "";
@@ -219,7 +219,7 @@ trait Bindable {
 	 */
 	protected function injectBoundProperty(
 		?string $key,
-		?string $value
+		$value
 	):void {
 		foreach($this->getChildrenWithBindAttribute() as $child) {
 			foreach($child->attributes as $attr) {
@@ -304,7 +304,7 @@ trait Bindable {
 
 	protected function injectAttributePlaceholder(
 		?string $key,
-		string $value
+		$value
 	):void {
 		/** @var BaseElement $element */
 		$element = $this;
