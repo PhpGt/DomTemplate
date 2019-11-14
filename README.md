@@ -28,7 +28,7 @@ Consider a page with an unordered list (`<ul>`). Within the list there should be
 
 In this example, we will simply use an array to contain the data, but the data can come from a data source such as a database, as long as it is `iterable`.
 
-### Source HTML (`example.html`)
+### Source HTML ([`01-groceries-example.html`][example-groceries-html])
 
 ```html
 <!doctype html>
@@ -94,3 +94,4 @@ Features at a glance
 + Use standards compliant techniques for templates and components.
 
 [dom]: https://www.php.gt/dom
+[example-groceries-html]: https://github.com/PhpGt/DomTemplate/blob/master/example/01-example-groceries.html
