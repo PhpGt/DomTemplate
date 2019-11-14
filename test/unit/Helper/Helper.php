@@ -419,7 +419,7 @@ HTML;
 HTML;
 
 
-	const HTML_ATTRIBUTE_PLACEHOLDERS = <<<HTML
+	const HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND = <<<HTML
 <!doctype html>
 <meta charset="utf-8" />
 <title>This document has some elements with attribute placeholders</title>
@@ -434,6 +434,24 @@ HTML;
 </main>
 <footer>
 	<a href="/user.php?id={userId}&type={userType}">Another link in the footer</a>
+</footer>
+HTML;
+
+	const HTML_ATTRIBUTE_PLACEHOLDERS = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>This document has some elements with attribute placeholders</title>
+<main>
+	<h1 id="heading-{userType}-{userId}" data-bind-parameters>This is a test!</h1>
+	<p><a id="userType-{userType}" href="/user/{userId}" data-bind-parameters>View your account</a></p>
+	
+	<p>You are logged in.</p>
+	<p>This is your profile picture:</p>
+	
+	<img src="/img/profile/{userId}.jpg" alt="{username}'s profile picture" data-bind-parameters />
+</main>
+<footer>
+	<a href="/user.php?id={userId}&type={userType}" data-bind-parameters>Another link in the footer</a>
 </footer>
 HTML;
 
