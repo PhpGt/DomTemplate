@@ -158,7 +158,18 @@ trait Bindable {
 				$templateParent = $templateElement->templateParentNode;
 			}
 
-			$t->bindData($data);
+			if($this->isBindableValue($data)) {
+				$t->bindValue($data);
+			}
+			else {
+				if($this->isList($data)) {
+					$t->bindList($data);
+				}
+				else {
+					$t->bindData($data);
+				}
+			}
+
 			$fragment->appendChild($t);
 		}
 
@@ -402,10 +413,9 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
-		$children = $element->xPath(
+		return $element->xPath(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
 		);
-		return $children;
 	}
 
 	protected function isIndexedArray($array):bool {
@@ -448,5 +458,73 @@ trait Bindable {
 		}
 
 		return $isAssociative;
+	}
+
+	/**
+	 * Does DomTemplate consider $data to be a data structure that
+	 * represents a single BindableValue? A BindableValue is a single datum
+	 * that does not have a "key-value" structure (just a "value").
+	 */
+	protected function isBindableValue($data):bool {
+		return is_string($data)
+		|| is_numeric($data)
+		|| (is_object($data) && method_exists($data, "__toString"));
+	}
+
+	/**
+	 * Does DomTemplate consider $data to be a BindableData structure that
+	 * represents a "key-value" structure?
+	 */
+	protected function isBindableData($data):bool {
+		if(is_null($data)) {
+			return false;
+		}
+
+		if([] == $data) {
+			return true;
+		}
+
+		if($data instanceof BindObject
+		|| $data instanceof BindDataMapper) {
+			return true;
+		}
+
+		if(is_object($data) && !is_iterable($data)) {
+			return true;
+		}
+
+		if(is_array($data)) {
+			$key = key($data);
+			$firstItem = $data[$key];
+
+			if($this->isBindableValue($firstItem)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Does DomTemplate consider $data to be a List that represents multiple
+	 * BindableData? A List is an iterable data structure that contains
+	 * zero or more "key-value" structure.
+	 */
+	protected function isList($data):bool {
+		$firstItem = null;
+
+		if(is_array($data)) {
+			$key = key($data);
+			$firstItem = $data[$key];
+		}
+		elseif($data instanceof Iterator) {
+			$firstItem = $data->current();
+		}
+
+		if(!$firstItem) {
+			return false;
+		}
+
+		return $this->isBindableData($firstItem);
 	}
 }
