@@ -445,35 +445,81 @@ class BindableTest extends TestCase {
 		}
 	}
 
-	public function testBindObjectValue() {
-		$dataObj = new StdClass();
-		$dataObj->name = "Test name";
-		$dataObj->age = 123;
+	public function testBindValueManualTemplate() {
+		$employeeData = [
+			"Alan Statham" => [
+				"id" => 1742,
+				"title" => "Consultant Radiologist",
+			],
+			"Caroline Todd" => [
+				"id" => 3010,
+				"title" => "Surgical Registrar",
+			],
+			"Guy Secretan" => [
+				"id" => 2019,
+				"title" => "Anaesthetist",
+			],
+			"Karen Ball" => [
+				"id" => 836,
+				"title" => "Human Resources",
+			],
+		];
 
-		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
-		$document->bindData($dataObj);
+		$document = new HTMLDocument(Helper::HTML_KEYLESS_BIND_ATTRIBUTE_TEMPLATE_NAMED);
+		$document->extractTemplates();
 
-		$spans = $document->querySelectorAll(".bound-data-test span");
-		self::assertEquals($dataObj->name, $spans[0]->innerText);
-		self::assertEquals($dataObj->age, $spans[1]->innerText);
+		foreach($employeeData as $name => $data) {
+			$t = $document->getTemplate("employee-template");
+			$t->bindValue($name);
+			$t->insertTemplate();
+		}
+
+		self::assertCount(
+			count($employeeData),
+			$document->querySelector("ul")->children
+		);
+
+		$i = 0;
+		foreach($employeeData as $name => $data) {
+			$element = $document->querySelector("ul")->children[$i];
+			self::assertEquals($name, $element->querySelector("h1")->innerText);
+			$i++;
+		}
 	}
 
-	public function testBindObjectValueParameter() {
-		$dataObj = new StdClass();
-		$dataObj->userId = 123;
-		$dataObj->username = "Testname";
+	public function testBindListStringKeys() {
+		$employeeData = [
+			"Alan Statham" => [
+				"id" => 1742,
+				"title" => "Consultant Radiologist",
+			],
+			"Caroline Todd" => [
+				"id" => 3010,
+				"title" => "Surgical Registrar",
+			],
+			"Guy Secretan" => [
+				"id" => 2019,
+				"title" => "Anaesthetist",
+			],
+			"Karen Ball" => [
+				"id" => 836,
+				"title" => "Human Resources",
+			],
+		];
 
-		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
-		$document->bindData($dataObj);
+		$document = new HTMLDocument(Helper::HTML_KEYLESS_BIND_ATTRIBUTE_TEMPLATE);
+		$document->extractTemplates();
+		$document->bindList($employeeData);
 
-		$img = $document->querySelector("img");
-		self::assertStringContainsString(
-			"{$dataObj->userId}.jpg",
-			$img->src
-		);
-		self::assertEquals(
-			"{$dataObj->username}'s profile picture",
-			$img->alt
-		);
+		$empListElement = $document->getElementById("emp-list");
+		self::assertCount(count($employeeData), $empListElement->children);
+
+		$i = 0;
+		foreach($employeeData as $name => $data) {
+			$empElement = $empListElement->children[$i];
+			$h1 = $empElement->querySelector("h1");
+			self::assertEquals($name, $h1->textContent);
+			$i++;
+		}
 	}
 }

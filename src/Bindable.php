@@ -147,12 +147,12 @@ trait Bindable {
 		foreach($kvpList as $i => $data) {
 			$count ++;
 
-			if(is_string($i)) {
-				$this->bindValue($i);
-			}
-
 // TODO: Recursive call if value is iterable.
 			$t = $templateElement->cloneNode(true);
+
+			if(is_string($i)) {
+				$t->bindValue($i);
+			}
 
 			if(!$templateParent) {
 				$templateParent = $templateElement->templateParentNode;

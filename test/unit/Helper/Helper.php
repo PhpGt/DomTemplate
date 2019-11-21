@@ -579,4 +579,29 @@ HTML;
 </body>
 HTML;
 
+	const HTML_KEYLESS_BIND_ATTRIBUTE_TEMPLATE_NAMED = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Keyless data-bind attributes</title>
+
+<body>
+	Employee list:
+	
+	<ul id="emp-list">
+		<li data-template="employee-template">
+			<h1 data-bind:text>Employee name</h1>
+			
+			Details:
+			<dl>
+				<dt>ID</dt>
+				<dd data-bind:text="id">000</dd>
+				
+				<dt>Department</dt>
+				<dd data-bind:text="title">JOBTITLE</dd>
+			</dl>
+		</li>
+	</ul>
+</body>
+HTML;
+
 }
