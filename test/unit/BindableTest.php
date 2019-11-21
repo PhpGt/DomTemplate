@@ -287,6 +287,38 @@ class BindableTest extends TestCase {
 		self::assertFalse($classList->contains("task-complete"));
 	}
 
+	public function testBindObjectValue() {
+		$dataObj = new StdClass();
+		$dataObj->name = "Test name";
+		$dataObj->age = 123;
+
+		$document = new HTMLDocument(Helper::HTML_NO_TEMPLATES);
+		$document->bindData($dataObj);
+
+		$spans = $document->querySelectorAll(".bound-data-test span");
+		self::assertEquals($dataObj->name, $spans[0]->innerText);
+		self::assertEquals($dataObj->age, $spans[1]->innerText);
+	}
+
+	public function testBindObjectValueParameter() {
+		$dataObj = new StdClass();
+		$dataObj->userId = 123;
+		$dataObj->username = "Testname";
+
+		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS);
+		$document->bindData($dataObj);
+
+		$img = $document->querySelector("img");
+		self::assertStringContainsString(
+			"{$dataObj->userId}.jpg",
+			$img->src
+		);
+		self::assertEquals(
+			"{$dataObj->username}'s profile picture",
+			$img->alt
+		);
+	}
+
 	public function testBindListMultipleDataTemplateElementsNoName() {
 		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMELESS_BIND_LIST);
 		$document->extractTemplates();
