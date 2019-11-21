@@ -2,7 +2,7 @@
 namespace Gt\DomTemplate\Test;
 
 use EmptyIterator;
-use Gt\DomTemplate\IncompatibleBindData;
+use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
@@ -72,6 +72,20 @@ class BindableTest extends TestCase {
 		$spanChildren = $boundDataTestElement->querySelectorAll("span");
 		self::assertEquals($name, $spanChildren[0]->innerText);
 		self::assertEquals($age, $spanChildren[1]->innerText);
+	}
+
+	public function testBindValue() {
+		$document = new HTMLDocument(Helper::HTML_KEYLESS_BIND_ATTRIBUTE);
+		$document->bindValue("PHPUnit");
+		$h1 = $document->querySelector("h1");
+		self::assertStringContainsString("Welcome, PHPUnit", $h1->innerText);
+	}
+
+	public function testBindValueOnActualElement() {
+		$document = new HTMLDocument(Helper::HTML_KEYLESS_BIND_ATTRIBUTE);
+		$h1 = $document->querySelector("h1");
+		$h1->bindValue("PHPUnit");
+		self::assertStringContainsString("Welcome, PHPUnit", $h1->innerText);
 	}
 
 	public function testBindDataExistingElements() {
@@ -174,13 +188,13 @@ class BindableTest extends TestCase {
 	}
 
 	public function testBindDataIndexedArray() {
-		self::expectException(IncompatibleBindData::class);
+		self::expectException(IncompatibleBindDataException::class);
 		$document = new HTMLDocument();
 		$document->bindData(["one", "two", "three"]);
 	}
 
 	public function testBindDataIterator() {
-		self::expectException(IncompatibleBindData::class);
+		self::expectException(IncompatibleBindDataException::class);
 		$document = new HTMLDocument();
 		$document->bindData(new EmptyIterator());
 	}

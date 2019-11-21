@@ -55,7 +55,7 @@ trait Bindable {
 
 		if($this->isIndexedArray($kvp)
 		|| $kvp instanceof Iterator) {
-			throw new IncompatibleBindData();
+			throw new IncompatibleBindDataException();
 		}
 
 		if($this->isAssociativeArray($kvp)) {
@@ -84,9 +84,12 @@ trait Bindable {
 					$assocArray[$key] = $value;
 				}
 			}
-			else {
+			elseif(is_object($kvp)) {
 // Finally, assume the kvp is a Plain Old PHP Object (POPO).
 				$assocArray = get_object_vars($kvp);
+			}
+			else {
+				$assocArray = $kvp;
 			}
 		}
 
@@ -399,9 +402,10 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
-		return $element->xPath(
+		$children = $element->xPath(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
 		);
+		return $children;
 	}
 
 	protected function isIndexedArray($array):bool {
