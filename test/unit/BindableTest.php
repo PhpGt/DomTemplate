@@ -1,6 +1,8 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use EmptyIterator;
+use Gt\DomTemplate\IncompatibleBindData;
 use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
@@ -181,6 +183,18 @@ class BindableTest extends TestCase {
 		$spanChildren = $boundDataTestElement->querySelectorAll("span");
 		self::assertFalse($spanChildren[0]->hasAttribute("data-bind:text"));
 		self::assertFalse($spanChildren[1]->hasAttribute("data-bind:text"));
+	}
+
+	public function testBindDataIndexedArray() {
+		self::expectException(IncompatibleBindData::class);
+		$document = new HTMLDocument();
+		$document->bindData(["one", "two", "three"]);
+	}
+
+	public function testBindDataIterator() {
+		self::expectException(IncompatibleBindData::class);
+		$document = new HTMLDocument();
+		$document->bindData(new EmptyIterator());
 	}
 
 	public function testInjectAttributePlaceholderNoDataBindParameters() {

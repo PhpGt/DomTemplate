@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Attr as BaseAttr;
 use Gt\Dom\Element as BaseElement;
 use Gt\Dom\HTMLCollection as BaseHTMLCollection;
+use Iterator;
 
 /**
  * In WebEngine, all Elements in the DOM are Bindable by default. A Bindable
@@ -52,9 +53,9 @@ trait Bindable {
 	):void {
 		$assocArray = null;
 
-		if($this->isIndexedArray($kvp)) {
-// An indexed array must only be used with bindList.
-			throw new BindDataAttemptWithIndexedArrayException();
+		if($this->isIndexedArray($kvp)
+		|| $kvp instanceof Iterator) {
+			throw new IncompatibleBindData();
 		}
 
 		if($this->isAssociativeArray($kvp)) {
