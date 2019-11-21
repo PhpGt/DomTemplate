@@ -50,30 +50,42 @@ trait Bindable {
 	public function bindData(
 		$kvp
 	):void {
-		$assocArray = $kvp;
+		$assocArray = null;
 
-		if(!$this->isAssociativeArray($assocArray)) {
+		if($this->isIndexedArray($kvp)) {
+// An indexed array must only be used with bindList.
+			throw new BindDataAttemptWithIndexedArrayException();
+		}
+
+		if($this->isAssociativeArray($kvp)) {
+			$assocArray = $kvp;
+		}
+		else {
 			if($kvp instanceof BindDataMapper) {
 				$assocArray = $kvp->bindDataMap();
 			}
 			elseif($kvp instanceof BindObject) {
 				$assocArray = [];
-				$prefixes = ["bind"];
-
-				foreach($prefixes as $prefix) {
-					foreach(get_class_methods($kvp) as $method) {
-						if(strpos($method, $prefix) !== 0) {
-							continue;
-						}
-
-						$key = lcfirst(substr($method, strlen($prefix)));
-						$value = $kvp->$method();
-						$assocArray[$key] = $value;
+				$prefix = "bind";
+				foreach(get_class_methods($kvp) as $method) {
+					if(strpos($method, $prefix) !== 0) {
+						continue;
 					}
+
+					$key = lcfirst(
+						substr(
+							$method,
+							strlen($prefix)
+						)
+					);
+
+					$value = $kvp->$method();
+					$assocArray[$key] = $value;
 				}
 			}
 			else {
-				$this->bindValue($kvp);
+// Finally, assume the kvp is a Plain Old PHP Object (POPO).
+				$assocArray = get_object_vars($kvp);
 			}
 		}
 
@@ -393,7 +405,7 @@ trait Bindable {
 		);
 	}
 
-	protected function isAssociativeArray($array):bool {
+	protected function isIndexedArray($array):bool {
 		if(!is_array($array)) {
 			return false;
 		}
@@ -402,7 +414,36 @@ trait Bindable {
 			return false;
 		}
 
-		return array_keys($array)
-			!== range(0, count($array) - 1);
+		$keys = array_keys($array);
+		$isIndexed = true;
+
+		foreach($keys as $key) {
+			if(!is_int($key)) {
+				$isIndexed = false;
+			}
+		}
+
+		return $isIndexed;
+	}
+
+	protected function isAssociativeArray($array):bool {
+		if(!is_array($array)) {
+			return false;
+		}
+
+		if($array == []) {
+			return true;
+		}
+
+		$keys = array_keys($array);
+		$isAssociative = true;
+
+		foreach($keys as $key) {
+			if(!is_string($key)) {
+				$isAssociative = false;
+			}
+		}
+
+		return $isAssociative;
 	}
 }

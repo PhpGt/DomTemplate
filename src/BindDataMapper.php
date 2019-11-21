@@ -11,5 +11,5 @@ interface BindDataMapper {
 	 * 	"age" => date("Y") - $this->dob->format("Y"),
 	 * ]
 	 */
-	public function bindDataMap():iterable;
+	public function bindDataMap():array;
 }
