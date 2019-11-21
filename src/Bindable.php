@@ -12,13 +12,6 @@ use Gt\Dom\HTMLCollection as BaseHTMLCollection;
  */
 trait Bindable {
 	/**
-	 * Alias of bindKeyValue.
-	 */
-	public function bind(?string $key, $value):void {
-		$this->bindKeyValue($key, $value);
-	}
-
-	/**
 	 * Bind a single key-value-pair within $this Element.
 	 * Elements state their bindable key using the data-bind HTML attribute.
 	 * There may be multiple Elements with the matching attribute, in which
@@ -51,20 +44,21 @@ trait Bindable {
 	/**
 	 * Bind multiple key-value-pairs within $this Element, calling
 	 * bindKeyValue for each key-value-pair in the iterable $kvp object.
+	 * @param array|object|BindObject|BindDataMapper $kvp
 	 * @see self::bindKeyValue
 	 */
 	public function bindData(
 		$kvp
 	):void {
-		$iterable = $kvp;
+		$assocArray = $kvp;
 
-		if(!is_iterable($kvp)) {
+		if(!$this->isAssociativeArray($assocArray)) {
 			if($kvp instanceof BindDataMapper) {
-				$iterable = $kvp->bindDataMap();
+				$assocArray = $kvp->bindDataMap();
 			}
-			elseif($kvp instanceof BindDataGetter) {
-				$iterable = [];
-				$prefixes = ["bind", "get"];
+			elseif($kvp instanceof BindObject) {
+				$assocArray = [];
+				$prefixes = ["bind"];
 
 				foreach($prefixes as $prefix) {
 					foreach(get_class_methods($kvp) as $method) {
@@ -74,7 +68,7 @@ trait Bindable {
 
 						$key = lcfirst(substr($method, strlen($prefix)));
 						$value = $kvp->$method();
-						$iterable[$key] = $value;
+						$assocArray[$key] = $value;
 					}
 				}
 			}
@@ -83,7 +77,7 @@ trait Bindable {
 			}
 		}
 
-		foreach($iterable as $key => $value) {
+		foreach($assocArray as $key => $value) {
 			$this->bindKeyValue($key, $value);
 		}
 	}
@@ -397,5 +391,18 @@ trait Bindable {
 		return $element->xPath(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]"
 		);
+	}
+
+	protected function isAssociativeArray($array):bool {
+		if(!is_array($array)) {
+			return false;
+		}
+
+		if($array == []) {
+			return false;
+		}
+
+		return array_keys($array)
+			!== range(0, count($array) - 1);
 	}
 }

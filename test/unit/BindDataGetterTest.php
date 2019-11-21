@@ -1,7 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
-use Gt\DomTemplate\BindDataGetter;
+use Gt\DomTemplate\BindObject;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\Test\Helper\BindDataGetter\TodoItem;
 use Gt\DomTemplate\Test\Helper\Helper;
