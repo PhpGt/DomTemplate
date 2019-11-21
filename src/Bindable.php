@@ -118,9 +118,6 @@ trait Bindable {
 		iterable $kvpList,
 		string $templateName = null
 	):int {
-		if(is_array($kvpList) && is_string(key($kvpList))) {
-			return $this->bindNestedList($kvpList);
-		}
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -143,9 +140,15 @@ trait Bindable {
 			$templateElement = $document->getNamedTemplate($templateName);
 		}
 
-		$i = 0;
-		foreach($kvpList as $data) {
-			$i++;
+		$count = 0;
+		foreach($kvpList as $i => $data) {
+			$count ++;
+
+			if(is_string($i)) {
+				$this->bindValue($i);
+			}
+
+// TODO: Recursive call if value is iterable.
 			$t = $templateElement->cloneNode(true);
 
 			if(!$templateParent) {
@@ -156,16 +159,11 @@ trait Bindable {
 			$fragment->appendChild($t);
 		}
 
-		global $test;
-		if($test) {
-			var_dump($templateParent->getNodePath());die();
-		}
-
 		if(!is_null($templateParent)) {
 			$templateParent->appendChild($fragment);
 		}
 
-		return $i;
+		return $count;
 	}
 
 	/**

@@ -29,10 +29,6 @@ class BindableTest extends TestCase {
 			"HTMLDocument is not bindable"
 		);
 		self::assertTrue(
-			method_exists($document, "bindNestedList"),
-			"HTMLDocument is not bindable"
-		);
-		self::assertTrue(
 			method_exists($outputTo, "bindKeyValue"),
 			"Template container element (dl) is not bindable"
 		);
@@ -42,10 +38,6 @@ class BindableTest extends TestCase {
 		);
 		self::assertTrue(
 			method_exists($outputTo, "bindList"),
-			"Template container element (dl) is not bindable"
-		);
-		self::assertTrue(
-			method_exists($outputTo, "bindNestedList"),
 			"Template container element (dl) is not bindable"
 		);
 	}
@@ -65,10 +57,6 @@ class BindableTest extends TestCase {
 		);
 		self::assertTrue(
 			method_exists($template, "bindList"),
-			"Template element is not bindable"
-		);
-		self::assertTrue(
-			method_exists($template, "bindNestedList"),
 			"Template element is not bindable"
 		);
 	}
@@ -354,60 +342,6 @@ class BindableTest extends TestCase {
 
 		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
 		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
-	}
-
-	public function testBindNestedList() {
-		$document = new HTMLDocument(Helper::HTML_MUSIC);
-		$document->extractTemplates();
-		$document->bindList(Helper::LIST_MUSIC);
-
-		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
-			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
-			$h2 = $domArtist->querySelector("h2");
-			self::assertEquals($artistName, $h2->innerText);
-
-			foreach($albumList as $albumName => $trackList) {
-				$domAlbum = $domArtist->querySelector("[data-album-name='$albumName']");
-				$h3 = $domAlbum->querySelector("h3");
-				self::assertEquals($albumName, $h3->innerText);
-
-				foreach($trackList as $i => $trackName) {
-					$domTrack = $domAlbum->querySelector("[data-track-name='$trackName']");
-					self::assertStringContainsString($trackName, $domTrack->innerText);
-					$child = $domAlbum->querySelector("ol")->children[$i];
-					self::assertSame($domTrack, $child);
-				}
-			}
-		}
-	}
-
-	public function testBindNestedListWithBadData() {
-		$document = new HTMLDocument(Helper::HTML_MUSIC);
-		$document->extractTemplates();
-		$data = Helper::LIST_MUSIC;
-		$data["Bongo and The Bronks"] = 123;
-		$document->bindList($data);
-
-		unset($data["Bongo and The Bronks"]);
-
-		foreach($data as $artistName => $albumList) {
-			$domArtist = $document->querySelector("[data-artist-name='$artistName']");
-			$h2 = $domArtist->querySelector("h2");
-			self::assertEquals($artistName, $h2->innerText);
-
-			foreach($albumList as $albumName => $trackList) {
-				$domAlbum = $domArtist->querySelector("[data-album-name='$albumName']");
-				$h3 = $domAlbum->querySelector("h3");
-				self::assertEquals($albumName, $h3->innerText);
-
-				foreach($trackList as $i => $trackName) {
-					$domTrack = $domAlbum->querySelector("[data-track-name='$trackName']");
-					self::assertStringContainsString($trackName, $domTrack->innerText);
-					$child = $domAlbum->querySelector("ol")->children[$i];
-					self::assertSame($domTrack, $child);
-				}
-			}
-		}
 	}
 
 	public function testBindListAttributeWithNoValue() {
