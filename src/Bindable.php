@@ -56,14 +56,14 @@ trait Bindable {
 	public function bindData(
 		$kvp
 	):void {
-		$iterable = $kvp;
+		$data = $kvp;
 
 		if(!is_iterable($kvp)) {
 			if($kvp instanceof BindDataMapper) {
-				$iterable = $kvp->bindDataMap();
+				$data = $kvp->bindDataMap();
 			}
 			elseif($kvp instanceof BindDataGetter) {
-				$iterable = [];
+				$data = [];
 				$prefixes = ["bind", "get"];
 
 				foreach($prefixes as $prefix) {
@@ -74,7 +74,7 @@ trait Bindable {
 
 						$key = lcfirst(substr($method, strlen($prefix)));
 						$value = $kvp->$method();
-						$iterable[$key] = $value;
+						$data[$key] = $value;
 					}
 				}
 			}
@@ -83,8 +83,13 @@ trait Bindable {
 			}
 		}
 
-		foreach($iterable as $key => $value) {
-			$this->bindKeyValue($key, $value);
+		if(is_iterable($data) || is_object($data)) {
+			foreach($data as $key => $value) {
+				$this->bindKeyValue($key, $value);
+			}
+		}
+		else {
+			$this->bindValue($data);
 		}
 	}
 
