@@ -32,6 +32,7 @@ class HTMLDocument extends BaseHTMLDocument {
 
 	protected $componentDirectory;
 	protected $templateFragmentMap;
+	protected $templateParentStack;
 	protected $boundAttributeList;
 
 	public function __construct(string $document = "", string $componentDirectory = "") {
@@ -43,6 +44,7 @@ class HTMLDocument extends BaseHTMLDocument {
 
 		$this->componentDirectory = $componentDirectory;
 		$this->templateFragmentMap = [];
+		$this->templateParentStack = [];
 		$this->boundAttributeList = [];
 	}
 
@@ -108,6 +110,24 @@ class HTMLDocument extends BaseHTMLDocument {
 		);
 
 		return $clone;
+	}
+
+	public function pushTemplateParentStack(
+		string $name,
+		Element $element
+	):void {
+		if(!isset($this->templateParentStack[$name])) {
+			$this->templateParentStack[$name] = [];
+		}
+
+		$this->templateParentStack[$name] []= $element;
+	}
+
+	public function insertTemplateParentStack():void {
+		ksort($this->templateParentStack);
+		foreach($this->templateParentStack as $name => $elementList) {
+
+		}
 	}
 
 	public function getParentOfUnnamedTemplate(

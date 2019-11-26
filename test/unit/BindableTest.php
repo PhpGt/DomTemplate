@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpComposerExtensionStubsInspection */
+
 namespace Gt\DomTemplate\Test;
 
 use EmptyIterator;
@@ -199,7 +200,7 @@ class BindableTest extends TestCase {
 		$document->bindData(new EmptyIterator());
 	}
 
-	public function testInjectAttributePlaceholderNoDataBindParameters() {
+	public function testInjectAttributePlaceholderNoDataBindAttributes() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$username = "thoughtpolice";
@@ -217,14 +218,14 @@ class BindableTest extends TestCase {
 		self::assertEquals($originalAlt, $img->alt);
 	}
 
-	public function testBindParametersPlaceholder() {
+	public function testBindAttributesPlaceholder() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$username = "thoughtpolice";
 		$link = $document->querySelector("a");
 		$img = $document->querySelector("img");
-		$link->setAttribute("data-bind-parameters", true);
-		$img->setAttribute("data-bind-parameters", true);
+		$link->setAttribute("data-bind-attributes", true);
+		$img->setAttribute("data-bind-attributes", true);
 
 		$document->bindKeyValue("userId", $userId);
 		$document->bindKeyValue("username", $username);
@@ -234,26 +235,26 @@ class BindableTest extends TestCase {
 		self::assertEquals("thoughtpolice's profile picture", $img->alt);
 	}
 
-	public function testBindParametersMultiple() {
+	public function testBindAttributesMultiple() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$userType = "thinkpol";
 		$h1 = $document->querySelector("h1");
-		$h1->setAttribute("data-bind-parameters", true);
+		$h1->setAttribute("data-bind-attributes", true);
 		$document->bindKeyValue("userId", $userId);
 		$document->bindKeyValue("userType", $userType);
 
 		self::assertEquals("heading-thinkpol-101", $h1->id);
 	}
 
-	public function testBindParametersMultipleInHref() {
+	public function testBindAttributesMultipleInHref() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
 		$userType = "thinkpol";
 		$footer = $document->querySelector("footer");
 
 		$link = $footer->querySelector("a");
-		$link->setAttribute("data-bind-parameters", true);
+		$link->setAttribute("data-bind-attributes", true);
 		$footer->bindKeyValue("userId", $userId);
 		self::assertNotNull($link->href);
 		$footer->bindKeyValue("userType", $userType);
@@ -335,15 +336,15 @@ class BindableTest extends TestCase {
 		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMES_BIND_LIST);
 		$document->extractTemplates();
 		$stateList = [
-			["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
-			["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
-			["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
+			(object)["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
+			(object)["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
+			(object)["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
 		];
 		$ministryList = [
-			["ministry-name" => "Peace", "ministry-id" => 123],
-			["ministry-name" => "Plenty", "ministry-id" => 511],
-			["ministry-name" => "Truth", "ministry-id" => 141],
-			["ministry-name" => "Love", "ministry-id" => 610],
+			(object)["ministry-name" => "Peace", "ministry-id" => 123],
+			(object)["ministry-name" => "Plenty", "ministry-id" => 511],
+			(object)["ministry-name" => "Truth", "ministry-id" => 141],
+			(object)["ministry-name" => "Love", "ministry-id" => 610],
 		];
 
 		$firstList = $document->getElementById("list-1");
@@ -358,23 +359,29 @@ class BindableTest extends TestCase {
 		self::assertCount(count($stateList), $firstList->children);
 		self::assertCount(count($ministryList), $secondList->children);
 
-		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
-		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
+		self::assertEquals(
+			$stateList[1]->{"state-name"},
+			$firstList->querySelectorAll("li")[1]->innerText
+		);
+		self::assertEquals(
+			$ministryList[2]->{"ministry-name"},
+			$secondList->querySelectorAll("li")[2]->innerText
+		);
 	}
 
 	public function testBindListMultipleDataTemplateElements() {
 		$document = new HTMLDocument(Helper::HTML_DOUBLE_NAMELESS_BIND_LIST);
 		$document->extractTemplates();
 		$stateList = [
-			["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
-			["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
-			["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
+			(object)["state-name" => "Oceania", "ideology" => "Ingsoc", "main-territory" => "Western Hemisphere"],
+			(object)["state-name" => "Eurasia", "ideology" => "Neo-Bolshevism", "main-territory" => "Continental Europe"],
+			(object)["state-name" => "Eastasia", "ideology" => "Death Worship", "main-territory" => "China"],
 		];
 		$ministryList = [
-			["ministry-name" => "Peace", "ministry-id" => 123],
-			["ministry-name" => "Plenty", "ministry-id" => 511],
-			["ministry-name" => "Truth", "ministry-id" => 141],
-			["ministry-name" => "Love", "ministry-id" => 610],
+			(object)["ministry-name" => "Peace", "ministry-id" => 123],
+			(object)["ministry-name" => "Plenty", "ministry-id" => 511],
+			(object)["ministry-name" => "Truth", "ministry-id" => 141],
+			(object)["ministry-name" => "Love", "ministry-id" => 610],
 		];
 
 		$firstList = $document->getElementById("list-1");
@@ -386,8 +393,14 @@ class BindableTest extends TestCase {
 		self::assertCount(count($stateList), $firstList->children);
 		self::assertCount(count($ministryList), $secondList->children);
 
-		self::assertEquals($stateList[1]["state-name"], $firstList->querySelectorAll("li")[1]->innerText);
-		self::assertEquals($ministryList[2]["ministry-name"], $secondList->querySelectorAll("li")[2]->innerText);
+		self::assertEquals(
+			$stateList[1]->{"state-name"},
+			$firstList->querySelectorAll("li")[1]->innerText
+		);
+		self::assertEquals(
+			$ministryList[2]->{"ministry-name"},
+			$secondList->querySelectorAll("li")[2]->innerText
+		);
 	}
 
 	public function testBindListAttributeWithNoValue() {
@@ -402,14 +415,14 @@ class BindableTest extends TestCase {
 		);
 
 		for($i = 0; $i < 10; $i++) {
-			$row = [
+			$row = (object)[
 				"text" => $formatter->format($i),
 				"value" => $i,
 				"isDisabled" => (bool)($i % 2),
 			];
 
 			if($i === 5) {
-				$row["isDisabled"] = true;
+				$row->{"isDisabled"} = true;
 			}
 
 			$data []= $row;
@@ -447,19 +460,19 @@ class BindableTest extends TestCase {
 
 	public function testBindValueManualTemplate() {
 		$employeeData = [
-			"Alan Statham" => [
+			"Alan Statham" => (object)[
 				"id" => 1742,
 				"title" => "Consultant Radiologist",
 			],
-			"Caroline Todd" => [
+			"Caroline Todd" => (object)[
 				"id" => 3010,
 				"title" => "Surgical Registrar",
 			],
-			"Guy Secretan" => [
+			"Guy Secretan" => (object)[
 				"id" => 2019,
 				"title" => "Anaesthetist",
 			],
-			"Karen Ball" => [
+			"Karen Ball" => (object)[
 				"id" => 836,
 				"title" => "Human Resources",
 			],
@@ -489,19 +502,19 @@ class BindableTest extends TestCase {
 
 	public function testBindListStringKeys() {
 		$employeeData = [
-			"Alan Statham" => [
+			"Alan Statham" => (object)[
 				"id" => 1742,
 				"title" => "Consultant Radiologist",
 			],
-			"Caroline Todd" => [
+			"Caroline Todd" => (object)[
 				"id" => 3010,
 				"title" => "Surgical Registrar",
 			],
-			"Guy Secretan" => [
+			"Guy Secretan" => (object)[
 				"id" => 2019,
 				"title" => "Anaesthetist",
 			],
-			"Karen Ball" => [
+			"Karen Ball" => (object)[
 				"id" => 836,
 				"title" => "Human Resources",
 			],
@@ -520,6 +533,90 @@ class BindableTest extends TestCase {
 			$h1 = $empElement->querySelector("h1");
 			self::assertEquals($name, $h1->textContent);
 			$i++;
+		}
+	}
+
+	public function testBindNestedList() {
+		$document = new HTMLDocument(Helper::HTML_MUSIC);
+		$document->extractTemplates();
+		$document->bindNestedList(Helper::LIST_MUSIC);
+
+		$ulArtists = $document->querySelector(".artist-list");
+
+		self::assertCount(
+			count(Helper::LIST_MUSIC),
+			$ulArtists->children
+		);
+
+		foreach(Helper::LIST_MUSIC as $artistName => $albumList) {
+			$liArtist = $ulArtists->querySelector("li[data-artist-name=$artistName]");
+			$h2ArtistName = $liArtist->querySelector("h2");
+			self::assertEquals($artistName, trim($h2ArtistName->innerText));
+
+			$ulAlbums = $liArtist->querySelector(".album-list");
+			foreach($albumList as $albumName => $trackList) {
+				$liAlbum = $ulAlbums->querySelector("li[data-album-name=$albumName]");
+				$h3AlbumName = $liAlbum->querySelector("h3");
+				self::assertEquals($albumName, trim($h3AlbumName->innerText));
+
+				$olTracks = $liAlbum->querySelector(".track-list");
+				foreach($trackList as $i => $trackName) {
+					$trackLi = $olTracks->children[$i];
+					self::assertEquals($trackName, trim($trackLi->innerText));
+				}
+			}
+		}
+	}
+
+	public function testBindNestedListWithinObject() {
+		$document = new HTMLDocument(Helper::HTML_SHOP);
+		$document->extractTemplates();
+		$data = Helper::LIST_SHOP;
+		foreach($data as $key => $value) {
+			$data[$key] = (object)$value;
+		}
+		$document->bindNestedList($data);
+
+		$ulProductList = $document->querySelector(".product-list");
+		self::assertCount(
+			count($data),
+			$ulProductList->children
+		);
+
+		$index = 0;
+		foreach($data as $itemName => $itemData) {
+			$liProduct = $ulProductList->children[$index];
+
+			self::assertEquals(
+				$itemName,
+				$liProduct->querySelector("h2")->innerText
+			);
+			self::assertEquals(
+				$itemData->{"description"},
+				$liProduct->querySelector("p")->innerText
+			);
+			self::assertEquals(
+				$itemData->{"price"},
+				$liProduct->querySelector(".price")->innerText
+			);
+
+			$ulCategories = $liProduct->querySelector("ul.categories");
+			self::assertCount(
+				count($itemData->{"categories"}),
+				$ulCategories->children
+			);
+
+			foreach($itemData->{"categories"}
+			as $categoryIndex => $categoryName) {
+				$liCategory = $ulCategories->children[$categoryIndex];
+				self::assertEquals($categoryName, trim($liCategory->innerText));
+
+				$link = $liCategory->querySelector("a");
+				self::assertEquals($categoryName, trim($link->innerText));
+				self::assertEquals("/shop/category/$categoryName", $link->href);
+			}
+
+			$index++;
 		}
 	}
 }

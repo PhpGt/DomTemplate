@@ -442,16 +442,16 @@ HTML;
 <meta charset="utf-8" />
 <title>This document has some elements with attribute placeholders</title>
 <main>
-	<h1 id="heading-{userType}-{userId}" data-bind-parameters>This is a test!</h1>
-	<p><a id="userType-{userType}" href="/user/{userId}" data-bind-parameters>View your account</a></p>
+	<h1 id="heading-{userType}-{userId}" data-bind-attributes>This is a test!</h1>
+	<p><a id="userType-{userType}" href="/user/{userId}" data-bind-attributes>View your account</a></p>
 	
 	<p>You are logged in.</p>
 	<p>This is your profile picture:</p>
 	
-	<img src="/img/profile/{userId}.jpg" alt="{username}'s profile picture" data-bind-parameters />
+	<img src="/img/profile/{userId}.jpg" alt="{username}'s profile picture" data-bind-attributes />
 </main>
 <footer>
-	<a href="/user.php?id={userId}&type={userType}" data-bind-parameters>Another link in the footer</a>
+	<a href="/user.php?id={userId}&type={userType}" data-bind-attributes>Another link in the footer</a>
 </footer>
 HTML;
 
@@ -528,6 +528,62 @@ HTML;
 				"Indigo",
 				"Teal",
 			],
+		]
+	];
+
+	const HTML_SHOP = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Online shop</title>
+<main>
+	<h1>Online shop!</h1>
+	
+	<ul class="product-list">
+		<li data-template>
+			<h2 data-bind:text>Product Name</h2>
+			<p data-bind:text="description">Description of product</p>
+			£<span data-bind:text="price" class="price">0.00</span>
+			
+			<h3>Categories:</h3>
+			<ul class="categories">
+				<li data-template>
+					<a href="/shop/category/{}" data-bind:text data-bind-attributes>Category name</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+HTML;
+
+	const LIST_SHOP = [
+// IMPORTANT: Within the unit test, the outer associative array needs to be
+// converted into an Object, but this can't be done as a CONST.
+		"Handblown Glass Carafe" => [
+			"description" => "The most important part of any brewing system",
+			"price" => 44.95,
+			"categories" => [
+				"coffee",
+				"brew",
+				"glass",
+				"filter",
+			]
+		],
+		"Pre-folded filter papers" => [
+			"description" => "Cone shaped filters to ensure the purest flavour",
+			"price" => 9.00,
+			"categories" => [
+				"coffee",
+				"refill",
+				"filter",
+			]
+		],
+		"Bean Grinder" => [
+			"description" => "Italian-made burr grinder, offering unparallelled performance",
+			"price" => 250,
+			"categories" => [
+				"coffee",
+				"grinding",
+				"accessory",
+			]
 		]
 	];
 

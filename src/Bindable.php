@@ -26,8 +26,8 @@ trait Bindable {
 			$value = "";
 		}
 
-		$this->injectBoundProperty($key, $value);
-		$this->injectAttributePlaceholder($key, $value);
+		$this->injectBoundData($key, $value);
+		$this->injectBoundAttribute($key, $value);
 	}
 
 	/**
@@ -58,40 +58,7 @@ trait Bindable {
 			throw new IncompatibleBindDataException();
 		}
 
-		if($this->isAssociativeArray($kvp)) {
-			$assocArray = $kvp;
-		}
-		else {
-			if($kvp instanceof BindDataMapper) {
-				$assocArray = $kvp->bindDataMap();
-			}
-			elseif($kvp instanceof BindObject) {
-				$assocArray = [];
-				$prefix = "bind";
-				foreach(get_class_methods($kvp) as $method) {
-					if(strpos($method, $prefix) !== 0) {
-						continue;
-					}
-
-					$key = lcfirst(
-						substr(
-							$method,
-							strlen($prefix)
-						)
-					);
-
-					$value = $kvp->$method();
-					$assocArray[$key] = $value;
-				}
-			}
-			elseif(is_object($kvp)) {
-// Finally, assume the kvp is a Plain Old PHP Object (POPO).
-				$assocArray = get_object_vars($kvp);
-			}
-			else {
-				$assocArray = $kvp;
-			}
-		}
+		$assocArray = $this->convertKvpToAssocArray($kvp);
 
 		foreach($assocArray as $key => $value) {
 			$this->bindKeyValue($key, $value);
@@ -130,7 +97,6 @@ trait Bindable {
 		$document = $element->ownerDocument;
 
 		$fragment = $document->createDocumentFragment();
-		$templateParent = null;
 
 		if(is_null($templateName)) {
 			$templateElement = $document->getUnnamedTemplate(
@@ -140,53 +106,39 @@ trait Bindable {
 			);
 		}
 		else {
-			$templateElement = $document->getNamedTemplate($templateName);
+			$templateElement = $document->getNamedTemplate(
+				$templateName
+			);
 		}
 
+		$templateParent = $templateElement->templateParentNode;
+		$parentPath = $templateParent->getNodePath();
+
 		$count = 0;
-		foreach($kvpList as $i => $data) {
+		foreach($kvpList as $key => $data) {
 			$count ++;
-
-// TODO: Recursive call if value is iterable.
 			$t = $templateElement->cloneNode(true);
+			/** @var Element $insertedT */
+			$insertedT = $fragment->appendChild($t);
 
-			if(is_string($i)) {
-				$t->bindValue($i);
-			}
-
-			if(!$templateParent) {
-				$templateParent = $templateElement->templateParentNode;
+			if(is_string($key)) {
+				$insertedT->bindValue($key);
 			}
 
 			if($this->isBindableValue($data)) {
-				$t->bindValue($data);
+				$insertedT->bindValue($data);
 			}
 			else {
-				if($this->isList($data)) {
-					$t->bindList($data);
-				}
-				else {
-					$t->bindData($data);
-				}
+				$insertedT->bindData($data);
 			}
-
-			$fragment->appendChild($t);
 		}
 
-		if(!is_null($templateParent)) {
-			$templateParent->appendChild($fragment);
-		}
-
+		$templateParent->appendChild($fragment);
 		return $count;
 	}
 
-	/**
-	 * When complex data needs binding to a nested DOM structure, a
-	 * BindIterator is necessary to link each child list with the
-	 * correct template.
-	 */
 	public function bindNestedList(
-		iterable $data,
+		iterable $nestedKvpList,
 		bool $requireMatchingTemplatePath = false
 	):int {
 		/** @var BaseElement $element */
@@ -203,28 +155,45 @@ trait Bindable {
 		);
 
 		$i = 0;
-		foreach($data as $key => $value) {
+		foreach($nestedKvpList as $key => $value) {
 			$i++;
 			$t = $document->getUnnamedTemplate(
 				$templateParent,
 				false
 			);
 
+			$insertedTemplate = $templateParent->appendChild($t);
+
 			if(is_string($key)) {
-				$t->bindValue($key);
+				$insertedTemplate->bindValue($key);
 			}
 
 			if(is_string($value)) {
-				$t->bindValue($value);
+				$insertedTemplate->bindValue($value);
 			}
-
-			$insertedTemplate = $templateParent->appendChild($t);
-
-			if(is_iterable($value)) {
+			elseif(is_iterable($value)) {
 				$i += $insertedTemplate->bindNestedList(
 					$value,
 					true
 				);
+			}
+			else {
+				$assocArray = $this->convertKvpToAssocArray($value);
+
+				foreach($assocArray as $dataKey => $dataValue) {
+					if($this->isList($dataValue)) {
+						$insertedTemplate->bindNestedList(
+							$dataValue,
+							true
+						);
+					}
+					else {
+						$insertedTemplate->bindKeyValue(
+							$dataKey,
+							$dataValue
+						);
+					}
+				}
 			}
 		}
 
@@ -236,7 +205,7 @@ trait Bindable {
 	 * matching data-bind:* attribute, and inject the provided $value
 	 * into the according property value.
 	 */
-	protected function injectBoundProperty(
+	protected function injectBoundData(
 		?string $key,
 		$value
 	):void {
@@ -321,7 +290,7 @@ trait Bindable {
 		return $attr->value[0] === "?";
 	}
 
-	protected function injectAttributePlaceholder(
+	protected function injectBoundAttribute(
 		?string $key,
 		$value
 	):void {
@@ -331,9 +300,24 @@ trait Bindable {
 			$element = $element->documentElement;
 		}
 
-		foreach($element->xPath(".//*[@data-bind-parameters]") as $elementToBindAttributes) {
+		foreach($element->xPath(".//*[@data-bind-attributes]") as $elementToBindAttributes) {
 			foreach($elementToBindAttributes->attributes as $attr) {
 				/** @var Attr $attr */
+
+				$attrValue = $attr->value;
+				if(is_null($key)) {
+					$attrValue = str_replace(
+						"{}",
+						$value,
+						$attrValue
+					);
+
+					$elementToBindAttributes->setAttribute(
+						$attr->name,
+						$attrValue
+					);
+				}
+
 				preg_match_all(
 					"/{(?P<bindProperties>[^}]+)}/",
 					$attr->value,
@@ -350,7 +334,6 @@ trait Bindable {
 					continue;
 				}
 
-				$attrValue = $attr->value;
 				$attrValue = str_replace(
 					"{" . $key . "}",
 					$value,
@@ -521,10 +504,50 @@ trait Bindable {
 			$firstItem = $data->current();
 		}
 
-		if(!$firstItem) {
+		if(is_null($firstItem)) {
 			return false;
 		}
 
-		return $this->isBindableData($firstItem);
+		return $this->isBindableData($firstItem)
+			|| $this->isBindableValue($firstItem);
+	}
+
+	protected function convertKvpToAssocArray($kvp):array {
+		if($this->isAssociativeArray($kvp)) {
+			$assocArray = $kvp;
+		}
+		else {
+			if($kvp instanceof BindDataMapper) {
+				$assocArray = $kvp->bindDataMap();
+			}
+			elseif($kvp instanceof BindObject) {
+				$assocArray = [];
+				$prefix = "bind";
+				foreach(get_class_methods($kvp) as $method) {
+					if(strpos($method, $prefix) !== 0) {
+						continue;
+					}
+
+					$key = lcfirst(
+						substr(
+							$method,
+							strlen($prefix)
+						)
+					);
+
+					$value = $kvp->$method();
+					$assocArray[$key] = $value;
+				}
+			}
+			elseif(is_object($kvp)) {
+// Finally, assume the kvp is a Plain Old PHP Object (POPO).
+				$assocArray = get_object_vars($kvp);
+			}
+			else {
+				$assocArray = $kvp;
+			}
+		}
+
+		return $assocArray;
 	}
 }
