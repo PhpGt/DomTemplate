@@ -88,6 +88,10 @@ trait Bindable {
 		iterable $kvpList,
 		string $templateName = null
 	):int {
+		if(empty($kvpList)) {
+			return 0;
+		}
+
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
