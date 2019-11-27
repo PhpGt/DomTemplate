@@ -67,7 +67,9 @@ trait TemplateParent {
 				$parentNode->removeChild($templateElement);
 			}
 
-			$templateElement->classList->add("t-$name");
+			if($name[0] !== "/") {
+				$templateElement->classList->add("t-$name");
+			}
 		}
 
 		if($this instanceof HTMLDocument) {
