@@ -619,4 +619,25 @@ class BindableTest extends TestCase {
 			$index++;
 		}
 	}
+
+	public function testTemplateNameIsAddedWhenNamed() {
+		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
+		$document->extractTemplates();
+
+		foreach(["one", "two", "three"] as $num) {
+			$t = $document->getTemplate("list-item");
+			$t->innerText = $num;
+			$inserted = $t->insertTemplate();
+
+			self::assertStringContainsString("t-list-item", $inserted->getAttribute("class"));
+		}
+	}
+
+	public function testTemplateNameIsNotAddedWhenNotNamed() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST_INLINE_NAMED_TEMPLATE_DOUBLE);
+		$document->extractTemplates();
+		$unnamedTemplateContainer = $document->getElementById("todo-list-2");
+		$unnamedTemplateContainer->bindList([1, 2, 3]);
+		self::assertCount(3, $unnamedTemplateContainer->children);
+	}
 }
