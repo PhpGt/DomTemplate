@@ -84,13 +84,19 @@ trait TemplateParent {
 	}
 
 	public function getTemplate(
-		string $name,
+		string $name = null,
 		string $templateDirectory = null,
 		bool $addTemplatePrefix = true
 	):DocumentFragment {
 		/** @var HTMLDocument $rootDocument */
 		$rootDocument = $this->getRootDocument();
-		$docTemplate = $rootDocument->getNamedTemplate($name);
+
+		if(is_null($name)) {
+			$docTemplate = $rootDocument->getUnnamedTemplate($this, false);
+		}
+		else {
+			$docTemplate = $rootDocument->getNamedTemplate($name);
+		}
 		if(!is_null($docTemplate)) {
 			return $docTemplate;
 		}
