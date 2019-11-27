@@ -60,6 +60,17 @@ class TemplateParentTest extends TestCase {
 		self::assertCount(2, $t->children);
 	}
 
+	public function testGetTemplateNoName() {
+		$document = new HTMLDocument(Helper::HTML_SELECT);
+		$document->extractTemplates();
+		$select = $document->getElementById("sut");
+		self::assertCount(0, $select->children);
+		$t = $select->getTemplate();
+		self::assertInstanceOf(DocumentFragment::class, $t);
+		$t->insertTemplate();
+		self::assertCount(1, $select->children);
+	}
+
 	public function testExpandComponentsNoComponents() {
 		$templateDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
 		$document = new HTMLDocument(Helper::HTML_TEMPLATES);
