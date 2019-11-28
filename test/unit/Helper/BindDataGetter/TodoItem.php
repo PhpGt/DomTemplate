@@ -1,9 +1,9 @@
 <?php
 namespace Gt\DomTemplate\Test\Helper\BindDataGetter;
 
-use Gt\DomTemplate\BindDataGetter;
+use Gt\DomTemplate\BindObject;
 
-class TodoItem implements BindDataGetter {
+class TodoItem implements BindObject {
 	private $id;
 	private $title;
 
