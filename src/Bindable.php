@@ -85,7 +85,7 @@ trait Bindable {
 	 * @see self::bindNestedList
 	 */
 	public function bindList(
-		iterable $kvpList,
+		?iterable $kvpList,
 		string $templateName = null
 	):int {
 		if(empty($kvpList)) {
@@ -142,9 +142,13 @@ trait Bindable {
 	}
 
 	public function bindNestedList(
-		iterable $nestedKvpList,
+		?iterable $nestedKvpList,
 		bool $requireMatchingTemplatePath = false
 	):int {
+		if(empty($nestedKvpList)) {
+			return 0;
+		}
+
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
