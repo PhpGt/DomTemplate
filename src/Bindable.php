@@ -271,6 +271,10 @@ trait Bindable {
 	):?string {
 		$keyToSet = $attr->value ?: null;
 
+		if(is_null($keyToSet)) {
+			return null;
+		}
+
 		if($keyToSet[0] === "@") {
 			$lookupAttribute = substr($keyToSet, 1);
 			$keyToSet = $attr->ownerElement->getAttribute(
