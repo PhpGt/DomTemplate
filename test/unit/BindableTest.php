@@ -8,6 +8,7 @@ use Gt\DomTemplate\BoundAttributeDoesNotExistException;
 use Gt\DomTemplate\BoundDataNotSetException;
 use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\NamelessTemplateSpecificityException;
+use Gt\DomTemplate\Test\Helper\BindDataGetter\TodoItem;
 use Gt\DomTemplate\Test\Helper\Helper;
 use NumberFormatter;
 use stdClass;
@@ -639,5 +640,21 @@ class BindableTest extends TestCase {
 		$unnamedTemplateContainer = $document->getElementById("todo-list-2");
 		$unnamedTemplateContainer->bindList([1, 2, 3]);
 		self::assertCount(3, $unnamedTemplateContainer->children);
+	}
+
+	public function testBindKeyValueBool() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$document->extractTemplates();
+		$todoIncomplete = new TodoItem(1, "Example not complete", false);
+		$todoComplete = new TodoItem(2, "Example complete", true);
+
+		$document->bindList([
+			$todoIncomplete,
+			$todoComplete,
+		]);
+
+		$listItems = $document->querySelectorAll("li");
+		self::assertFalse($listItems[0]->classList->contains("completed"));
+		self::assertTrue($listItems[1]->classList->contains("completed"));
 	}
 }

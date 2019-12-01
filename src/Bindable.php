@@ -26,6 +26,13 @@ trait Bindable {
 			$value = "";
 		}
 
+		if($value === false) {
+			return;
+		}
+		if($value === true) {
+			$value = $key;
+		}
+
 		$this->injectBoundData($key, $value);
 		$this->injectBoundAttribute($key, $value);
 	}

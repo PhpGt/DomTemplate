@@ -220,7 +220,7 @@ HTML;
 <title>Todo list</title>
 <main>
 	<ul id="todo-list">
-		<li data-template>
+		<li data-template data-bind:class="completed">
 			<input name="id" data-bind:value="@name" />
 			<input name="title" data-bind:value="@name" />
 			<button name="do" value="complete">Complete</button>		
