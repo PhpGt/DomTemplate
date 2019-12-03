@@ -60,8 +60,7 @@ trait Bindable {
 	):void {
 		$assocArray = null;
 
-		if($this->isIndexedArray($kvp)
-		|| $kvp instanceof Iterator) {
+		if($this->isIndexedArray($kvp)) {
 			throw new IncompatibleBindDataException();
 		}
 
