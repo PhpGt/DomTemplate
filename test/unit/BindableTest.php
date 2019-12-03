@@ -195,12 +195,6 @@ class BindableTest extends TestCase {
 		$document->bindData(["one", "two", "three"]);
 	}
 
-	public function testBindDataIterator() {
-		self::expectException(IncompatibleBindDataException::class);
-		$document = new HTMLDocument();
-		$document->bindData(new EmptyIterator());
-	}
-
 	public function testInjectAttributePlaceholderNoDataBindAttributes() {
 		$document = new HTMLDocument(Helper::HTML_ATTRIBUTE_PLACEHOLDERS_NO_BIND);
 		$userId = 101;
