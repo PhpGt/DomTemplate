@@ -182,8 +182,8 @@ class TemplateParentTest extends TestCase {
 			Helper::HTML_TEMPLATE_WITH_NESTED_COMPONENT,
 			$templateDir
 		);
-		$document->extractTemplates();
 		$document->expandComponents();
+		$document->extractTemplates();
 
 		self::assertCount(
 			0,
@@ -243,8 +243,7 @@ class TemplateParentTest extends TestCase {
 			$templateDir
 		);
 		$document->expandComponents();
-
-		$document->getTemplate("title-definition-item")->insertTemplate();
+		$document->extractTemplates();
 
 		$section = $document->querySelector("section");
 		$ol = $section->lastElementChild;
@@ -419,5 +418,32 @@ class TemplateParentTest extends TestCase {
 		self::assertTrue(
 			$component->classList->contains("source-class")
 		);
+	}
+
+	/** @link https://github.com/PhpGt/DomTemplate/issues/105 */
+	public function testTemplateWithinComponentIsAddedCorrectly() {
+		$componentDir = self::TEST_DIR . "/" . self::COMPONENT_PATH;
+		file_put_contents(
+			"$componentDir/simple-list.html",
+			Helper::COMPONENT_WITH_TEMPLATE
+		);
+
+		$document = new HTMLDocument(
+			Helper::HTML_SIMPLE_LIST_COMPONENT,
+			$componentDir
+		);
+		$document->expandComponents();
+		$document->extractTemplates();
+
+		$componentElement = $document->querySelector(".c-simple-list");
+		self::assertCount(0, $componentElement->children);
+
+		$componentElement->bindList([
+			"one",
+			"two",
+			"three",
+		]);
+
+		self::assertCount(3, $componentElement->children);
 	}
 }

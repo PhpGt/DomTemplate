@@ -112,24 +112,6 @@ class HTMLDocument extends BaseHTMLDocument {
 		return $clone;
 	}
 
-	public function pushTemplateParentStack(
-		string $name,
-		Element $element
-	):void {
-		if(!isset($this->templateParentStack[$name])) {
-			$this->templateParentStack[$name] = [];
-		}
-
-		$this->templateParentStack[$name] []= $element;
-	}
-
-	public function insertTemplateParentStack():void {
-		ksort($this->templateParentStack);
-		foreach($this->templateParentStack as $name => $elementList) {
-
-		}
-	}
-
 	public function getParentOfUnnamedTemplate(
 		Element $element,
 		bool $requireMatchingPath = false
