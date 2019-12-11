@@ -26,6 +26,13 @@ trait Bindable {
 			$value = "";
 		}
 
+		if($value === false) {
+			return;
+		}
+		if($value === true) {
+			$value = $key;
+		}
+
 		$this->injectBoundData($key, $value);
 		$this->injectBoundAttribute($key, $value);
 	}
@@ -53,8 +60,7 @@ trait Bindable {
 	):void {
 		$assocArray = null;
 
-		if($this->isIndexedArray($kvp)
-		|| $kvp instanceof Iterator) {
+		if($this->isIndexedArray($kvp)) {
 			throw new IncompatibleBindDataException();
 		}
 
@@ -85,7 +91,7 @@ trait Bindable {
 	 * @see self::bindNestedList
 	 */
 	public function bindList(
-		iterable $kvpList,
+		?iterable $kvpList,
 		string $templateName = null
 	):int {
 		if(empty($kvpList)) {
@@ -142,9 +148,13 @@ trait Bindable {
 	}
 
 	public function bindNestedList(
-		iterable $nestedKvpList,
+		?iterable $nestedKvpList,
 		bool $requireMatchingTemplatePath = false
 	):int {
+		if(empty($nestedKvpList)) {
+			return 0;
+		}
+
 		/** @var BaseElement $element */
 		$element = $this;
 		if($element instanceof HTMLDocument) {
@@ -266,6 +276,10 @@ trait Bindable {
 		BaseAttr $attr
 	):?string {
 		$keyToSet = $attr->value ?: null;
+
+		if(is_null($keyToSet)) {
+			return null;
+		}
 
 		if($keyToSet[0] === "@") {
 			$lookupAttribute = substr($keyToSet, 1);
