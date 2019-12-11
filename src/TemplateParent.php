@@ -196,7 +196,6 @@ trait TemplateParent {
 		}
 
 		$fragment->appendHTML($html);
-		$fragment->extractTemplates();
 		return $fragment;
 	}
 
