@@ -194,6 +194,22 @@ HTML;
 <li>This is an item in the list</li>
 HTML;
 
+	const COMPONENT_WITH_TEMPLATE = <<<HTML
+<ul>
+	<li data-template data-bind:text>Test</li>
+</ul>
+HTML;
+
+	const HTML_SIMPLE_LIST_COMPONENT = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Simple componentised list test</title>
+<main>
+	<simple-list></simple-list>
+</main>
+HTML;
+
+
 	const HTML_BIND_UNKNOWN_PROPERTY = <<<HTML
 <!doctype html>
 <meta charset="utf-8" />
