@@ -651,4 +651,12 @@ class BindableTest extends TestCase {
 		self::assertFalse($listItems[0]->classList->contains("completed"));
 		self::assertTrue($listItems[1]->classList->contains("completed"));
 	}
+
+	public function testBindListEmptySetsInnerHtmlToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$document->extractTemplates();
+		$ul = $document->getElementById("todo-list");
+		$ul->bindList([]);
+		self::assertEquals("", $ul->innerHTML);
+	}
 }
