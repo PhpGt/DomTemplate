@@ -95,6 +95,10 @@ trait Bindable {
 		string $templateName = null
 	):int {
 		if(empty($kvpList)) {
+			if($this->children->length === 0) {
+				$this->innerHTML = "";
+			}
+
 			return 0;
 		}
 

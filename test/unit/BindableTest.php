@@ -621,7 +621,7 @@ class BindableTest extends TestCase {
 
 		foreach(["one", "two", "three"] as $num) {
 			$t = $document->getTemplate("list-item");
-			$t->innerText = $num;
+			$t->innerHTML = $num;
 			$inserted = $t->insertTemplate();
 
 			self::assertStringContainsString("t-list-item", $inserted->getAttribute("class"));
