@@ -621,7 +621,7 @@ class BindableTest extends TestCase {
 
 		foreach(["one", "two", "three"] as $num) {
 			$t = $document->getTemplate("list-item");
-			$t->innerText = $num;
+			$t->innerHTML = $num;
 			$inserted = $t->insertTemplate();
 
 			self::assertStringContainsString("t-list-item", $inserted->getAttribute("class"));
@@ -650,5 +650,13 @@ class BindableTest extends TestCase {
 		$listItems = $document->querySelectorAll("li");
 		self::assertFalse($listItems[0]->classList->contains("completed"));
 		self::assertTrue($listItems[1]->classList->contains("completed"));
+	}
+
+	public function testBindListEmptySetsInnerHtmlToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$document->extractTemplates();
+		$ul = $document->getElementById("todo-list");
+		$ul->bindList([]);
+		self::assertEquals("", $ul->innerHTML);
 	}
 }
