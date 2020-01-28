@@ -451,6 +451,25 @@ class TemplateParentTest extends TestCase {
 		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
 		$document->extractTemplates();
 		$todoListElement = $document->getElementById("todo-list");
-		self::assertSame("", $todoListElement->innerHTML);
+		self::assertEmpty($todoListElement->innerHTML);
+	}
+
+	public function testExtractTemplatesSetsNestedParentInnerHTMLToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_NESTED_LIST);
+		$document->extractTemplates();
+		$outerListElement = $document->querySelector("ul");
+		self::assertEmpty($outerListElement->innerHTML);
+// An example of binding some real data to this example:
+//		$document->bindNestedList([
+//			"Outer 1" => (object)[
+//				"Inner 1:1" => ["name" => uniqid("Inner 1:1 ")],
+//				"Inner 1:2" => ["name" => uniqid("Inner 1:2 ")],
+//				"Inner 1:3" => ["name" => uniqid("Inner 1:3 ")],
+//			],
+//			"Outer 2" => (object)[
+//				"Inner 2:1" => ["name" => uniqid("Inner 2:1 ")],
+//				"Inner 2:2" => ["name" => uniqid("Inner 2:2 ")],
+//			],
+//		]);
 	}
 }
