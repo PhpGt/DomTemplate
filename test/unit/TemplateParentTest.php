@@ -446,4 +446,11 @@ class TemplateParentTest extends TestCase {
 
 		self::assertCount(3, $componentElement->children);
 	}
+
+	public function testExtractTemplatesSetsParentInnerHTMLToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+		self::assertSame("", $todoListElement->innerHTML);
+	}
 }
