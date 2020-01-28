@@ -446,4 +446,45 @@ class TemplateParentTest extends TestCase {
 
 		self::assertCount(3, $componentElement->children);
 	}
+
+	public function testExtractTemplatesSetsParentInnerHTMLToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$document->extractTemplates();
+		$todoListElement = $document->getElementById("todo-list");
+		self::assertEmpty($todoListElement->innerHTML);
+	}
+
+	public function testExtractTemplatesSetsNestedParentInnerHTMLToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_NESTED_LIST);
+		$document->extractTemplates();
+		$outerListElement = $document->querySelector("ul");
+		self::assertEmpty($outerListElement->innerHTML);
+	}
+
+	public function testExtractTemplatesSetsNestedParentInnerHTMLPartiallyToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_NESTED_LIST);
+		$document->extractTemplates();
+		$outerListElement = $document->querySelector("ul");
+		$document->bindNestedList([
+			"Outer 1" => [
+				"1:1" => [],
+				"1:2" => [],
+				"1:3" => [],
+			],
+			"Outer 2" => [],
+			"Outer 3" => [
+				"3:1" => [
+					"Example" => (object)[
+						"name" => "Here I am!"
+					]
+				],
+				"3:2" => [],
+			],
+		]);
+
+		self::assertNotEmpty($outerListElement->innerHTML);
+		self::assertNotEmpty($outerListElement->querySelectorAll("ol")[0]->innerHTML);
+		self::assertNotEmpty($outerListElement->querySelectorAll("ol")[2]->innerHTML);
+		self::assertEmpty($outerListElement->querySelectorAll("ol")[1]->innerHTML);
+	}
 }

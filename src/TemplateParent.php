@@ -24,8 +24,8 @@ trait TemplateParent {
 			$name = $this->getTemplateNameFromElement($templateElement);
 
 			$parentNode = $templateElement->parentNode;
-			$nextSibling = $templateElement->nextSibling;
-			$previousSibling = $templateElement->previousSibling;
+			$nextElementSibling = $templateElement->nextElementSibling;
+			$previousElementSibling = $templateElement->previousElementSibling;
 			$templateNodePath = $templateElement->getNodePath();
 
 			$nestedTemplateElementList = $templateElement->querySelectorAll(
@@ -45,8 +45,8 @@ trait TemplateParent {
 			);
 			$fragment->setTemplateProperties(
 				$parentNode,
-				$nextSibling,
-				$previousSibling
+				$nextElementSibling,
+				$previousElementSibling
 			);
 			$fragment->expandComponents();
 
@@ -65,6 +65,10 @@ trait TemplateParent {
 
 			if($templateElement->parentNode === $parentNode) {
 				$parentNode->removeChild($templateElement);
+			}
+
+			if(count($parentNode->children) === 0) {
+				$parentNode->innerHTML = "";
 			}
 
 			if($name[0] !== "/") {
@@ -88,11 +92,17 @@ trait TemplateParent {
 		string $templateDirectory = null,
 		bool $addTemplatePrefix = true
 	):DocumentFragment {
+		/** @var Element $element */
+		$element = $this;
+
 		/** @var HTMLDocument $rootDocument */
-		$rootDocument = $this->getRootDocument();
+		$rootDocument = $element->getRootDocument();
 
 		if(is_null($name)) {
-			$docTemplate = $rootDocument->getUnnamedTemplate($this, false);
+			$docTemplate = $rootDocument->getUnnamedTemplate(
+				$element,
+				false
+			);
 		}
 		else {
 			$docTemplate = $rootDocument->getNamedTemplate($name);
@@ -102,7 +112,7 @@ trait TemplateParent {
 		}
 
 		if(is_null($templateDirectory)) {
-			$templateDirectory = $this->componentDirectory;
+			$templateDirectory = $element->componentDirectory;
 		}
 
 		if(is_dir($templateDirectory)) {
@@ -115,7 +125,7 @@ trait TemplateParent {
 				$fileName = strtok($fileName, ".");
 
 				if($name === $fileName) {
-					$component = $this->loadComponent(
+					$component = $element->loadComponent(
 						$name,
 						dirname($fileInfo->getRealPath())
 					);
