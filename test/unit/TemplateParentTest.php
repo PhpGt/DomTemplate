@@ -459,17 +459,32 @@ class TemplateParentTest extends TestCase {
 		$document->extractTemplates();
 		$outerListElement = $document->querySelector("ul");
 		self::assertEmpty($outerListElement->innerHTML);
-// An example of binding some real data to this example:
-//		$document->bindNestedList([
-//			"Outer 1" => (object)[
-//				"Inner 1:1" => ["name" => uniqid("Inner 1:1 ")],
-//				"Inner 1:2" => ["name" => uniqid("Inner 1:2 ")],
-//				"Inner 1:3" => ["name" => uniqid("Inner 1:3 ")],
-//			],
-//			"Outer 2" => (object)[
-//				"Inner 2:1" => ["name" => uniqid("Inner 2:1 ")],
-//				"Inner 2:2" => ["name" => uniqid("Inner 2:2 ")],
-//			],
-//		]);
+	}
+
+	public function testExtractTemplatesSetsNestedParentInnerHTMLPartiallyToEmpty() {
+		$document = new HTMLDocument(Helper::HTML_NESTED_LIST);
+		$document->extractTemplates();
+		$outerListElement = $document->querySelector("ul");
+		$document->bindNestedList([
+			"Outer 1" => [
+				"1:1" => [],
+				"1:2" => [],
+				"1:3" => [],
+			],
+			"Outer 2" => [],
+			"Outer 3" => [
+				"3:1" => [
+					"Example" => (object)[
+						"name" => "Here I am!"
+					]
+				],
+				"3:2" => [],
+			],
+		]);
+
+		self::assertNotEmpty($outerListElement->innerHTML);
+		self::assertNotEmpty($outerListElement->querySelectorAll("ol")[0]->innerHTML);
+		self::assertNotEmpty($outerListElement->querySelectorAll("ol")[2]->innerHTML);
+		self::assertEmpty($outerListElement->querySelectorAll("ol")[1]->innerHTML);
 	}
 }

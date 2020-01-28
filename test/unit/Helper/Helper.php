@@ -362,11 +362,11 @@ HTML;
 <title>Nested list</title>
 <main>
 	<ul>
-		<li data-template>
-			<h1 data-bind:text>Outer title goes here</h1>
+		<li data-template class="outer">
+			<h1 data-bind:text>0:0</h1>
 			
 			<ol>
-				<li data-template>
+				<li data-template class="inner">
 					<h2 data-bind:text>Inner title goes here</h2>				
 				</li>			
 			</ol>		
