@@ -16,23 +16,23 @@ class DocumentFragment extends BaseDocumentFragment {
 	/** @var BaseElement */
 	public $templateParentNode;
 	/** @var BaseElement */
-	public $templateNextSibling;
+	public $templateNextElementSibling;
 	/** @var BaseElement */
-	public $templatePreviousSibling;
+	public $templatePreviousElementSibling;
 
 	/**
 	 * @param BaseNode $parentNode
-	 * @param BaseNode $nextSibling
-	 * @param BaseNode $previousSibling
+	 * @param BaseNode $nextElementSibling
+	 * @param BaseNode $previousElementSibling
 	 */
 	public function setTemplateProperties(
 		$parentNode = null,
-		$nextSibling = null,
-		$previousSibling = null
+		$nextElementSibling = null,
+		$previousElementSibling = null
 	):void {
 		$this->templateParentNode = $parentNode;
-		$this->templateNextSibling = $nextSibling;
-		$this->templatePreviousSibling = $previousSibling;
+		$this->templateNextElementSibling = $nextElementSibling;
+		$this->templatePreviousElementSibling = $previousElementSibling;
 	}
 
 	/**
@@ -43,7 +43,7 @@ class DocumentFragment extends BaseDocumentFragment {
 
 		if(is_null($insertInto)) {
 			$insertInto = $this->templateParentNode;
-			$insertBefore = $this->templateNextSibling;
+			$insertBefore = $this->templateNextElementSibling;
 		}
 		if(is_null($insertInto)) {
 			throw new TemplateHasNoParentException();
@@ -58,17 +58,5 @@ class DocumentFragment extends BaseDocumentFragment {
 		);
 
 		return $inserted;
-	}
-
-	public function prop_get_templateNextSibling() {
-		return $this->templateNextSibling;
-	}
-
-	public function prop_get_templatePreviousSibling() {
-		return $this->templatePreviousSibling;
-	}
-
-	public function prop_get_templateParentNode() {
-		return $this->templateParentNode;
 	}
 }

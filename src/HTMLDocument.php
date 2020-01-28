@@ -61,8 +61,8 @@ class HTMLDocument extends BaseHTMLDocument {
 			$clone = $fragment->cloneNode(true);
 			$clone->setTemplateProperties(
 				$fragment->templateParentNode,
-				$fragment->templateNextSibling,
-				$fragment->templatePreviousSibling
+				$fragment->templateNextElementSibling,
+				$fragment->templatePreviousElementSibling
 			);
 
 			return $clone;
@@ -105,8 +105,8 @@ class HTMLDocument extends BaseHTMLDocument {
 		$clone = $fragment->cloneNode(true);
 		$clone->setTemplateProperties(
 			$fragment->templateParentNode,
-			$fragment->templateNextSibling,
-			$fragment->templatePreviousSibling
+			$fragment->templateNextElementSibling,
+			$fragment->templatePreviousElementSibling
 		);
 
 		return $clone;
@@ -120,7 +120,6 @@ class HTMLDocument extends BaseHTMLDocument {
 // Unnamed templates can't have sibling elements of the same path, otherwise
 // they would need to be named. Remove any index from the path.
 		$path = preg_replace("/\[\d+\]/", "", $path);
-		$matches = [];
 		$pathToReturn = null;
 
 		foreach($this->templateFragmentMap as $name => $t) {
@@ -149,6 +148,7 @@ class HTMLDocument extends BaseHTMLDocument {
 			return null;
 		}
 
+		/** @var Element[] $matchingElements */
 		$matchingElements =  $this->xPath($pathToReturn);
 		return $matchingElements[count($matchingElements) - 1];
 	}
