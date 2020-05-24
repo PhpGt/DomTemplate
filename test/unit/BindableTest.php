@@ -1,5 +1,4 @@
 <?php /** @noinspection PhpComposerExtensionStubsInspection */
-
 namespace Gt\DomTemplate\Test;
 
 use EmptyIterator;
@@ -658,5 +657,28 @@ class BindableTest extends TestCase {
 		$ul = $document->getElementById("todo-list");
 		$ul->bindList([]);
 		self::assertEquals("", $ul->innerHTML);
+	}
+
+	public function testBindKvpList() {
+		$kvpData = [
+			"Name" => "Alan",
+			"Occupation" => "Cryptanalyst",
+			"Place of work" => "Bletchley Park",
+		];
+
+		$document = new HTMLDocument(Helper::HTML_KVP_LIST);
+		$document->extractTemplates();
+		$ul = $document->getElementById("list");
+		$ul->bindList($kvpData);
+
+		$expectedKeys = array_keys($kvpData);
+		$expectedValues = array_values($kvpData);
+		foreach($ul->querySelectorAll("li") as $i => $li) {
+			$keySpan = $li->querySelector(".key span");
+			$valueSpan = $li->querySelector(".value span");
+
+			self::assertEquals($expectedKeys[$i], $keySpan->textContent);
+			self::assertEquals($expectedValues[$i], $valueSpan->textContent);
+		}
 	}
 }

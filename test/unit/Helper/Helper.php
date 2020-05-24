@@ -567,6 +567,25 @@ HTML;
 		]
 	];
 
+	const HTML_KVP_LIST = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>KVP list test</title>
+<main>
+	<ul id="list">
+		<li data-template>
+			<p class="key">
+				KEY: <span data-bind:text="_key">Key goes here</span>
+			</p>
+			<p class="value">
+				VALUE: <span data-bind:text>Value goes here</span>			
+			</p>
+		</li>
+	</ul>
+</main>
+HTML;
+
+
 	const HTML_SHOP = <<<HTML
 <!doctype html>
 <meta charset="utf-8" />
