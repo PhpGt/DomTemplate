@@ -137,6 +137,7 @@ trait Bindable {
 
 			if(is_string($key)) {
 				$insertedT->bindValue($key);
+				$insertedT->bindKeyValue("_key", $key);
 			}
 
 			if($this->isBindableValue($data)) {
