@@ -9,7 +9,7 @@
 	},
 	"require-dev": {
 		"ext-intl": "*",
-		"phpunit/phpunit": "8.*"
+		"phpunit/phpunit": "9.*"
 	},
 
 	"autoload": {
