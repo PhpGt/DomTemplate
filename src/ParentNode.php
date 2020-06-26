@@ -2,7 +2,6 @@
 namespace Gt\DomTemplate;
 
 use DOMNode;
-use Gt\Dom\HTMLCollection;
 
 /**
  * @property-read HTMLCollection $children A live HTMLCollection containing all
