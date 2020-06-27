@@ -3,7 +3,6 @@ namespace Gt\DomTemplate;
 
 use DOMNode;
 use Gt\Dom\Node as BaseNode;
-use Gt\Dom\Element as BaseElement;
 use Gt\Dom\DocumentFragment as BaseDocumentFragment;
 
 /**
@@ -13,11 +12,11 @@ class DocumentFragment extends BaseDocumentFragment {
 	use ParentNode,
 		TemplateParent, Bindable;
 
-	/** @var BaseElement */
+	/** @var Element */
 	public $templateParentNode;
-	/** @var BaseElement */
+	/** @var Element */
 	public $templateNextElementSibling;
-	/** @var BaseElement */
+	/** @var Element */
 	public $templatePreviousElementSibling;
 
 	/**
