@@ -715,4 +715,31 @@ HTML;
 </body>
 HTML;
 
+	const HTML_FORM = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Form test</title>
+
+<body>
+	Contact form:
+	
+	<form method="post">
+		<label>
+			<span>Your name</span>
+			<input name="your-name" required />		
+		</label>
+		<label>
+			<span>Your telephone</span>
+			<input name="telephone" type="tel" />		
+		</label>
+		<label>
+			<span>Message</span>
+			<textarea name="message" required></textarea>		
+		</label>
+		<button name="do" value="submit">Submit!</button>
+	</form>
+</body>
+HTML;
+
+
 }

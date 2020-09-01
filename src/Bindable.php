@@ -18,10 +18,7 @@ trait Bindable {
 	 * There may be multiple Elements with the matching attribute, in which
 	 * case they will all have their data set.
 	 */
-	public function bindKeyValue(
-		?string $key,
-		$value
-	):void {
+	public function bindKeyValue(?string $key, $value):void {
 		if(is_null($value)) {
 			$value = "";
 		}
@@ -55,9 +52,7 @@ trait Bindable {
 	 * @param array|object|BindObject|BindDataMapper $kvp
 	 * @see self::bindKeyValue
 	 */
-	public function bindData(
-		$kvp
-	):void {
+	public function bindData($kvp):void {
 		$assocArray = null;
 
 		if($this->isIndexedArray($kvp)) {
@@ -217,6 +212,19 @@ trait Bindable {
 		}
 
 		return $i;
+	}
+
+	public function bindNames($kvp):void {
+		$nameElements = $this->querySelectorAll("[name]");
+
+		foreach($nameElements as $element) {
+			$name = $element->name;
+			if(!array_key_exists($name, $kvp)) {
+				continue;
+			}
+
+			$element->value = $kvp[$name];
+		}
 	}
 
 	/**

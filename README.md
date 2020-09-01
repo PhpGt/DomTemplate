@@ -76,12 +76,14 @@ $outputTo->bindList($data);
 <!doctype html>
 <h1>Shopping list</h1>
 
-<ul id="shopping-list">
-	<li data-id="1">Tomatoes</li>
-	<li data-id="2">Noodles</li>
-	<li data-id="3">Cheese</li>
-	<li data-id="4">Broccoli</li>
-</ul>
+<shopping-list>
+    <ul id="shopping-list">
+        <li data-id="1">Tomatoes</li>
+        <li data-id="2">Noodles</li>
+        <li data-id="3">Cheese</li>
+        <li data-id="4">Broccoli</li>
+    </ul>
+</shopping-list>
 
 <p>The use of a custom element is more useful on more complex pages, but is shown above as an example.</p>
 ```
@@ -92,6 +94,7 @@ Features at a glance
 + HTML components - organise and reuse DOM trees by storing separate components in their own HTML files, and including them using custom HTML tags.
 + Binding of dynamic data - bind key value pairs, associative arrays, lists of associative arrays and even nested lists.
 + Use standards compliant techniques for templates and components.
++ Easily style components using CSS by addressing their tag name (`shopping-list` in the above example).
 
 [dom]: https://www.php.gt/dom
 [example-groceries-html]: https://github.com/PhpGt/DomTemplate/blob/master/example/01-example-groceries.html
