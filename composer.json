@@ -8,7 +8,6 @@
 		"phpgt/dom": "*"
 	},
 	"require-dev": {
-		"ext-intl": "*",
 		"phpunit/phpunit": "8.*"
 	},
 
