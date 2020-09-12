@@ -8,7 +8,7 @@
 		"phpgt/dom": "2.*"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "8.*"
+		"phpunit/phpunit": "9.*"
 	},
 
 	"autoload": {
