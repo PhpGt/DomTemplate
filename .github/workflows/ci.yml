@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: php-actions/composer@master
+      - uses: php-actions/composer@v2
       - name: Upload build for test runner
         uses: actions/upload-artifact@v2
         with:
