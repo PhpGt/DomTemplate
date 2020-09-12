@@ -9,7 +9,6 @@ use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\NamelessTemplateSpecificityException;
 use Gt\DomTemplate\Test\Helper\BindDataGetter\TodoItem;
 use Gt\DomTemplate\Test\Helper\Helper;
-use NumberFormatter;
 use stdClass;
 
 class BindableTest extends TestCase {
@@ -403,14 +402,11 @@ class BindableTest extends TestCase {
 		$sut = $document->getElementById("sut");
 		$data = [];
 
-		$formatter = new NumberFormatter(
-			"en_GB",
-			NumberFormatter::SPELLOUT
-		);
+		$numberText = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
 		for($i = 0; $i < 10; $i++) {
 			$row = (object)[
-				"text" => $formatter->format($i),
+				"text" => $numberText[$i],
 				"value" => $i,
 				"isDisabled" => (bool)($i % 2),
 			];
@@ -446,7 +442,7 @@ class BindableTest extends TestCase {
 				);
 			}
 
-			$expectedText = $formatter->format($i);
+			$expectedText = $numberText[$i];
 			self::assertEquals($expectedText, $text);
 			self::assertEquals($i, $value);
 		}

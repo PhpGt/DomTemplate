@@ -1707,7 +1707,5 @@
     "platform": {
         "ext-dom": "*"
     },
-    "platform-dev": {
-        "ext-intl": "*"
-    }
+    "platform-dev": []
 }
