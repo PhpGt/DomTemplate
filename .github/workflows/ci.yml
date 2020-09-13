@@ -42,3 +42,5 @@ jobs:
 
       - name: PHP Static Analysis
         uses: php-actions/phpstan@master
+        with:
+          path: src/
