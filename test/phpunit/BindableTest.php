@@ -214,7 +214,15 @@ class BindableTest extends TestCase {
 		$form = $document->forms[0];
 		$form->bindList($list);
 		$document->removeTemplateAttributes();
-		echo($document->saveHTML());die();
+
+		foreach($document->querySelectorAll("label") as $label) {
+			$span = $label->querySelector("span");
+			$input = $label->querySelector("input");
+			self::assertFalse($span->hasAttribute("data-bind:text"));
+			self::assertFalse($input->hasAttribute("data-bind-attributes"));
+			self::assertFalse($input->hasAttribute("data-bind:required"));
+			self::assertFalse($input->hasAttribute("data-bind:placeholder"));
+		}
 	}
 
 	public function testBindDataIndexedArray() {
