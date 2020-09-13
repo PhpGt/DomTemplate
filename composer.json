@@ -5,11 +5,11 @@
 
 	"require": {
 		"ext-dom": "*",
-		"phpgt/dom": "*"
+		"phpgt/dom": "2.*"
 	},
 	"require-dev": {
-		"ext-intl": "*",
-		"phpunit/phpunit": "8.*"
+		"phpunit/phpunit": "9.*",
+		"phpstan/phpstan": "0.12.*"
 	},
 
 	"autoload": {
@@ -19,7 +19,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Gt\\DomTemplate\\Test\\": "./test/unit"
+			"Gt\\DomTemplate\\Test\\": "./test/phpunit"
 		}
 	}
 }
