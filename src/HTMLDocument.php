@@ -17,6 +17,7 @@ use Gt\Dom\HTMLCollection as BaseHTMLCollection;
  * @property-read Element $firstElementChild;
  * @property-read Element $lastElementChild;
  * @property-read Element $body;
+ * @property-read HTMLCollection|Element[] $forms;
  *
  * @method Attr createAttribute(string $name)
  * @method Comment createComment(string $data)
@@ -27,8 +28,7 @@ use Gt\Dom\HTMLCollection as BaseHTMLCollection;
  *
  */
 class HTMLDocument extends BaseHTMLDocument {
-	use ParentNode,
-		TemplateParent, Bindable;
+	use ParentNode, TemplateParent, Bindable;
 
 	protected $componentDirectory;
 	protected $templateFragmentMap;
