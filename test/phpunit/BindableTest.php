@@ -187,6 +187,44 @@ class BindableTest extends TestCase {
 		self::assertFalse($spanChildren[1]->hasAttribute("data-bind:text"));
 	}
 
+	public function testBoolBindDataRemoved() {
+		$list = [
+			[
+				"label" => "Your name",
+				"name" => "your-name",
+				"placeholder" => "e.g. Julia Dixon",
+				"required" => true,
+			],
+			[
+				"label" => "Your email",
+				"name" => "email",
+				"placeholder" => "e.g. julia@oceana.com",
+				"required" => true,
+			],
+			[
+				"label" => "Age",
+				"name" => "age",
+				"placeholder" => "e.g. 23",
+				"required" => false,
+			],
+		];
+
+		$document = new HTMLDocument(Helper::HTML_DYNAMIC_FORM);
+		$document->extractTemplates();
+		$form = $document->forms[0];
+		$form->bindList($list);
+		$document->removeTemplateAttributes();
+
+		foreach($document->querySelectorAll("label") as $label) {
+			$span = $label->querySelector("span");
+			$input = $label->querySelector("input");
+			self::assertFalse($span->hasAttribute("data-bind:text"));
+			self::assertFalse($input->hasAttribute("data-bind-attributes"));
+			self::assertFalse($input->hasAttribute("data-bind:required"));
+			self::assertFalse($input->hasAttribute("data-bind:placeholder"));
+		}
+	}
+
 	public function testBindDataIndexedArray() {
 		self::expectException(IncompatibleBindDataException::class);
 		$document = new HTMLDocument();
