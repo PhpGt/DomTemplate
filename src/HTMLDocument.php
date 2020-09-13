@@ -225,12 +225,17 @@ class HTMLDocument extends BaseHTMLDocument {
 		$allBindableElements = $this->getAllDomTemplateElements();
 
 		foreach($allBindableElements as $element) {
+			$attributesToRemove = [];
 			foreach($element->attributes as $attr) {
 				/** @var \Gt\Dom\Attr $attr */
 				if(strpos($attr->name, "data-bind") === 0
 				|| strpos($attr->name, "data-template") === 0) {
-					$attr->remove();
+					$attributesToRemove []= $attr->name;
 				}
+			}
+
+			foreach($attributesToRemove as $name) {
+				$element->removeAttribute($name);
 			}
 		}
 	}
