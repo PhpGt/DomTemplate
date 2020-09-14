@@ -1,6 +1,7 @@
 <?php /** @noinspection PhpComposerExtensionStubsInspection */
 namespace Gt\DomTemplate\Test;
 
+use ArrayObject;
 use EmptyIterator;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\BoundAttributeDoesNotExistException;
@@ -728,6 +729,20 @@ class BindableTest extends TestCase {
 		foreach($examplePostData as $key => $value) {
 			$element = $document->querySelector("[name='$key']");
 			self::assertEquals($value, $element->value, $element->tagName);
+		}
+	}
+
+	public function testBindArrayObject() {
+		$data = ["one", "two", "three"];
+		$exampleData = new ArrayObject($data);
+		$document = new HTMLDocument(Helper::HTML_VALUE_LIST);
+		$document->extractTemplates();
+		$document->bindList($exampleData);
+		$liList = $document->querySelectorAll("li");
+		self::assertCount(count($data), $liList);
+
+		foreach($liList as $i => $li) {
+			self::assertEquals($data[$i], $li->innerText);
 		}
 	}
 }
