@@ -715,4 +715,19 @@ class BindableTest extends TestCase {
 			self::assertEquals($expectedValues[$i], $valueSpan->textContent);
 		}
 	}
+
+	public function testBindNames() {
+		$examplePostData = [];
+		$document = new HTMLDocument(Helper::HTML_FORM);
+		foreach($document->querySelectorAll("[name]") as $nameElement) {
+			$examplePostData[$nameElement->name] = uniqid("value-");
+		}
+
+		$document->bindNames($examplePostData);
+
+		foreach($examplePostData as $key => $value) {
+			$element = $document->querySelector("[name='$key']");
+			self::assertEquals($value, $element->value, $element->tagName);
+		}
+	}
 }
