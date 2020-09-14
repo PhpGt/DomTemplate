@@ -776,7 +776,6 @@ class BindableTest extends TestCase {
 
 		$liList = $document->querySelectorAll("#todo-list>li");
 		self::assertCount(count($todoArrayData), $liList);
-		echo $document->saveHTML();die();
 
 		foreach($liList as $i => $li) {
 			$originalTodoData = $todoArrayData[$i];
