@@ -596,7 +596,6 @@ HTML;
 </main>
 HTML;
 
-
 	const HTML_SHOP = <<<HTML
 <!doctype html>
 <meta charset="utf-8" />

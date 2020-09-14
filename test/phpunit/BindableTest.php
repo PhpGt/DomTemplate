@@ -745,4 +745,52 @@ class BindableTest extends TestCase {
 			self::assertEquals($data[$i], $li->innerText);
 		}
 	}
+
+	public function testBindArrayObjectArray() {
+		$todoArrayData = [
+			[
+				"completed" => true,
+				"id" => 1,
+				"title" => "Plan everything"
+			],
+			[
+				"completed" => false,
+				"id" => 2,
+				"title" => "Build everything"
+			],
+			[
+				"completed" => false,
+				"id" => 3,
+				"title" => "Profit"
+			],
+		];
+		$todoData = [];
+		foreach($todoArrayData as $arrayDatum) {
+			$todoData []= new ArrayObject($arrayDatum);
+		}
+
+		$document = new HTMLDocument(Helper::HTML_TODO_LIST);
+		$document->extractTemplates();
+		$document->bindList($todoData);
+		$document->removeTemplateAttributes();
+
+		$liList = $document->querySelectorAll("#todo-list>li");
+		self::assertCount(count($todoArrayData), $liList);
+		echo $document->saveHTML();die();
+
+		foreach($liList as $i => $li) {
+			$originalTodoData = $todoArrayData[$i];
+			if($originalTodoData["completed"]) {
+				self::assertTrue($li->classList->contains("completed"));
+				self::assertEquals(
+					$li->querySelector("[name=id]")->value,
+					$originalTodoData["id"]
+				);
+				self::assertEquals(
+					$li->querySelector("[name=title]")->value,
+					$originalTodoData["title"]
+				);
+			}
+		}
+	}
 }
