@@ -585,6 +585,16 @@ HTML;
 </main>
 HTML;
 
+	const HTML_VALUE_LIST = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>KVP list test</title>
+<main>
+	<ul id="list">
+		<li data-template data-bind:text>VALUE</li>
+	</ul>
+</main>
+HTML;
 
 	const HTML_SHOP = <<<HTML
 <!doctype html>

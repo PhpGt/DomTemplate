@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate;
 
+use ArrayObject;
 use Gt\Dom\Attr as BaseAttr;
 use Gt\Dom\Element as BaseElement;
 use Gt\Dom\HTMLCollection as BaseHTMLCollection;
@@ -569,6 +570,9 @@ trait Bindable {
 					$value = $kvp->$method();
 					$assocArray[$key] = $value;
 				}
+			}
+			elseif($kvp instanceof ArrayObject) {
+				$assocArray = (array)$kvp;
 			}
 			elseif(is_object($kvp)) {
 // Finally, assume the kvp is a Plain Old PHP Object (POPO).
