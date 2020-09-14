@@ -741,5 +741,20 @@ HTML;
 </body>
 HTML;
 
+	const HTML_DYNAMIC_FORM = <<<HTML
+<!doctype html>
+<meta charset="utf-8" />
+<title>Dynamic form test</title>
+
+<body>
+	<form>
+		<label data-template>
+			<span data-bind:text="label">Label text</span>
+			<input name="{name}" data-bind:required="?required" data-bind:placeholder="placeholder" data-bind-attributes /> 
+		</label>
+	</form>
+</body>
+HTML;
+
 
 }

@@ -9,8 +9,7 @@ use Gt\Dom\DocumentFragment as BaseDocumentFragment;
  * @method Node cloneNode(bool $deep)
  */
 class DocumentFragment extends BaseDocumentFragment {
-	use ParentNode,
-		TemplateParent, Bindable;
+	use ParentNode, TemplateParent, Bindable;
 
 	/** @var Element */
 	public $templateParentNode;

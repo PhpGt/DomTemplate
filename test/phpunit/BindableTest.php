@@ -9,7 +9,6 @@ use Gt\DomTemplate\HTMLDocument;
 use Gt\DomTemplate\NamelessTemplateSpecificityException;
 use Gt\DomTemplate\Test\Helper\BindDataGetter\TodoItem;
 use Gt\DomTemplate\Test\Helper\Helper;
-use NumberFormatter;
 use stdClass;
 
 class BindableTest extends TestCase {
@@ -186,6 +185,44 @@ class BindableTest extends TestCase {
 		$spanChildren = $boundDataTestElement->querySelectorAll("span");
 		self::assertFalse($spanChildren[0]->hasAttribute("data-bind:text"));
 		self::assertFalse($spanChildren[1]->hasAttribute("data-bind:text"));
+	}
+
+	public function testBoolBindDataRemoved() {
+		$list = [
+			[
+				"label" => "Your name",
+				"name" => "your-name",
+				"placeholder" => "e.g. Julia Dixon",
+				"required" => true,
+			],
+			[
+				"label" => "Your email",
+				"name" => "email",
+				"placeholder" => "e.g. julia@oceana.com",
+				"required" => true,
+			],
+			[
+				"label" => "Age",
+				"name" => "age",
+				"placeholder" => "e.g. 23",
+				"required" => false,
+			],
+		];
+
+		$document = new HTMLDocument(Helper::HTML_DYNAMIC_FORM);
+		$document->extractTemplates();
+		$form = $document->forms[0];
+		$form->bindList($list);
+		$document->removeTemplateAttributes();
+
+		foreach($document->querySelectorAll("label") as $label) {
+			$span = $label->querySelector("span");
+			$input = $label->querySelector("input");
+			self::assertFalse($span->hasAttribute("data-bind:text"));
+			self::assertFalse($input->hasAttribute("data-bind-attributes"));
+			self::assertFalse($input->hasAttribute("data-bind:required"));
+			self::assertFalse($input->hasAttribute("data-bind:placeholder"));
+		}
 	}
 
 	public function testBindDataIndexedArray() {
@@ -403,14 +440,11 @@ class BindableTest extends TestCase {
 		$sut = $document->getElementById("sut");
 		$data = [];
 
-		$formatter = new NumberFormatter(
-			"en_GB",
-			NumberFormatter::SPELLOUT
-		);
+		$numberText = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
 		for($i = 0; $i < 10; $i++) {
 			$row = (object)[
-				"text" => $formatter->format($i),
+				"text" => $numberText[$i],
 				"value" => $i,
 				"isDisabled" => (bool)($i % 2),
 			];
@@ -446,7 +480,7 @@ class BindableTest extends TestCase {
 				);
 			}
 
-			$expectedText = $formatter->format($i);
+			$expectedText = $numberText[$i];
 			self::assertEquals($expectedText, $text);
 			self::assertEquals($i, $value);
 		}

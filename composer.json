@@ -8,8 +8,8 @@
 		"phpgt/dom": "2.*"
 	},
 	"require-dev": {
-		"ext-intl": "*",
-		"phpunit/phpunit": "9.*"
+		"phpunit/phpunit": "9.*",
+		"phpstan/phpstan": "0.12.*"
 	},
 
 	"autoload": {
