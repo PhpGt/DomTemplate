@@ -4,8 +4,9 @@
 	"license": "MIT",
 
 	"require": {
+		"php": ">=8.0",
 		"ext-dom": "*",
-		"phpgt/dom": "2.*"
+		"phpgt/dom": "v3.0.0-RC1"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "9.*",
@@ -21,5 +22,12 @@
 		"psr-4": {
 			"Gt\\DomTemplate\\Test\\": "./test/phpunit"
 		}
-	}
+	},
+
+	"funding": [
+		{
+			"type": "github",
+			"url": "https://github.com/sponsors/PhpGt"
+		}
+	]
 }
