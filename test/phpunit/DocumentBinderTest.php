@@ -107,7 +107,7 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("Nothing is bound", $document->querySelector("output")->innerHTML);
 	}
 
-	public function testBindValue_noMatchesInDifferentHierarchy():void {
+	public function testBindKeyValue_noMatchesInDifferentHierarchy():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
 		$sut = new DocumentBinder($document);
 // The "title" bind element is actually within the #c3 hierarchy so should not be bound.
@@ -115,7 +115,7 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("Default title", $document->querySelector("#container3 h1")->textContent);
 	}
 
-	public function testBindValue():void {
+	public function testBindKeyValue():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
 		$sut = new DocumentBinder($document);
 		$sut->bindKeyValue("title", "This should bind");
