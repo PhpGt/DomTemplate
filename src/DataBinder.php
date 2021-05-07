@@ -28,7 +28,7 @@ class DataBinder {
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]",
 			$context
 		) as $element) {
-			$tagName = $element->tagName;
+			$tagName = "<" . strtolower($element->tagName) . ">";
 
 			foreach($element->attributes as $attrName => $attrValue) {
 				if(!str_starts_with($attrName, "data-bind")) {

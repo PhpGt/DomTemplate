@@ -17,7 +17,7 @@ class DataBinderTest extends TestCase {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_NO_BIND_PROPERTY);
 		$sut = new DataBinder($document);
 		self::expectException(InvalidBindPropertyException::class);
-		self::expectExceptionMessage("OUTPUT Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
+		self::expectExceptionMessage("<output> Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
 		$sut->bindValue("Test!");
 	}
 
@@ -74,6 +74,11 @@ class DataBinderTest extends TestCase {
 		self::assertSame("Test!", $document->getElementById("o7")->textContent);
 	}
 
+	/**
+	 * Another test to ensure the developer is provided a friendly error
+	 * message. This time, if they use an unknown bind property, the error
+	 * message should suggest what they meant.
+	 */
 	public function testBindValue_invalidPropertyTextContent():void {
 		$document = DocumentTestFactory::createHTML();
 		$badElement = $document->createElement("example");
@@ -81,7 +86,7 @@ class DataBinderTest extends TestCase {
 		$document->body->appendChild($badElement);
 		$sut = new DataBinder($document);
 		self::expectException(InvalidBindPropertyException::class);
-		self::expectExceptionMessage("Unknown bind property `textContent` on EXAMPLE Element - did you mean `data-bind:text`?");
+		self::expectExceptionMessage("Unknown bind property `textContent` on <example> Element - did you mean `data-bind:text`?");
 		$sut->bindValue("Test!");
 	}
 
@@ -92,7 +97,7 @@ class DataBinderTest extends TestCase {
 		$document->body->appendChild($badElement);
 		$sut = new DataBinder($document);
 		self::expectException(InvalidBindPropertyException::class);
-		self::expectExceptionMessage("Unknown bind property `unknown` on EXAMPLE Element");
+		self::expectExceptionMessage("Unknown bind property `unknown` on <example> Element");
 		$sut->bindValue("Test!");
 	}
 }
