@@ -64,10 +64,9 @@ echo $document;
 Features at a glance
 --------------------
 
-+ HTML components - organise and reuse DOM trees by storing separate components in their own HTML files, and including them using custom HTML tags.
 + Binding of dynamic data - bind key value pairs, associative arrays, lists of associative arrays and even nested lists.
-+ Use standards compliant techniques for templates and components.
-+ Easily style components using CSS by addressing their tag name (`shopping-list` in the above example).
++ HTML components - organise and reuse DOM trees by storing separate components in their own HTML files, and including them using custom HTML tags.
++ Page templates - create HTML documents that "extend" others.
++ Easily modularise CSS by selecting their custom tag names.
 
 [dom]: https://www.php.gt/dom
-[example-groceries-html]: https://github.com/PhpGt/DomTemplate/blob/master/example/01-example-groceries.html
