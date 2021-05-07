@@ -5,7 +5,7 @@ use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\Node;
 
-class DataBinder {
+class DocumentBinder {
 	public function __construct(
 		private Document $document
 	) {
