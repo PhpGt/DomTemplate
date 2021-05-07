@@ -73,33 +73,6 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("Test!", $document->getElementById("o7")->textContent);
 	}
 
-	/**
-	 * Another test to ensure the developer is provided a friendly error
-	 * message. This time, if they use an unknown bind property, the error
-	 * message should suggest what they meant.
-	 */
-	public function testBindValue_invalidPropertyTextContent():void {
-		$document = DocumentTestFactory::createHTML();
-		$badElement = $document->createElement("example");
-		$badElement->setAttribute("data-bind:textContent", "");
-		$document->body->appendChild($badElement);
-		$sut = new DocumentBinder($document);
-		self::expectException(InvalidBindPropertyException::class);
-		self::expectExceptionMessage("Unknown bind property `textContent` on <example> Element - did you mean `data-bind:text`?");
-		$sut->bindValue("Test!");
-	}
-
-	public function testBindValue_invalidProperty():void {
-		$document = DocumentTestFactory::createHTML();
-		$badElement = $document->createElement("example");
-		$badElement->setAttribute("data-bind:unknown", "");
-		$document->body->appendChild($badElement);
-		$sut = new DocumentBinder($document);
-		self::expectException(InvalidBindPropertyException::class);
-		self::expectExceptionMessage("Unknown bind property `unknown` on <example> Element.");
-		$sut->bindValue("Test!");
-	}
-
 	public function testBindKeyValue_noMatches():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);

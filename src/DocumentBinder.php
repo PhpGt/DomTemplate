@@ -55,22 +55,21 @@ class DocumentBinder {
 	):void {
 		switch(strtolower($bindProperty)) {
 		case "text":
+		case "innerText":
+		case "inner-text":
+		case "textContent":
 			$element->textContent = $bindValue;
 			break;
 
+		case "html":
+		case "innerHTML":
+		case "inner-html":
+			$element->innerHTML = $bindValue;
+			break;
+
 		default:
-			$suggestedProperty = null;
-
-			if(str_starts_with($bindProperty, "text")) {
-				$suggestedProperty = "text";
-			}
-
-			$suggestionMessage = $suggestedProperty
-				? " - did you mean `data-bind:$suggestedProperty`?"
-				: ".";
-
-			$tag = $this->getHTMLtag($element);
-			throw new InvalidBindPropertyException("Unknown bind property `$bindProperty` on $tag Element$suggestionMessage");
+			// TODO: check for magic attributes
+			// TODO: set arbitrary attribute if no magic.
 		}
 	}
 
