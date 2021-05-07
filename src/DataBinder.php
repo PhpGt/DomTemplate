@@ -1,7 +1,6 @@
 <?php
 namespace Gt\DomTemplate;
 
-use Generator;
 use Gt\Dom\Document;
 use Gt\Dom\Node;
 use Stringable;
@@ -69,5 +68,12 @@ class DataBinder {
 				}
 			}
 		}
+	}
+
+	public function bindKeyValue(
+		string $key,
+		Stringable|string $value
+	):void {
+
 	}
 }

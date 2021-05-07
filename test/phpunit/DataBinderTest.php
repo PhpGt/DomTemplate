@@ -1,7 +1,6 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
-use Gt\Dom\Document;
 use Gt\DomTemplate\DataBinder;
 use Gt\DomTemplate\InvalidBindPropertyException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
