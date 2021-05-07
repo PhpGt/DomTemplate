@@ -86,44 +86,64 @@ class DocumentBinder {
 			$context = $this->document;
 		}
 
-		foreach($this->document->evaluate(
+		foreach($this->evaluateDataBindElements($context) as $element) {
+			$this->processDataBindAttributes(
+				$element,
+				$key,
+				$value
+			);
+		}
+	}
+
+	/**
+	 * @param Document|Node|null $context
+	 * @return \Gt\Dom\XPathResult
+	 */
+	private function evaluateDataBindElements(Document|Node|null $context):\Gt\Dom\XPathResult {
+		return $this->document->evaluate(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]",
 			$context
-		) as $element) {
-			foreach($element->attributes as $attrName => $attrValue) {
-				if(!str_starts_with($attrName, "data-bind")) {
-					continue;
-				}
+		);
+	}
 
-				if(!strstr($attrName, ":")) {
-					$tag = $this->getHTMLTag($element);
-					throw new InvalidBindPropertyException("$tag Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
-				}
+	private function processDataBindAttributes(
+		Element $element,
+		?string $key,
+		mixed $value
+	) {
+		foreach($element->attributes as $attrName => $attrValue) {
+			if(!str_starts_with($attrName, "data-bind")) {
+				continue;
+			}
 
-				if(is_null($key)) {
+			if(!strstr($attrName, ":")) {
+				$tag = $this->getHTMLTag($element);
+				throw new InvalidBindPropertyException("$tag Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
+			}
+
+			if(is_null($key)) {
 // If there is no key specified, only bind the elements that don't have a
 // specified key in their bind attribute's value.
-					if(strlen($attrValue) > 0) {
-						continue;
-					}
+				if(strlen($attrValue) > 0) {
+					continue;
 				}
-				else {
+			}
+			else {
 // If there is a key specified, and the bind attribute's value doesn't match,
 // skip this attribute.
-					if($key !== $attrValue) {
-						continue;
-					}
+				if($key !== $attrValue) {
+					continue;
 				}
-
-				$this->setBindProperty(
-					$element,
-					substr(
-						$attrName,
-						strpos($attrName, ":") + 1
-					),
-					$value
-				);
 			}
+
+			$this->setBindProperty(
+				$element,
+				substr(
+					$attrName,
+					strpos($attrName, ":") + 1
+				),
+				$value
+			);
 		}
 	}
 }
