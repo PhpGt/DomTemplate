@@ -39,6 +39,9 @@ HTML;
 <div id="container3">
 	<h1 data-bind:text="title">Default title</h1>
 	<output id="o7" data-bind:text>Seventh default</output>
+	<p>
+		You have just bound the <span data-bind:text="title">default title</span> title!
+	</p>
 </div>
 HTML;
 

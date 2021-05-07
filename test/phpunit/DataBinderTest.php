@@ -3,6 +3,7 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\DomTemplate\DataBinder;
 use Gt\DomTemplate\InvalidBindPropertyException;
+use Gt\DomTemplate\NoMatchingBindElementException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -96,7 +97,30 @@ class DataBinderTest extends TestCase {
 		$document->body->appendChild($badElement);
 		$sut = new DataBinder($document);
 		self::expectException(InvalidBindPropertyException::class);
-		self::expectExceptionMessage("Unknown bind property `unknown` on <example> Element");
+		self::expectExceptionMessage("Unknown bind property `unknown` on <example> Element.");
 		$sut->bindValue("Test!");
+	}
+
+	public function testBindKeyValue_noMatches():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$sut = new DataBinder($document);
+		$sut->bindKeyValue("missing", "example");
+		self::assertSame("Nothing is bound", $document->querySelector("output")->innerHTML);
+	}
+
+	public function testBindValue_noMatchesInDifferentHierarchy():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$sut = new DataBinder($document);
+// The "title" bind element is actually within the #c3 hierarchy so should not be bound.
+		$sut->bindKeyValue("title", "This should not bind", $document->getElementById("container1"));
+		self::assertSame("Default title", $document->querySelector("#container3 h1")->textContent);
+	}
+
+	public function testBindValue():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$sut = new DataBinder($document);
+		$sut->bindKeyValue("title", "This should bind");
+		self::assertSame("This should bind", $document->querySelector("#container3 h1")->textContent);
+		self::assertSame("This should bind", $document->querySelector("#container3 p span")->textContent);
 	}
 }
