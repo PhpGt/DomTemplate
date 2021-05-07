@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\Node;
+use Gt\Dom\XPathResult;
 
 class DocumentBinder {
 	public function __construct(
@@ -95,11 +96,7 @@ class DocumentBinder {
 		}
 	}
 
-	/**
-	 * @param Document|Node|null $context
-	 * @return \Gt\Dom\XPathResult
-	 */
-	private function evaluateDataBindElements(Document|Node|null $context):\Gt\Dom\XPathResult {
+	private function evaluateDataBindElements(Document|Node|null $context):XPathResult {
 		return $this->document->evaluate(
 			"descendant-or-self::*[@*[starts-with(name(), 'data-bind')]]",
 			$context
