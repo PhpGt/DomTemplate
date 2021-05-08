@@ -17,6 +17,21 @@ HTML;
 <output data-bind:text>Nothing is bound</output>
 HTML;
 
+	const HTML_SYNONYMOUS_BIND_PROPERTIES = <<<HTML
+<!doctype html>
+<output id="o1" data-bind:text>Nothing is bound</output>
+<output id="o2" data-bind:textContent>Nothing is bound</output>
+<output id="o3" data-bind:text-content>Nothing is bound</output>
+<output id="o4" data-bind:innerText>Nothing is bound</output>
+<output id="o5" data-bind:inner-text>Nothing is bound</output>
+
+<output id="o6" data-bind:html>Nothing is bound</output>
+<output id="o7" data-bind:HTML>Nothing is bound</output>
+<output id="o8" data-bind:innerHTML>Nothing is bound</output>
+<output id="o9" data-bind:inner-html>Nothing is bound</output>
+HTML;
+
+
 	const HTML_MULTIPLE_ELEMENTS = <<<HTML
 <!doctype html>
 <output id="o1" data-bind:text>First default</output>
@@ -44,6 +59,27 @@ HTML;
 	</p>
 </div>
 HTML;
+
+	const HTML_USER_PROFILE = <<<HTML
+<!doctype html>
+<h1>User profile</h1>
+<dl>
+	<dt>Username</dt>
+	<dd id="dd1" data-bind:text="username">username123</dd>
+	<dt>Email address</dt>
+	<dd id="dd2" data-bind:text="email">you@example.com</dd>
+	<dt>Category</dt>
+	<dd id="dd3" data-bind:text="category">N/A</dd>
+</dl>
+
+<h2>Audit trail</h2>
+<div id="audit-trail">
+	<p>The following activity has been recorded on your account:</p>
+	
+	<ul></ul>
+</div>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

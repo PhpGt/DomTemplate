@@ -8,7 +8,8 @@ use Gt\Dom\XPathResult;
 
 class DocumentBinder {
 	public function __construct(
-		private Document $document
+		private Document $document,
+		private array $config = []
 	) {
 	}
 
@@ -23,12 +24,33 @@ class DocumentBinder {
 		$this->bind(null, $value, $context);
 	}
 
+	/**
+	 * Applies the string value of $value to any elements within $context
+	 * that have the data-bind attribute matching the provided key.
+	 */
 	public function bindKeyValue(
 		string $key,
 		mixed $value,
 		Node $context = null
 	):void {
 		$this->bind($key, $value, $context);
+	}
+
+	/**
+	 * Binds multiple key-value-pairs to any matching elements within
+	 * the $context element.
+	 */
+	public function bindData(
+		mixed $kvp,
+		Node $context = null
+	):void {
+		if($this->isIndexedArray($kvp)) {
+			throw new IncompatibleBindDataException("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
+		}
+
+		foreach($kvp as $key => $value) {
+			$this->bindKeyValue($key, $value, $context);
+		}
 	}
 
 	/**
@@ -47,6 +69,11 @@ class DocumentBinder {
 	 * 3) ":class" will toggle the provided value as a class.
 	 * 4) "?attr" will add/remove the attribute (for example, "?disabled"
 	 * is useful for toggling an button's disabled attribute).
+	 * 5) "@attr" will bind the attribute matching the name of the bindKey,
+	 * for example "data-bind:@id" will bind the id attribute to the value
+	 * of the data with key of "id".
+	 * 6) "table" will create the appropriate columns and rows within the
+	 * <table> element being bound. Useful for CRUD applications.
 	 */
 	private function setBindProperty(
 		Element $element,
@@ -55,14 +82,15 @@ class DocumentBinder {
 	):void {
 		switch(strtolower($bindProperty)) {
 		case "text":
-		case "innerText":
+		case "innertext":
 		case "inner-text":
-		case "textContent":
+		case "textcontent":
+		case "text-content":
 			$element->textContent = $bindValue;
 			break;
 
 		case "html":
-		case "innerHTML":
+		case "innerhtml":
 		case "inner-html":
 			$element->innerHTML = $bindValue;
 			break;
@@ -87,6 +115,7 @@ class DocumentBinder {
 		}
 
 		foreach($this->evaluateDataBindElements($context) as $element) {
+			/** @var Element $element */
 			$this->processDataBindAttributes(
 				$element,
 				$key,
@@ -141,5 +170,19 @@ class DocumentBinder {
 				$value
 			);
 		}
+	}
+
+	private function isIndexedArray(mixed $data):bool {
+		if(!is_array($data)) {
+			return false;
+		}
+
+		foreach(array_keys($data) as $key) {
+			if(!is_int($key)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

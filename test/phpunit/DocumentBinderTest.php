@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate\Test;
 
 use Gt\DomTemplate\DocumentBinder;
+use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
@@ -73,6 +74,22 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("Test!", $document->getElementById("o7")->textContent);
 	}
 
+	public function testBindValue_synonymousProperties():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SYNONYMOUS_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+		$sut->bindValue("updated <b>bold</b>");
+
+		self::assertSame("updated &lt;b&gt;bold&lt;/b&gt;", $document->getElementById("o1")->innerHTML);
+		self::assertSame("updated &lt;b&gt;bold&lt;/b&gt;", $document->getElementById("o2")->innerHTML);
+		self::assertSame("updated &lt;b&gt;bold&lt;/b&gt;", $document->getElementById("o3")->innerHTML);
+		self::assertSame("updated &lt;b&gt;bold&lt;/b&gt;", $document->getElementById("o4")->innerHTML);
+		self::assertSame("updated &lt;b&gt;bold&lt;/b&gt;", $document->getElementById("o5")->innerHTML);
+		self::assertSame("updated <b>bold</b>", $document->getElementById("o6")->innerHTML);
+		self::assertSame("updated <b>bold</b>", $document->getElementById("o7")->innerHTML);
+		self::assertSame("updated <b>bold</b>", $document->getElementById("o8")->innerHTML);
+		self::assertSame("updated <b>bold</b>", $document->getElementById("o9")->innerHTML);
+	}
+
 	public function testBindKeyValue_noMatches():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);
@@ -94,5 +111,45 @@ class DocumentBinderTest extends TestCase {
 		$sut->bindKeyValue("title", "This should bind");
 		self::assertSame("This should bind", $document->querySelector("#container3 h1")->textContent);
 		self::assertSame("This should bind", $document->querySelector("#container3 p span")->textContent);
+	}
+
+	public function testBindData_assocArray():void {
+		$username = uniqid("user");
+		$email = uniqid() . "@example.com";
+		$category = uniqid("category-");
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData([
+			"username" => $username,
+			"email" => $email,
+			"category" => $category,
+		]);
+
+		self::assertSame($username, $document->getElementById("dd1")->textContent);
+		self::assertSame($email, $document->getElementById("dd2")->textContent);
+		self::assertSame($category, $document->getElementById("dd3")->textContent);
+	}
+
+	public function testBindData_indexArray_shouldThrowException():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		self::expectException(IncompatibleBindDataException::class);
+		self::expectExceptionMessage("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
+		$sut->bindData(["one", "two", "three"]);
+	}
+
+	public function testBindData_outOfContext():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData([
+			"username" => "will-not-bind",
+			"email" => "will-not-bind",
+			"category" => "will-not-bind",
+		], $document->getElementById("audit-trail"));
+
+		self::assertNotSame("will-not-bind", $document->getElementById("dd1")->textContent);
+		self::assertNotSame("will-not-bind", $document->getElementById("dd2")->textContent);
+		self::assertNotSame("will-not-bind", $document->getElementById("dd3")->textContent);
 	}
 }
