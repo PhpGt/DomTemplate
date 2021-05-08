@@ -80,6 +80,22 @@ HTML;
 </div>
 HTML;
 
+	const HTML_DIFFERENT_BIND_PROPERTIES = <<<HTML
+<!doctype html>
+<img id="img1" class="main" src="/default.png" alt="Not bound" 
+	data-bind:src="photoURL" 
+	data-bind:alt="altText" 
+	data-bind:class="size" />
+
+<img id="img2" class="secondary" src="/default.png" alt="Not bound"
+	data-bind:class="?is-selected" />
+
+<img id="img3" class="secondary" src="/default.png" alt="Not bound"
+	data-bind:class="?isSelected selected-image" />
+
+<p id="p1" data-params="funny friendly" data-bind:data-params="?isMagic magical">Is this paragraph magical?</p>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

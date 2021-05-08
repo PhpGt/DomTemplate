@@ -1,6 +1,8 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\HTMLElement\HTMLImageElement;
+use Gt\Dom\HTMLElement\HTMLParagraphElement;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
@@ -151,5 +153,76 @@ class DocumentBinderTest extends TestCase {
 		self::assertNotSame("will-not-bind", $document->getElementById("dd1")->textContent);
 		self::assertNotSame("will-not-bind", $document->getElementById("dd2")->textContent);
 		self::assertNotSame("will-not-bind", $document->getElementById("dd3")->textContent);
+	}
+
+	public function testBindKeyValue_arbitraryAttributes():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+		/** @var HTMLImageElement $img */
+		$img = $document->getElementById("img1");
+
+		$sut->bindKeyValue("photoURL", "/cat.jpg");
+		self::assertSame("/cat.jpg", $img->src);
+
+		$sut->bindKeyValue("altText", "My cat");
+		self::assertSame("My cat", $img->alt);
+	}
+
+	public function testBindKeyValue_classAttribute():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLImageElement $img */
+		$img = $document->getElementById("img1");
+
+		self::assertSame("main", $img->className);
+		$sut->bindKeyValue("size", "large");
+		self::assertSame("main large", $img->className);
+		$sut->bindKeyValue("size", "large");
+		self::assertSame("main large", $img->className);
+	}
+
+	public function testBindKeyValue_classToggle():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLImageElement $img */
+		$img = $document->getElementById("img2");
+
+		self::assertSame("secondary", $img->className);
+		$sut->bindKeyValue("is-selected", true, $img);
+		self::assertSame("secondary is-selected", $img->className);
+		$sut->bindKeyValue("is-selected", false, $img);
+		self::assertSame("secondary", $img->className);
+	}
+
+	public function testBindKeyValue_classToggle_differentClassNameToBindKey():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLImageElement $img */
+		$img = $document->getElementById("img3");
+
+		self::assertSame("secondary", $img->className);
+		$sut->bindKeyValue("isSelected", true, $img);
+		self::assertSame("secondary selected-image", $img->className);
+		$sut->bindKeyValue("isSelected", false, $img);
+		self::assertSame("secondary", $img->className);
+	}
+
+	public function testBindKeyValue_toggleArbitraryAttribute():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLParagraphElement $paragraph */
+		$paragraph = $document->getElementById("p1");
+
+		self::assertSame("funny friendly", $paragraph->dataset->params);
+		$sut->bindKeyValue("isMagic", false, $paragraph);
+		self::assertSame("funny friendly", $paragraph->dataset->params);
+		$sut->bindKeyValue("isMagic", true, $paragraph);
+		self::assertSame("funny friendly magical", $paragraph->dataset->params);
+		$sut->bindKeyValue("isMagic", false, $paragraph);
+		self::assertSame("funny friendly", $paragraph->dataset->params);
 	}
 }

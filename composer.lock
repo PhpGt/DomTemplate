@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "78b2524351ff25db91f1b54fd4f8edb5",
+    "content-hash": "66ad12e67c6f2ee2ba9d363f6d6fd7a5",
     "packages": [
         {
             "name": "phpgt/cssxpath",
@@ -62,16 +62,16 @@
         },
         {
             "name": "phpgt/dom",
-            "version": "v3.0.0-RC1",
+            "version": "dev-facade",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "9ff12209e04f7d49ddd55ffd8fc568aab6d285b4"
+                "reference": "30ad4630496e0ed0a04b9f8fe0858038d46fd782"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/9ff12209e04f7d49ddd55ffd8fc568aab6d285b4",
-                "reference": "9ff12209e04f7d49ddd55ffd8fc568aab6d285b4",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/30ad4630496e0ed0a04b9f8fe0858038d46fd782",
+                "reference": "30ad4630496e0ed0a04b9f8fe0858038d46fd782",
                 "shasum": ""
             },
             "require": {
@@ -143,7 +143,7 @@
             "description": "The modern DOM API for PHP projects.",
             "support": {
                 "issues": "https://github.com/PhpGt/Dom/issues",
-                "source": "https://github.com/PhpGt/Dom/tree/v3.0.0-RC1"
+                "source": "https://github.com/PhpGt/Dom/tree/facade"
             },
             "funding": [
                 {
@@ -151,7 +151,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-05-07T10:45:51+00:00"
+            "time": "2021-05-08T11:48:08+00:00"
         },
         {
             "name": "phpgt/propfunc",
@@ -781,16 +781,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.85",
+            "version": "0.12.86",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "20e6333c0067875ad7697cd8acdf245c6ef69d03"
+                "reference": "a84fdc53ecca7643dbc89ef8880d8b393a6c155a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/20e6333c0067875ad7697cd8acdf245c6ef69d03",
-                "reference": "20e6333c0067875ad7697cd8acdf245c6ef69d03",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a84fdc53ecca7643dbc89ef8880d8b393a6c155a",
+                "reference": "a84fdc53ecca7643dbc89ef8880d8b393a6c155a",
                 "shasum": ""
             },
             "require": {
@@ -821,7 +821,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.85"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.86"
             },
             "funding": [
                 {
@@ -837,7 +837,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-04-27T14:13:16+00:00"
+            "time": "2021-05-08T11:29:01+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2415,11 +2415,12 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "phpgt/dom": 5
+        "phpgt/dom": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "php": ">=8.0",
         "ext-dom": "*"
     },
     "platform-dev": [],
