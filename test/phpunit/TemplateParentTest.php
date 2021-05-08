@@ -10,7 +10,7 @@ class TemplateParentTest extends TestCase {
 	const TEST_DIR = "/tmp/phpgt/domtemplate/test";
 	const COMPONENT_PATH = "_component";
 
-	public function setUp():void {
+	protected function setUp():void {
 		$this->rrmdir(self::TEST_DIR);
 		mkdir(
 			self::TEST_DIR . "/" . self::COMPONENT_PATH,
@@ -19,7 +19,7 @@ class TemplateParentTest extends TestCase {
 		);
 	}
 
-	public function tearDown():void {
+	protected function tearDown():void {
 		$this->rrmdir(self::TEST_DIR);
 	}
 
@@ -49,7 +49,7 @@ class TemplateParentTest extends TestCase {
 		self::assertGreaterThan(0, count($templateElements));
 		$document->extractTemplates();
 		$newTemplateElements = $document->querySelectorAll("template,[data-template]");
-		self::assertEquals(0, count($newTemplateElements));
+		self::assertCount(0, $newTemplateElements);
 	}
 
 	public function testGetTemplate() {
