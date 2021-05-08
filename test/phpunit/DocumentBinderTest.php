@@ -4,6 +4,9 @@ namespace Gt\DomTemplate\Test;
 use Gt\Dom\HTMLElement\HTMLButtonElement;
 use Gt\Dom\HTMLElement\HTMLImageElement;
 use Gt\Dom\HTMLElement\HTMLParagraphElement;
+use Gt\Dom\HTMLElement\HTMLTableElement;
+use Gt\Dom\HTMLElement\HTMLTableRowElement;
+use Gt\Dom\HTMLElement\HTMLTableSectionElement;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
@@ -227,6 +230,11 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("funny friendly", $paragraph->dataset->params);
 	}
 
+	/**
+	 * This tests the `data-bind:disabled="?isDisabled" functionality. The
+	 * question mark at the start of the bind parameter indicates that the
+	 * bind attribute will be toggled depending on a bound boolean value.
+	 */
 	public function testBindKeyValue_toggleDisabled():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
@@ -241,6 +249,14 @@ class DocumentBinderTest extends TestCase {
 		self::assertFalse($button->disabled);
 	}
 
+	/**
+	 * This tests the inverse logic of the above test. The bind parameter
+	 * is prefixed with a question mark AND an exclamation mark, meaning to
+	 * use the inverse of what is passed. This makes sense for the
+	 * "disabled" attribute, because it is likely that the data represents
+	 * whether the element should be enabled (but there's no "enabled"
+	 * HTML attribute).
+	 */
 	public function testBindKeyValue_toggleDisabled_inverseLogic():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
@@ -253,5 +269,92 @@ class DocumentBinderTest extends TestCase {
 		self::assertTrue($button->disabled);
 		$sut->bindKeyValue("isBtn2Enabled", true);
 		self::assertFalse($button->disabled);
+	}
+
+	/**
+	 * Binding table data into an empty table will create all the
+	 * appropriate <thead>, <tbody>, <tr>, <th>, and <td> elements.
+	 */
+	public function testBindKeyValue_table_emptyTable():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+
+		self::assertEmpty($table->innerHTML);
+		$sut->bindKeyValue("tableData", [
+			["Column 1", "Column 2", "Column 3"],
+			["c1 val1", "c2 val1", "c3 val1"],
+			["c1 val2", "c2 val2", "c3 val2"],
+			["c1 val3", "c2 val3", "c3 val3"],
+		], $table);
+
+		self::assertSame("Column 1", $table->tHead->rows[0]->children[0]->textContent);
+		self::assertSame("Column 2", $table->tHead->rows[0]->children[1]->textContent);
+		self::assertSame("Column 3", $table->tHead->rows[0]->children[2]->textContent);
+
+		/** @var HTMLTableSectionElement $tBody */
+		$tBody = $table->tBodies[0];
+		self::assertCount(3, $tBody->children);
+
+		self::assertSame("c1 val2", $tBody->rows[1]->children[0]->textContent);
+		self::assertSame("c2 val2", $tBody->rows[1]->children[1]->textContent);
+		self::assertSame("c3 val2", $tBody->rows[1]->children[2]->textContent);
+	}
+
+	/**
+	 * Binding table data into a table that already has a <thead> element
+	 * will use the existing <th> values to limit which columns are output.
+	 */
+	public function testBindKeyValue_table_existingTHead():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl2");
+
+		$thead = $table->tHead;
+		$originalTheadHTML = $thead->innerHTML;
+
+		$tableData = [
+// Notice that there are more columns here than in the actual HTML.
+			["id", "firstName", "lastName", "username", "email"],
+			[34, "Derek", "Rethans", "derek", "derek@php.net"],
+			[35, "Christoph", "Becker", "cmbecker69", "cmbecker69@php.net"],
+			[25, "Sara", "Golemon", "pollita", "pollita@php.net"],
+		];
+		$sut->bindKeyValue("tableData", $tableData, $table);
+
+		/** @var HTMLTableSectionElement $tbody */
+		$tbody = $table->tBodies[0];
+
+		self::assertSame($originalTheadHTML, $thead->innerHTML);
+		self::assertCount(count($tableData), $tbody->rows);
+		/** @var HTMLTableRowElement $row0 */
+		$row0 = $tbody->rows[0];
+		/** @var HTMLTableRowElement $row1 */
+		$row1 = $tbody->rows[1];
+		/** @var HTMLTableRowElement $row2 */
+		$row2 = $tbody->rows[2];
+		/** @var HTMLTableRowElement $row3 */
+		$row3 = $tbody->rows[3];
+		self::assertCount(3, $row0->children);
+		self::assertCount(3, $row1->children);
+		self::assertCount(3, $row2->children);
+		self::assertCount(3, $row3->children);
+
+		self::assertSame("Greg", $row0->cells[0]->textContent);
+		self::assertSame("Bowler", $row0->cells[1]->textContent);
+		self::assertSame("greg@php.gt", $row0->cells[2]->textContent);
+		self::assertSame("Derek", $row1->cells[0]->textContent);
+		self::assertSame("Rethans", $row1->cells[1]->textContent);
+		self::assertSame("derek@php.net", $row1->cells[2]->textContent);
+		self::assertSame("Christoph", $row2->cells[0]->textContent);
+		self::assertSame("Becker", $row2->cells[1]->textContent);
+		self::assertSame("cmbecker69@php.net", $row2->cells[2]->textContent);
+		self::assertSame("Sara", $row3->cells[0]->textContent);
+		self::assertSame("Golemon", $row3->cells[1]->textContent);
+		self::assertSame("pollita@php.net", $row3->cells[2]->textContent);
 	}
 }

@@ -101,6 +101,29 @@ HTML;
 </form>
 HTML;
 
+	const HTML_TABLES = <<<HTML
+<!doctype html>
+<table id="tbl1" data-bind:table="tableData"></table>
+
+<table id="tbl2" data-bind:table="tableData">
+	<thead>
+		<tr>
+			<th data-table-key="firstName">First name</th>
+			<th data-table-key="lastName">Last name</th>
+			<th data-table-key="email">Email address</th>
+		</tr>	
+	</thead>
+	<tbody>
+		<tr>
+<!-- This row already exists in the HTML and should be kept when new data is bound -->
+			<td>Greg</td>
+			<td>Bowler</td>
+			<td>greg@php.gt</td>
+		</tr>
+	</tbody>
+</table>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

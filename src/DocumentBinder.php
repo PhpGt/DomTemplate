@@ -5,8 +5,13 @@ use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
 use Gt\Dom\Element;
 use Gt\Dom\Facade\DOMTokenListFactory;
+use Gt\Dom\HTMLElement\HTMLTableCellElement;
+use Gt\Dom\HTMLElement\HTMLTableElement;
+use Gt\Dom\HTMLElement\HTMLTableRowElement;
+use Gt\Dom\HTMLElement\HTMLTableSectionElement;
 use Gt\Dom\Node;
 use Gt\Dom\XPathResult;
+use Stringable;
 
 class DocumentBinder {
 	public function __construct(
@@ -150,6 +155,10 @@ class DocumentBinder {
 	 *    + If the bindKey starts with a question mark "?", the attribute
 	 * 	will be toggled, depending on whether the $bindValue is
 	 * 	true/false.
+	 *    + If the bindKey starts with a question mark and exclamation mark,
+	 * 	"?!", the attribute will be toggled as above, but with inverse
+	 * 	logic. Useful for toggling "disabled" attribute from data that
+	 * 	represents "enabled" state.
 	 *
 	 * With colon/question mark bind values, the value of the attribute will
 	 * match the value of $bindValue - if a different attribute value is
@@ -191,6 +200,11 @@ class DocumentBinder {
 			else {
 				$element->classList->add($bindValue);
 			}
+			break;
+
+		case "table":
+			$bindValue = $this->normaliseTableData($bindValue);
+			$this->handleTableData($bindValue, $element);
 			break;
 
 		default:
@@ -280,5 +294,111 @@ class DocumentBinder {
 			fn() => explode(" ", $element->getAttribute($attribute)),
 			fn(string...$tokens) => $element->setAttribute($attribute, implode(" ", $tokens)),
 		);
+	}
+
+	/**
+	 * @param iterable<int,iterable<int,string>>|iterable<string,iterable<int, string>>|iterable<string,iterable<string, iterable<int, string>>> $bindValue
+	 * The three structures allowed by this method are:
+	 * 1) If $bindValue has int keys, the first value must represent an
+	 * iterable of columnHeaders, and subsequent values must represent an
+	 * iterable of columnValues.
+	 * 2) If $bindValue has string keys, the keys must represent the column
+	 * headers and the value must be an iterable of columnValues.
+	 * 3) If columnValues has int keys, each item represents the value of
+	 * a column <td> element.
+	 * 4) If columnValues has a string keys, each key represents a <th> and
+	 * each sub-iterable represents the remaining column values.
+	 * @return array<int, array<int, string|Stringable>> A two-dimensional
+	 * array where the outer array represents the rows, the inner array
+	 * represents the columns.
+	 */
+	private function normaliseTableData(iterable $bindValue):array {
+		// TODO: Actual normalisation.
+		$normalised = $bindValue;
+
+		reset($bindValue);
+		$key = key($bindValue);
+
+		if(is_int($key)) {
+
+		}
+		else {
+
+		}
+
+		return $normalised;
+	}
+
+	/**
+	 * @param array<int, array<int, string>> $tableData
+	 * @param Element $context
+	 */
+	private function handleTableData(
+		array $tableData,
+		Element $context
+	):void {
+		$tableArray = [$context];
+		if(!$context instanceof HTMLTableElement) {
+			$tableArray = [];
+			foreach($context->querySelectorAll("table") as $table) {
+				array_push($tableArray, $table);
+			}
+		}
+
+		if(empty($tableArray)) {
+			throw new TableElementNotFoundInContextException();
+		}
+
+		foreach($tableArray as $table) {
+			/** @var HTMLTableElement $table */
+
+			$headerRow = array_shift($tableData);
+			$allowedHeaders = $headerRow;
+
+			$tHead = $table->tHead;
+			if($tHead) {
+				$allowedHeaders = [];
+
+				/** @var HTMLTableRowElement $tHeadRow */
+				$tHeadRow = $tHead->rows[0];
+				foreach($tHeadRow->cells as $cell) {
+					/** @var HTMLTableCellElement $cell */
+					$headerKey = $cell->hasAttribute("data-table-key")
+						? $cell->getAttribute("data-table-key")
+						: trim($cell->textContent);
+					array_push($allowedHeaders, $headerKey);
+				}
+			}
+			else {
+				$tHead = $table->createTHead();
+				$theadTr = $tHead->insertRow();
+
+				foreach($headerRow as $value) {
+					$th = $theadTr->insertCell();
+					$th->textContent = $value;
+				}
+			}
+
+			/** @var ?HTMLTableSectionElement $tbody */
+			$tbody = $table->tBodies[0] ?? null;
+			if(!$tbody) {
+				$tbody = $table->createTBody();
+			}
+
+			foreach($tableData as $rowData) {
+				$tr = $tbody->insertRow();
+
+				foreach($allowedHeaders as $allowedHeader) {
+					if(!in_array($allowedHeader, $headerRow)) {
+						continue;
+					}
+
+					$rowIndex = array_search($allowedHeader, $headerRow);
+					$columnValue = $rowData[$rowIndex];
+					$td = $tr->insertCell();
+					$td->textContent = $columnValue;
+				}
+			}
+		}
 	}
 }
