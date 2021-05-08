@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\HTMLElement\HTMLButtonElement;
 use Gt\Dom\HTMLElement\HTMLImageElement;
 use Gt\Dom\HTMLElement\HTMLParagraphElement;
 use Gt\DomTemplate\DocumentBinder;
@@ -224,5 +225,19 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("funny friendly magical", $paragraph->dataset->params);
 		$sut->bindKeyValue("isMagic", false, $paragraph);
 		self::assertSame("funny friendly", $paragraph->dataset->params);
+	}
+
+	public function testBindKeyValue_toggleDisabled():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLButtonElement $button */
+		$button = $document->getElementById("btn1");
+
+		self::assertFalse($button->disabled);
+		$sut->bindKeyValue("isBtn1Disabled", true);
+		self::assertTrue($button->disabled);
+		$sut->bindKeyValue("isBtn1Disabled", false);
+		self::assertFalse($button->disabled);
 	}
 }

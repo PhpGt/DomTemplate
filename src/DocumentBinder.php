@@ -242,21 +242,29 @@ class DocumentBinder {
 		mixed $bindValue
 	):void {
 		$modifierChar = $modifier[0];
-		$attributeValue = substr($modifier, 1);
-		if(-1 !== $spacePos = strpos($attributeValue, " ")) {
-			$attributeValue = substr($attributeValue, $spacePos + 1);
+		$modifierValue = substr($modifier, 1);
+		if(false !== $spacePos = strpos($modifierValue, " ")) {
+			$modifierValue = substr($modifierValue, $spacePos + 1);
 		}
 
 		switch($modifierChar) {
-		case "?":
+		case ":":
 			$tokenList = $this->getTokenList($element, $attribute);
 			if($bindValue) {
-				$tokenList->add($attributeValue);
+				$tokenList->add($modifierValue);
 			}
 			else {
-				$tokenList->remove($attributeValue);
+				$tokenList->remove($modifierValue);
 			}
 			break;
+
+		case "?":
+			if($bindValue) {
+				$element->setAttribute($attribute, "");
+			}
+			else {
+				$element->removeAttribute($attribute);
+			}
 		}
 	}
 

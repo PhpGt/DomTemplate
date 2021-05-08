@@ -88,12 +88,16 @@ HTML;
 	data-bind:class="size" />
 
 <img id="img2" class="secondary" src="/default.png" alt="Not bound"
-	data-bind:class="?is-selected" />
+	data-bind:class=":is-selected" />
 
 <img id="img3" class="secondary" src="/default.png" alt="Not bound"
-	data-bind:class="?isSelected selected-image" />
+	data-bind:class=":isSelected selected-image" />
 
-<p id="p1" data-params="funny friendly" data-bind:data-params="?isMagic magical">Is this paragraph magical?</p>
+<p id="p1" data-params="funny friendly" data-bind:data-params=":isMagic magical">Is this paragraph magical?</p>
+
+<form id="form1">
+	<button id="btn1" data-bind:disabled="?isBtn1Disabled" />
+</form>
 HTML;
 
 
