@@ -100,7 +100,7 @@ class DocumentBinder {
 			else {
 // If there is a key specified, and the bind attribute's value doesn't match,
 // skip this attribute.
-				$trimmedAttrValue = ltrim($attrValue, ":?@");
+				$trimmedAttrValue = ltrim($attrValue, ":!?@");
 				$trimmedAttrValue = strtok($trimmedAttrValue, " ");
 				if($key !== $trimmedAttrValue) {
 					continue;
@@ -259,6 +259,10 @@ class DocumentBinder {
 			break;
 
 		case "?":
+			if($modifierValue[0] === "!") {
+				$bindValue = !$bindValue;
+			}
+
 			if($bindValue) {
 				$element->setAttribute($attribute, "");
 			}

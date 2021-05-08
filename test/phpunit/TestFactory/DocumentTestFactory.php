@@ -97,6 +97,7 @@ HTML;
 
 <form id="form1">
 	<button id="btn1" data-bind:disabled="?isBtn1Disabled" />
+	<button id="btn2" data-bind:disabled="?!isBtn2Enabled" />
 </form>
 HTML;
 

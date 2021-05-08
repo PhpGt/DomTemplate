@@ -240,4 +240,18 @@ class DocumentBinderTest extends TestCase {
 		$sut->bindKeyValue("isBtn1Disabled", false);
 		self::assertFalse($button->disabled);
 	}
+
+	public function testBindKeyValue_toggleDisabled_inverseLogic():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLButtonElement $button */
+		$button = $document->getElementById("btn2");
+
+		self::assertFalse($button->disabled);
+		$sut->bindKeyValue("isBtn2Enabled", false);
+		self::assertTrue($button->disabled);
+		$sut->bindKeyValue("isBtn2Enabled", true);
+		self::assertFalse($button->disabled);
+	}
 }
