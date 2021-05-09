@@ -308,22 +308,47 @@ class DocumentBinder {
 	 * a column <td> element.
 	 * 4) If columnValues has a string keys, each key represents a <th> and
 	 * each sub-iterable represents the remaining column values.
-	 * @return array<int, array<int, string|Stringable>> A two-dimensional
-	 * array where the outer array represents the rows, the inner array
-	 * represents the columns.
+	 * @return array<int, array<int|string, string|Stringable>> A
+	 * two-dimensional array where the outer array represents the rows, the
+	 * inner array represents the columns.
 	 */
 	private function normaliseTableData(iterable $bindValue):array {
 		// TODO: Actual normalisation.
-		$normalised = $bindValue;
+		$normalised = [];
 
 		reset($bindValue);
 		$key = key($bindValue);
 
 		if(is_int($key)) {
+			foreach($bindValue as $i => $value) {
+				if(!is_iterable($value)) {
+					throw new IncorrectTableDataFormat("Row $i data is not iterable.");
+				}
+				$row = [];
 
+				foreach($value as $j => $columnValue) {
+					array_push($row, $columnValue);
+				}
+				array_push($normalised, $row);
+			}
 		}
 		else {
+			array_push($normalised, array_keys($bindValue));
 
+			foreach($bindValue as $colName => $colValueList) {
+				if(!is_iterable($colValueList)) {
+					throw new IncorrectTableDataFormat("Column data $colName is not iterable.");
+				}
+
+				$row = [];
+				foreach($colValueList as $i => $colValue) {
+					array_push($row, $colValue);
+				}
+// TODO: The shape is all wrong here.
+// All IDs are being put into the first row, then all names are in the second.
+// Whre actually each row should contain one of each datum.
+				array_push($normalised, $row);
+			}
 		}
 
 		return $normalised;

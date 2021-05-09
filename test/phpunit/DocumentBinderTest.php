@@ -339,10 +339,54 @@ class DocumentBinderTest extends TestCase {
 		$row2 = $tbody->rows[2];
 		/** @var HTMLTableRowElement $row3 */
 		$row3 = $tbody->rows[3];
-		self::assertCount(3, $row0->children);
-		self::assertCount(3, $row1->children);
-		self::assertCount(3, $row2->children);
-		self::assertCount(3, $row3->children);
+		self::assertCount(3, $row0->cells);
+		self::assertCount(3, $row1->cells);
+		self::assertCount(3, $row2->cells);
+		self::assertCount(3, $row3->cells);
+
+		self::assertSame("Greg", $row0->cells[0]->textContent);
+		self::assertSame("Bowler", $row0->cells[1]->textContent);
+		self::assertSame("greg@php.gt", $row0->cells[2]->textContent);
+		self::assertSame("Derek", $row1->cells[0]->textContent);
+		self::assertSame("Rethans", $row1->cells[1]->textContent);
+		self::assertSame("derek@php.net", $row1->cells[2]->textContent);
+		self::assertSame("Christoph", $row2->cells[0]->textContent);
+		self::assertSame("Becker", $row2->cells[1]->textContent);
+		self::assertSame("cmbecker69@php.net", $row2->cells[2]->textContent);
+		self::assertSame("Sara", $row3->cells[0]->textContent);
+		self::assertSame("Golemon", $row3->cells[1]->textContent);
+		self::assertSame("pollita@php.net", $row3->cells[2]->textContent);
+	}
+
+	public function testBindKeyValue_tableDataNormalised():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl2");
+
+		$thead = $table->tHead;
+		$originalTheadHTML = $thead->innerHTML;
+
+		$tableData = [
+			"id" => [34, 35, 25],
+			"firstName" => ["Derek", "Christoph", "Sara"],
+			"lastName" => ["Rethans", "Becker", "Golemon"],
+			"username" => ["derek", "cmbecker69", "pollita"],
+			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
+		];
+		$sut->bindKeyValue("tableData", $tableData, $table);
+
+		/** @var HTMLTableSectionElement $tbody */
+		$tbody = $table->tBodies[0];
+		/** @var HTMLTableRowElement $row0 */
+		$row0 = $tbody->rows[0];
+		/** @var HTMLTableRowElement $row1 */
+		$row1 = $tbody->rows[1];
+		/** @var HTMLTableRowElement $row2 */
+		$row2 = $tbody->rows[2];
+		/** @var HTMLTableRowElement $row3 */
+		$row3 = $tbody->rows[3];
 
 		self::assertSame("Greg", $row0->cells[0]->textContent);
 		self::assertSame("Bowler", $row0->cells[1]->textContent);
