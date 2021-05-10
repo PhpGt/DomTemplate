@@ -512,4 +512,25 @@ class DocumentBinderTest extends TestCase {
 		self::expectExceptionMessage("Row 1 data is not iterable.");
 		$sut->bindKeyValue("tableData", $tableData, $table);
 	}
+
+	public function testBindKeyValue_tableData_doubleHeaderNonIterableValue():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+
+		$tableData = [
+			["Item", "Price", "Stock Level"],
+			[
+// Note that the inner array does not represent its data as an array.
+				"Washing machine" => 698_00,
+				"Television" => 998_00,
+				"Laptop" => 799_99,
+			]
+		];
+		self::expectException(IncorrectTableDataFormat::class);
+		self::expectExceptionMessage("Row 1 has a string key (Washing machine) but the value is not iterable.");
+		$sut->bindKeyValue("tableData", $tableData, $table);
+	}
 }
