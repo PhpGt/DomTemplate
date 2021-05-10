@@ -26,7 +26,7 @@ class DocumentBinder {
 	 */
 	public function bindValue(
 		mixed $value,
-		Node $context = null
+		Element $context = null
 	):void {
 		$this->bind(null, $value, $context);
 	}
@@ -38,7 +38,7 @@ class DocumentBinder {
 	public function bindKeyValue(
 		string $key,
 		mixed $value,
-		Node $context = null
+		Element $context = null
 	):void {
 		$this->bind($key, $value, $context);
 	}
@@ -49,7 +49,7 @@ class DocumentBinder {
 	 */
 	public function bindData(
 		mixed $kvp,
-		Node $context = null
+		Element $context = null
 	):void {
 		if($this->isIndexedArray($kvp)) {
 			throw new IncompatibleBindDataException("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
@@ -60,17 +60,24 @@ class DocumentBinder {
 		}
 	}
 
+	public function bindTable(
+		mixed $tableData,
+		Element $context = null
+	):void {
+		$tableData = $this->normaliseTableData($tableData);
+		$this->handleTableData($tableData, $context);
+	}
+
 	private function bind(
 		?string $key,
 		mixed $value,
-		?Node $context = null
+		?Element $context = null
 	):void {
 		if(!$context) {
 			$context = $this->document;
 		}
 
 		foreach($this->evaluateDataBindElements($context) as $element) {
-			/** @var Element $element */
 			$this->processDataBindAttributes(
 				$element,
 				$key,
@@ -203,8 +210,7 @@ class DocumentBinder {
 			break;
 
 		case "table":
-			$bindValue = $this->normaliseTableData($bindValue);
-			$this->handleTableData($bindValue, $element);
+			$this->bindTable($bindValue, $element);
 			break;
 
 		default:
@@ -287,12 +293,12 @@ class DocumentBinder {
 	}
 
 	private function getTokenList(
-		Element $element,
+		Element $node,
 		string $attribute
 	):DOMTokenList {
 		return DOMTokenListFactory::create(
-			fn() => explode(" ", $element->getAttribute($attribute)),
-			fn(string...$tokens) => $element->setAttribute($attribute, implode(" ", $tokens)),
+			fn() => explode(" ", $node->getAttribute($attribute)),
+			fn(string...$tokens) => $node->setAttribute($attribute, implode(" ", $tokens)),
 		);
 	}
 
@@ -326,9 +332,25 @@ class DocumentBinder {
 				$row = [];
 
 				foreach($value as $j => $columnValue) {
-					array_push($row, $columnValue);
+// A string key within the inner array indicates "double header" table data.
+					if(is_string($j)) {
+						$doubleHeader = [$j => []];
+						if(!is_iterable($columnValue)) {
+							throw new IncorrectTableDataFormat("Row $i has a string key ($j) but the value is not iterable.");
+						}
+
+						foreach($columnValue as $cellValue) {
+							array_push($doubleHeader[$j], $cellValue);
+						}
+						array_push($normalised, $doubleHeader);
+					}
+					else {
+						array_push($row, $columnValue);
+					}
 				}
-				array_push($normalised, $row);
+				if(!empty($row)) {
+					array_push($normalised, $row);
+				}
 			}
 		}
 		else {
@@ -356,7 +378,7 @@ class DocumentBinder {
 	}
 
 	/**
-	 * @param array<int, array<int, string>> $tableData
+	 * @param array<int, array<int, string>>|array<int, array<int|string, string|array<int, mixed>>> $tableData
 	 * @param Element $context
 	 */
 	private function handleTableData(
@@ -413,6 +435,8 @@ class DocumentBinder {
 
 			foreach($tableData as $rowData) {
 				$tr = $tbody->insertRow();
+				/** @var int|string|null $firstKey */
+				$firstKey = key($rowData);
 
 				foreach($allowedHeaders as $allowedHeader) {
 					if(!in_array($allowedHeader, $headerRow)) {
@@ -420,9 +444,24 @@ class DocumentBinder {
 					}
 
 					$rowIndex = array_search($allowedHeader, $headerRow);
-					$columnValue = $rowData[$rowIndex];
-					$td = $tr->insertCell();
-					$td->textContent = $columnValue;
+					$cellTypeToCreate = "td";
+
+					if(is_string($firstKey)) {
+						if($rowIndex === 0) {
+							$columnValue = $firstKey;
+							$cellTypeToCreate = "th";
+						}
+						else {
+							$columnValue = $rowData[$firstKey][$rowIndex - 1];
+						}
+					}
+					else {
+						$columnValue = $rowData[$rowIndex];
+					}
+
+					$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);
+					$cellElement->textContent = $columnValue;
+					$tr->appendChild($cellElement);
 				}
 			}
 		}

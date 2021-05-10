@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use Gt\Dom\HTMLElement\HTMLButtonElement;
 use Gt\Dom\HTMLElement\HTMLImageElement;
 use Gt\Dom\HTMLElement\HTMLParagraphElement;
+use Gt\Dom\HTMLElement\HTMLTableCellElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
 use Gt\Dom\HTMLElement\HTMLTableSectionElement;
@@ -365,9 +366,6 @@ class DocumentBinderTest extends TestCase {
 		/** @var HTMLTableElement $table */
 		$table = $document->getElementById("tbl2");
 
-		$thead = $table->tHead;
-		$originalTheadHTML = $thead->innerHTML;
-
 		$tableData = [
 			"id" => [34, 35, 25],
 			"firstName" => ["Derek", "Christoph", "Sara"],
@@ -401,4 +399,76 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("Golemon", $row3->cells[1]->textContent);
 		self::assertSame("pollita@php.net", $row3->cells[2]->textContent);
 	}
+
+	/**
+	 * A "double header" is a term I use to describe tables that have
+	 * header data in the first column going along the top, but also another
+	 * header line as the first row. See the MDN example for why <th> might
+	 * be present in the first column of a table:
+	 * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tbody
+	 */
+	public function testBindKeyValue_doubleHeaderTable_shouldEmitTHElementsInRows():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+
+		$tableData = [
+			["Item", "Price", "Stock Level"],
+			[
+				"Washing machine" => ["698_00", 24],
+				"Television" => ["998_00", 7],
+				"Laptop" => ["799_99", 60],
+			]
+		];
+		$sut->bindKeyValue("tableData", $tableData, $table);
+
+		/** @var HTMLTableSectionElement $tbody */
+		$tbody = $table->tBodies[0];
+		/** @var HTMLTableRowElement $row0 */
+		$row0 = $tbody->rows[0];
+		/** @var HTMLTableRowElement $row1 */
+		$row1 = $tbody->rows[1];
+		/** @var HTMLTableRowElement $row2 */
+		$row2 = $tbody->rows[2];
+
+		foreach($row0->cells as $i => $cell) {
+			/** @var HTMLTableCellElement $cell */
+			if($i === 0) {
+				self::assertSame("TH", $cell->tagName);
+				self::assertSame("Washing machine", $cell->textContent);
+			}
+			else {
+				self::assertSame("TD", $cell->tagName);
+				self::assertEquals($tableData[1]["Washing machine"][$i - 1], $cell->textContent);
+			}
+		}
+
+		foreach($row1->cells as $i => $cell) {
+			/** @var HTMLTableCellElement $cell */
+			if($i === 0) {
+				self::assertSame("TH", $cell->tagName);
+				self::assertSame("Television", $cell->textContent);
+			}
+			else {
+				self::assertSame("TD", $cell->tagName);
+				self::assertEquals($tableData[1]["Television"][$i - 1], $cell->textContent);
+			}
+		}
+
+		foreach($row2->cells as $i => $cell) {
+			/** @var HTMLTableCellElement $cell */
+			if($i === 0) {
+				self::assertSame("TH", $cell->tagName);
+				self::assertSame("Laptop", $cell->textContent);
+			}
+			else {
+				self::assertSame("TD", $cell->tagName);
+				self::assertEquals($tableData[1]["Laptop"][$i - 1], $cell->textContent);
+			}
+		}
+	}
+
+	// TODO: Test that incorrect table types throw useful exceptions.
 }
