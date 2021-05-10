@@ -123,6 +123,12 @@ HTML;
 	</tbody>
 </table>
 HTML;
+	const HTML_NO_TABLE = <<<HTML
+<!doctype html>
+<div data-bind:table="tableData">
+	<p>There's no table in here, mate.</p>
+</div>
+HTML;
 
 
 	public static function createHTML(string $html = ""):HTMLDocument {

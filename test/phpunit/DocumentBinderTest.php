@@ -12,6 +12,7 @@ use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\IncorrectTableDataFormat;
 use Gt\DomTemplate\InvalidBindPropertyException;
+use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -550,5 +551,12 @@ class DocumentBinderTest extends TestCase {
 		self::expectException(IncorrectTableDataFormat::class);
 		self::expectExceptionMessage("Column data \"Price\" is not iterable.");
 		$sut->bindKeyValue("tableData", $tableData);
+	}
+
+	public function testBindKeyValue_tableData_noTable():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_NO_TABLE);
+		$sut = new DocumentBinder($document);
+		self::expectException(TableElementNotFoundInContextException::class);
+		$sut->bindKeyValue("tableData", []);
 	}
 }
