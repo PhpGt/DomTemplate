@@ -442,9 +442,9 @@ class DocumentBinderTest extends TestCase {
 		$tableData = [
 			["Item", "Price", "Stock Level"],
 			[
-				"Washing machine" => ["698_00", 24],
-				"Television" => ["998_00", 7],
-				"Laptop" => ["799_99", 60],
+				"Washing machine" => [698_00, 24],
+				"Television" => [998_00, 7],
+				"Laptop" => [799_99, 60],
 			]
 		];
 		$sut->bindKeyValue("tableData", $tableData, $table);
