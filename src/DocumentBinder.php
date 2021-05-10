@@ -313,7 +313,6 @@ class DocumentBinder {
 	 * inner array represents the columns.
 	 */
 	private function normaliseTableData(iterable $bindValue):array {
-		// TODO: Actual normalisation.
 		$normalised = [];
 
 		reset($bindValue);
@@ -334,21 +333,23 @@ class DocumentBinder {
 		}
 		else {
 			array_push($normalised, array_keys($bindValue));
+			$rows = [];
 
 			foreach($bindValue as $colName => $colValueList) {
 				if(!is_iterable($colValueList)) {
 					throw new IncorrectTableDataFormat("Column data $colName is not iterable.");
 				}
 
-				$row = [];
 				foreach($colValueList as $i => $colValue) {
-					array_push($row, $colValue);
+					if(!isset($rows[$i])) {
+						$rows[$i] = [];
+					}
+
+					array_push($rows[$i], $colValue);
 				}
-// TODO: The shape is all wrong here.
-// All IDs are being put into the first row, then all names are in the second.
-// Whre actually each row should contain one of each datum.
-				array_push($normalised, $row);
 			}
+
+			array_push($normalised, ...$rows);
 		}
 
 		return $normalised;
