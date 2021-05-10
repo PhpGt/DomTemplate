@@ -559,4 +559,10 @@ class DocumentBinderTest extends TestCase {
 		self::expectException(TableElementNotFoundInContextException::class);
 		$sut->bindKeyValue("tableData", []);
 	}
+
+	// TODO: bind table data into an element that contains multiple tables with multiple data-bind:table attributes.
+
+	// TODO: bind table data into an element that already has a thead but doesn't use data-table-key for the headings (add columns by index instead).
+
+	// TODO: bind table data that has more data keys than is already present in the thead... this should already be tested...
 }
