@@ -138,6 +138,14 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($category, $document->getElementById("dd3")->textContent);
 	}
 
+	public function testBindData_indexedArray():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		self::expectException(IncompatibleBindDataException::class);
+		self::expectExceptionMessage("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
+		$sut->bindData(["one", "two", "three"]);
+	}
+
 	public function testBindData_indexArray_shouldThrowException():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
