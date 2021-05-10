@@ -533,4 +533,22 @@ class DocumentBinderTest extends TestCase {
 		self::expectExceptionMessage("Row 1 has a string key (Washing machine) but the value is not iterable.");
 		$sut->bindKeyValue("tableData", $tableData, $table);
 	}
+
+	public function testBindKeyValue_tableData_assocArrayWithoutIterableColumns():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+		$tableData = [
+// This is emulating a common syntax mistake - the columns are not within an
+// array, but from a glance the shape looks OK.
+			"Item" => ["Washing machine", "Television", "Laptop"],
+			"Price" => 698_00, 998_00, 799_99,
+			"Stock Level", [24, 7, 60],
+		];
+		self::expectException(IncorrectTableDataFormat::class);
+		self::expectExceptionMessage("Column data \"Price\" is not iterable.");
+		$sut->bindKeyValue("tableData", $tableData);
+	}
 }

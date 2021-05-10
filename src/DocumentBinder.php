@@ -359,7 +359,7 @@ class DocumentBinder {
 
 			foreach($bindValue as $colName => $colValueList) {
 				if(!is_iterable($colValueList)) {
-					throw new IncorrectTableDataFormat("Column data $colName is not iterable.");
+					throw new IncorrectTableDataFormat("Column data \"$colName\" is not iterable.");
 				}
 
 				foreach($colValueList as $i => $colValue) {
