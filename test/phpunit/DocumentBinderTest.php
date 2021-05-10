@@ -13,6 +13,7 @@ use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class DocumentBinderTest extends TestCase {
 	/**
@@ -144,6 +145,21 @@ class DocumentBinderTest extends TestCase {
 		self::expectException(IncompatibleBindDataException::class);
 		self::expectExceptionMessage("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
 		$sut->bindData(["one", "two", "three"]);
+	}
+
+	public function testBindData_object():void {
+		$userObject = new StdClass();
+		$userObject->username = "g105b";
+		$userObject->email = "greg.bowler@g105b.com";
+		$userObject->category = "maintainer";
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData($userObject);
+
+		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
+		self::assertSame($userObject->email, $document->getElementById("dd2")->textContent);
+		self::assertSame($userObject->category, $document->getElementById("dd3")->textContent);
 	}
 
 	public function testBindData_indexArray_shouldThrowException():void {
