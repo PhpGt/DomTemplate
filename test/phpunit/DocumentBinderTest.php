@@ -10,6 +10,7 @@ use Gt\Dom\HTMLElement\HTMLTableRowElement;
 use Gt\Dom\HTMLElement\HTMLTableSectionElement;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
+use Gt\DomTemplate\IncorrectTableDataFormat;
 use Gt\DomTemplate\InvalidBindPropertyException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
@@ -494,5 +495,21 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
-	// TODO: Test that incorrect table types throw useful exceptions.
+	public function testBindKeyValue_tableData_nonIterableValue():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+
+		$tableData = [
+			["Item", "Price", "Stock Level"],
+			"incorrect",
+			"table",
+			"format",
+		];
+		self::expectException(IncorrectTableDataFormat::class);
+		self::expectExceptionMessage("Row 1 data is not iterable.");
+		$sut->bindKeyValue("tableData", $tableData, $table);
+	}
 }
