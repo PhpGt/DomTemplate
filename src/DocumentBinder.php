@@ -397,10 +397,10 @@ class DocumentBinder {
 			throw new TableElementNotFoundInContextException();
 		}
 
+		$headerRow = array_shift($tableData);
 		foreach($tableArray as $table) {
 			/** @var HTMLTableElement $table */
 
-			$headerRow = array_shift($tableData);
 			$allowedHeaders = $headerRow;
 
 			$tHead = $table->tHead;

@@ -122,6 +122,23 @@ HTML;
 		</tr>
 	</tbody>
 </table>
+
+<div id="multi-table-container">
+	<section id="s1">
+		<p>First table:</p>
+		<table data-bind:table="tableData"></table>	
+	</section>
+	
+	<section id="s2">
+		<p>Second table (different data):</p>
+		<table data-bind:table="tableData2"></table>	
+	</section>
+	
+	<section id="s3">
+		<p>Third table (same data):</p>
+		<table data-bind:table="tableData"></table>	
+	</section>
+</div>
 HTML;
 	const HTML_NO_TABLE = <<<HTML
 <!doctype html>

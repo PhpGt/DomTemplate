@@ -560,7 +560,84 @@ class DocumentBinderTest extends TestCase {
 		$sut->bindKeyValue("tableData", []);
 	}
 
-	// TODO: bind table data into an element that contains multiple tables with multiple data-bind:table attributes.
+	public function testBindKeyValue_tableData_multipleTables():void {
+		$tableData = [
+			"id" => [34, 35, 25],
+			"firstName" => ["Derek", "Christoph", "Sara"],
+			"lastName" => ["Rethans", "Becker", "Golemon"],
+			"username" => ["derek", "cmbecker69", "pollita"],
+			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
+		];
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+		$sut->bindKeyValue(
+			"tableData",
+			$tableData,
+			$document->getElementById("multi-table-container")
+		);
+
+		$tableList = $document->querySelectorAll("#multi-table-container table");
+		self::assertCount(3, $tableList);
+
+		foreach($tableList as $tableIndex => $table) {
+			/** @var HTMLTableElement $table */
+			if($table->parentElement->id === "s2") {
+				continue;
+			}
+
+			/** @var HTMLTableSectionElement $tbody */
+			$tbody = $table->tBodies[0];
+			$tableDataKeys = array_keys($tableData);
+			foreach($tbody->rows as $rowIndex => $row) {
+				/** @var HTMLTableRowElement $row */
+				foreach($row->cells as $cellIndex => $cell) {
+					$key = $tableDataKeys[$cellIndex];
+					self::assertEquals(
+						$tableData[$key][$rowIndex],
+						$cell->textContent
+					);
+				}
+			}
+		}
+	}
+
+	public function testBindTable_multipleTables():void {
+		$tableData = [
+			"id" => [34, 35, 25],
+			"firstName" => ["Derek", "Christoph", "Sara"],
+			"lastName" => ["Rethans", "Becker", "Golemon"],
+			"username" => ["derek", "cmbecker69", "pollita"],
+			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
+		];
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+		$sut->bindTable(
+			$tableData,
+			$document->getElementById("multi-table-container")
+		);
+
+		$tableList = $document->querySelectorAll("#multi-table-container table");
+		self::assertCount(3, $tableList);
+
+		foreach($tableList as $tableIndex => $table) {
+			/** @var HTMLTableElement $table */
+			/** @var HTMLTableSectionElement $tbody */
+			$tbody = $table->tBodies[0];
+			$tableDataKeys = array_keys($tableData);
+			foreach($tbody->rows as $rowIndex => $row) {
+				/** @var HTMLTableRowElement $row */
+				foreach($row->cells as $cellIndex => $cell) {
+					$key = $tableDataKeys[$cellIndex];
+					self::assertEquals(
+						$tableData[$key][$rowIndex],
+						$cell->textContent
+					);
+				}
+			}
+		}
+	}
 
 	// TODO: bind table data into an element that already has a thead but doesn't use data-table-key for the headings (add columns by index instead).
 
