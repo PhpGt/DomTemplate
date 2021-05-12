@@ -123,6 +123,25 @@ HTML;
 	</tbody>
 </table>
 
+<table id="tbl3">
+	<thead>
+		<tr>
+<!-- Here you can see the data's key is in the TH elements. -->
+			<th>firstName</th>
+			<th>lastName</th>
+			<th>email</th>
+		</tr>	
+	</thead>
+	<tbody>
+		<tr>
+<!-- This row already exists in the HTML and should be kept when new data is bound -->
+			<td>Greg</td>
+			<td>Bowler</td>
+			<td>greg@php.gt</td>
+		</tr>
+	</tbody>
+</table>
+
 <div id="multi-table-container">
 	<section id="s1">
 		<p>First table:</p>

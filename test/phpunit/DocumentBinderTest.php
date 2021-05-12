@@ -639,7 +639,48 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
-	// TODO: bind table data into an element that already has a thead but doesn't use data-table-key for the headings (add columns by index instead).
+	public function testBindTable_keyNamesInTHead():void {
+		$tableData = [
+			"id" => [34, 35, 25],
+			"firstName" => ["Derek", "Christoph", "Sara"],
+			"lastName" => ["Rethans", "Becker", "Golemon"],
+			"username" => ["derek", "cmbecker69", "pollita"],
+			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
+		];
+
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl3");
+		$sut = new DocumentBinder($document);
+		$sut->bindTable(
+			$tableData,
+			$table
+		);
+
+		$tableDataKeys = [];
+		foreach($table->rows as $rowIndex => $row) {
+			/** @var $row HTMLTableRowElement */
+			if($rowIndex === 1) {
+				self::assertEquals("Greg", $row->cells[0]->textContent);
+				continue;
+			}
+
+			foreach($row->cells as $cellIndex => $cell) {
+				if($rowIndex === 0) {
+					array_push($tableDataKeys, $cell->textContent);
+					continue;
+				}
+
+				$key = $tableDataKeys[$cellIndex];
+				self::assertEquals(
+// `$rowIndex - 2` because we're counting the header, and the pre-existing row.
+					$tableData[$key][$rowIndex - 2],
+					$cell->textContent
+				);
+			}
+		}
+	}
 
 	// TODO: bind table data that has more data keys than is already present in the thead... this should already be tested...
 }
