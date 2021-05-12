@@ -439,10 +439,6 @@ class DocumentBinder {
 				$firstKey = key($rowData);
 
 				foreach($allowedHeaders as $allowedHeader) {
-					if(!in_array($allowedHeader, $headerRow)) {
-						continue;
-					}
-
 					$rowIndex = array_search($allowedHeader, $headerRow);
 					$cellTypeToCreate = "td";
 

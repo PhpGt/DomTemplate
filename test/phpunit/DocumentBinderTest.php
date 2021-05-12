@@ -681,6 +681,4 @@ class DocumentBinderTest extends TestCase {
 			}
 		}
 	}
-
-	// TODO: bind table data that has more data keys than is already present in the thead... this should already be tested...
 }
