@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
+use Gt\Dom\Facade\NodeClass\DOMElementFacade;
 use Gt\Dom\Node;
 
 class TemplateElement {
@@ -36,5 +37,19 @@ class TemplateElement {
 
 	public function getTemplateParent():Element {
 		return $this->templateParent;
+	}
+
+	public function getTemplateName():string {
+		return $this->originalElement->getAttribute("data-template")
+			?: $this->calculateTemplatePath($this->templateParent);
+	}
+
+	private function calculateTemplatePath(Element $element):string {
+		$refObj = new \ReflectionObject($element);
+		$refProp = $refObj->getProperty("domNode");
+		$refProp->setAccessible(true);
+		/** @var DOMElementFacade $nativeDomNode */
+		$nativeDomNode = $refProp->getValue($element);
+		return $nativeDomNode->getNodePath();
 	}
 }
