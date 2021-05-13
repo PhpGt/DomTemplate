@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use ArrayIterator;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\TemplateCollection;
@@ -20,6 +21,22 @@ class ListBinderTest extends TestCase {
 		$sut = new ListBinder($templateCollection);
 		$boundCount = $sut->bindListData(
 			[],
+			$document
+		);
+		self::assertSame(0, $boundCount);
+	}
+
+	public function testBindList_emptyList_iterator():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+// The template collection should never even be touched if the list is empty.
+		$templateCollection->expects(self::never())
+			->method("get");
+
+		$sut = new ListBinder($templateCollection);
+		$boundCount = $sut->bindListData(
+			new ArrayIterator([]),
 			$document
 		);
 		self::assertSame(0, $boundCount);

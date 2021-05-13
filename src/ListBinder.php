@@ -36,7 +36,7 @@ class ListBinder {
 		);
 
 		$binder = new ElementBinder();
-		$i = null;
+		$i = -1;
 		foreach($listData as $i => $listItem) {
 			$key = null;
 			$value = null;
@@ -49,25 +49,17 @@ class ListBinder {
 			$binder->bind($key, $value, $t);
 		}
 
-		if(is_null($i)) {
-			return 0;
-		}
-
 		return $i + 1;
 	}
 
 	private function isEmpty(iterable $listData):bool {
-		foreach($listData as $item) {
-			if(is_array($listData)) {
-				reset($listData);
-			}
-			elseif($listData instanceof Iterator) {
-				$listData->rewind();
-			}
-
-			return false;
+		if(is_array($listData)) {
+			return is_null(array_key_first($listData));
 		}
-
-		return true;
+		else {
+			/** @var Iterator $listData */
+			$listData->rewind();
+			return !$listData->valid();
+		}
 	}
 }
