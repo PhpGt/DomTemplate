@@ -143,7 +143,7 @@ class ListBinderTest extends TestCase {
 		self::assertSame("", $document->querySelector("ul")->innerHTML);
 	}
 
-	public function testBindListData_kvpList():void {
+	public function testBindListData_kvpList_array():void {
 		$kvpList = [
 			["userId" => 543, "username" => "win95", "orderCount" => 55],
 			["userId" => 559, "username" => "seafoam", "orderCount" => 30],
@@ -165,6 +165,31 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($kvpList[$i]["userId"], $li->querySelector("h3 span")->textContent);
 			self::assertEquals($kvpList[$i]["username"], $li->querySelector("h2 span")->textContent);
 			self::assertEquals($kvpList[$i]["orderCount"], $li->querySelector("p span")->textContent);
+		}
+	}
+
+	public function testBindListData_kvpList_object():void {
+		$kvpList = [
+			(object)["userId" => 543, "username" => "win95", "orderCount" => 55],
+			(object)["userId" => 559, "username" => "seafoam", "orderCount" => 30],
+			(object)["userId" => 274, "username" => "hammatime", "orderCount" => 23],
+		];
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$orderList = $document->querySelector("ul");
+
+		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->method("get")
+			->willReturn($templateElement);
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($kvpList, $orderList);
+
+		foreach($orderList->children as $i => $li) {
+			/** @var HTMLLiElement $li */
+			self::assertEquals($kvpList[$i]->{"userId"}, $li->querySelector("h3 span")->textContent);
+			self::assertEquals($kvpList[$i]->{"username"}, $li->querySelector("h2 span")->textContent);
+			self::assertEquals($kvpList[$i]->{"orderCount"}, $li->querySelector("p span")->textContent);
 		}
 	}
 }
