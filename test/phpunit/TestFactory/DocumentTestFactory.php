@@ -182,6 +182,9 @@ HTML;
 <ul>
 	<li data-template data-bind:text>Template item!</li>
 </ul>
+<ol>
+	<li>This doesn't have a data-template attribute</li>
+</ol>
 HTML;
 
 	const HTML_TWO_LISTS = <<<HTML

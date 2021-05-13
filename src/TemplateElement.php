@@ -45,11 +45,6 @@ class TemplateElement {
 	}
 
 	private function calculateTemplatePath(Element $element):string {
-		$refObj = new \ReflectionObject($element);
-		$refProp = $refObj->getProperty("domNode");
-		$refProp->setAccessible(true);
-		/** @var DOMElementFacade $nativeDomNode */
-		$nativeDomNode = $refProp->getValue($element);
-		return $nativeDomNode->getNodePath();
+		return new NodePathExtractor($element);
 	}
 }

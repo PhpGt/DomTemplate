@@ -38,8 +38,14 @@ class TemplateCollection {
 	}
 
 	private function findMatch(Element $context):TemplateElement {
+		$contextPath = new NodePathExtractor($context);
+
 		foreach($this->elementKVP as $name => $element) {
 			if($name[0] !== "/") {
+				continue;
+			}
+
+			if(!str_starts_with($name, $contextPath)) {
 				continue;
 			}
 
@@ -48,5 +54,7 @@ class TemplateCollection {
 				return $element;
 			}
 		}
+
+		throw new TemplateElementNotFoundInContextException("There is no unnamed template element in the context element ({$context->tagName}).");
 	}
 }
