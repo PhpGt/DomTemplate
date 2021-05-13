@@ -24,6 +24,9 @@ class TemplateCollection {
 		}
 
 		if($templateName) {
+			if(!isset($this->elementKVP[$templateName])) {
+				throw new TemplateElementNotFoundInContextException("Template element with name \"$templateName\" can not be found within the context {$context->tagName} element.");
+			}
 			return $this->elementKVP[$templateName];
 		}
 
