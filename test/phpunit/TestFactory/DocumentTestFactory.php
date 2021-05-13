@@ -7,6 +7,10 @@ use Gt\Dom\HTMLDocument;
 use Gt\Dom\XMLDocument;
 
 class DocumentTestFactory {
+	const HTML_EMPTY = <<<HTML
+<!doctype html>
+HTML;
+
 	const HTML_NO_BIND_PROPERTY = <<<HTML
 <!doctype html>
 <output data-bind>Nothing is bound</output>
@@ -164,6 +168,13 @@ HTML;
 <div data-bind:table="tableData">
 	<p>There's no table in here, mate.</p>
 </div>
+HTML;
+
+	const HTML_LIST_TEMPLATE = <<<HTML
+<!doctype html>
+<ul>
+	<li data-template>Template item!</li>
+</ul>
 HTML;
 
 

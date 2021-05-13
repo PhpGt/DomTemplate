@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLElement\HTMLTableCellElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
@@ -14,9 +15,13 @@ class TableBinder {
 	 */
 	public function bindTableData(
 		array $tableData,
-		Element $context
+		Document|Element $context
 	):void {
 		$tableData = $this->normaliseTableData($tableData);
+
+		if($context instanceof Document) {
+			$context = $context->documentElement;
+		}
 
 		$tableArray = [$context];
 		if(!$context instanceof HTMLTableElement) {
