@@ -22,12 +22,13 @@ class ListBinder {
 		Document|Element $context,
 		?string $templateName = null
 	):int {
-		if($this->isEmpty($listData)) {
-			return 0;
-		}
-
 		if($context instanceof Document) {
 			$context = $context->documentElement;
+		}
+
+		if($this->isEmpty($listData)) {
+			$this->clearTemplateParentHTML($context, $templateName);
+			return 0;
 		}
 
 		$templateItem = $this->templateCollection->get(
@@ -61,5 +62,14 @@ class ListBinder {
 			$listData->rewind();
 			return !$listData->valid();
 		}
+	}
+
+	private function clearTemplateParentHTML(
+		Element $context,
+		?string $templateName
+	):void {
+		$template = $this->templateCollection->get($context, $templateName);
+		$parent = $template->getTemplateParent();
+		$parent->innerHTML = trim($parent->innerHTML);
 	}
 }

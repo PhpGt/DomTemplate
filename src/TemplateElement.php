@@ -33,4 +33,8 @@ class TemplateElement {
 
 		return $clone;
 	}
+
+	public function getTemplateParent():Element {
+		return $this->templateParent;
+	}
 }

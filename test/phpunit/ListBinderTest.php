@@ -14,9 +14,6 @@ class ListBinderTest extends TestCase {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
 
 		$templateCollection = self::createMock(TemplateCollection::class);
-// The template collection should never even be touched if the list is empty.
-		$templateCollection->expects(self::never())
-			->method("get");
 
 		$sut = new ListBinder($templateCollection);
 		$boundCount = $sut->bindListData(
@@ -30,9 +27,6 @@ class ListBinderTest extends TestCase {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
 
 		$templateCollection = self::createMock(TemplateCollection::class);
-// The template collection should never even be touched if the list is empty.
-		$templateCollection->expects(self::never())
-			->method("get");
 
 		$sut = new ListBinder($templateCollection);
 		$boundCount = $sut->bindListData(
@@ -133,5 +127,18 @@ class ListBinderTest extends TestCase {
 		foreach($gameData as $i => $game) {
 			self::assertSame($game, $document->querySelectorAll("#game-list li")[$i]->textContent);
 		}
+	}
+
+	public function testBindListData_empty_parentShouldBeEmpty():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$templateElement = new TemplateElement($document->querySelector("li[data-template]"));
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->method("get")
+			->willReturn($templateElement);
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData([], $document);
+
+		self::assertSame("", $document->querySelector("ul")->innerHTML);
 	}
 }
