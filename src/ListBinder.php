@@ -30,11 +30,6 @@ class ListBinder {
 			$context = $context->documentElement;
 		}
 
-		$attributeNameValue = "data-template";
-		if($templateName) {
-			$attributeNameValue .= "='$templateName'";
-		}
-
 		$templateItem = $this->templateCollection->get(
 			$context,
 			$templateName

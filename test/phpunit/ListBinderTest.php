@@ -79,4 +79,42 @@ class ListBinderTest extends TestCase {
 			self::assertSame($value, $ul->children[$i]->textContent);
 		}
 	}
+
+	/**
+	 * This tests what happens when the context element has more than one
+	 * element with a data-template attribute. In this test, we expect the
+	 * two template elements to have different template names.
+	 */
+	public function testBindListData_twoLists():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS);
+		$templateElementProgLang = new TemplateElement(
+			$document->querySelector("#favourites li[data-template='prog-lang']")
+		);
+		$templateElementGame = new TemplateElement(
+			$document->querySelector("#favourites li[data-template='game']")
+		);
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->expects(self::exactly(2))
+			->method("get")
+			->withConsecutive(
+				[$document->documentElement, "prog-lang"],
+				[$document->documentElement, "game"]
+			)
+			->willReturnOnConsecutiveCalls($templateElementProgLang, $templateElementGame);
+
+		$sut = new ListBinder($templateCollection);
+		$progLangData = ["PHP", "HTML", "bash"];
+		$sut->bindListData($progLangData, $document, "prog-lang");
+		$gameData = ["Pac Man", "Mega Man", "Tetris"];
+		$sut->bindListData($gameData, $document, "game");
+
+		foreach($progLangData as $i => $progLang) {
+			self::assertSame($progLang, $document->querySelectorAll("#prog-lang-list li")[$i]->textContent);
+		}
+
+		foreach($gameData as $i => $game) {
+			self::assertSame($game, $document->querySelectorAll("#game-list li")[$i]->textContent);
+		}
+	}
 }

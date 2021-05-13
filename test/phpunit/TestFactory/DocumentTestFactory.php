@@ -177,6 +177,22 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_TWO_LISTS = <<<HTML
+<!doctype html>
+<div id="favourites">
+	<h1>My favourite programming languages</h1>
+	<ul id="prog-lang-list">
+		<li data-template="prog-lang" data-bind:text>Programming language goes here</li>
+	</ul>
+	
+	<h1>My favourite video games</h1>
+	<ul id="game-list">
+		<li data-template="game" data-bind:text>Video game goes here</li>
+	</ul>
+</div>
+HTML;
+
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
