@@ -5,11 +5,9 @@ use Gt\Dom\HTMLElement\HTMLTableCellElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
 use Gt\Dom\HTMLElement\HTMLTableSectionElement;
-use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncorrectTableDataFormat;
 use Gt\DomTemplate\TableBinder;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
-use JetBrains\PhpStorm\ArrayShape;
 use PHPUnit\Framework\TestCase;
 
 class TableBinderTest extends TestCase {
@@ -296,7 +294,7 @@ class TableBinderTest extends TestCase {
 		$tableList = $document->querySelectorAll("#multi-table-container table");
 		self::assertCount(3, $tableList);
 
-		foreach($tableList as $tableIndex => $table) {
+		foreach($tableList as $table) {
 			/** @var HTMLTableElement $table */
 			if($table->parentElement->id === "s2") {
 				continue;
@@ -358,5 +356,21 @@ class TableBinderTest extends TestCase {
 				);
 			}
 		}
+	}
+
+	public function testBindTableData_documentContext():void {
+		$sut = new TableBinder();
+		$tableData = [
+			"id" => [34, 35, 25],
+			"firstName" => ["Derek", "Christoph", "Sara"],
+			"lastName" => ["Rethans", "Becker", "Golemon"],
+			"username" => ["derek", "cmbecker69", "pollita"],
+			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
+		];
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLE_NO_BIND_KEY);
+		$sut->bindTableData($tableData, $document);
+
+		self::assertCount(4, $document->querySelectorAll("table tr"));
 	}
 }

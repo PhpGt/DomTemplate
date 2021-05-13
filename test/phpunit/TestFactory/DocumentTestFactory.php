@@ -170,6 +170,13 @@ HTML;
 </div>
 HTML;
 
+	const HTML_TABLE_NO_BIND_KEY = <<<HTML
+<!doctype html>
+<div data-bind:table>
+	<table></table>
+</div>
+HTML;
+
 	const HTML_LIST_TEMPLATE = <<<HTML
 <!doctype html>
 <ul>
