@@ -2,7 +2,6 @@
 namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
-use Gt\Dom\Facade\NodeClass\DOMElementFacade;
 use Gt\Dom\Node;
 
 class TemplateElement {
@@ -16,7 +15,13 @@ class TemplateElement {
 		$this->templateNextSibling = $this->originalElement->nextSibling;
 
 		$this->originalElement->remove();
-// TODO: store template parent, siblings, etc. where necessary.
+	}
+
+	public function getNewElement():Element {
+		/** @var Element $element */
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$element = $this->originalElement->cloneNode(true);
+		return $element;
 	}
 
 	/**
@@ -25,8 +30,7 @@ class TemplateElement {
 	 * clone.
 	 */
 	public function insertTemplate():Element {
-		/** @var Element $clone */
-		$clone = $this->originalElement->cloneNode(true);
+		$clone = $this->getNewElement();
 		$this->templateParent->insertBefore(
 			$clone,
 			$this->templateNextSibling
@@ -40,8 +44,15 @@ class TemplateElement {
 	}
 
 	public function getTemplateName():string {
-		return $this->originalElement->getAttribute("data-template")
-			?: $this->calculateTemplatePath($this->templateParent);
+		$templateName = $this->originalElement->getAttribute("data-template");
+		if($templateName === "") {
+			return $this->calculateTemplatePath($this->templateParent);
+		}
+		elseif($templateName[0] === "/") {
+			throw new InvalidTemplateElementNameException("A template's name must not start with a forward slash (\"$templateName\")");
+		}
+
+		return $templateName;
 	}
 
 	private function calculateTemplatePath(Element $element):string {
