@@ -304,4 +304,64 @@ class DocumentBinderTest extends TestCase {
 		self::expectException(TableElementNotFoundInContextException::class);
 		$sut->bindKeyValue("tableData", []);
 	}
+
+	public function testBindTable():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		$tableData = [
+			["Name", "Position"],
+			["Alan Statham", "Head of Radiology"],
+			["Sue White", "Staff Liason Officer"],
+			["Mac Macartney", "General Surgeon"],
+			["Joanna Clore", "HR"],
+			["Caroline Todd", "Surgical Registrar"],
+		];
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+		$sut->bindTable($tableData, $table);
+
+		foreach($tableData as $rowIndex => $rowData) {
+			/** @var HTMLTableRowElement $row */
+			$row = $table->rows[$rowIndex];
+
+			foreach($rowData as $cellIndex => $cellValue) {
+				self::assertSame(
+					$cellValue,
+					$row->cells[$cellIndex]->textContent
+				);
+			}
+		}
+	}
+
+	public function testBindKeyValue_tableData():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		$tableData = [
+			["Name", "Position"],
+			["Alan Statham", "Head of Radiology"],
+			["Sue White", "Staff Liason Officer"],
+			["Mac Macartney", "General Surgeon"],
+			["Joanna Clore", "HR"],
+			["Caroline Todd", "Surgical Registrar"],
+		];
+
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+		$sut->bindKeyValue("tableData", $tableData, $table);
+
+		foreach($tableData as $rowIndex => $rowData) {
+			/** @var HTMLTableRowElement $row */
+			$row = $table->rows[$rowIndex];
+
+			foreach($rowData as $cellIndex => $cellValue) {
+				self::assertSame(
+					$cellValue,
+					$row->cells[$cellIndex]->textContent
+				);
+			}
+		}
+	}
 }
