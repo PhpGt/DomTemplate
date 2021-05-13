@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate\Test;
 
 use ArrayIterator;
+use Gt\Dom\HTMLElement\HTMLLiElement;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\TemplateCollection;
@@ -140,5 +141,30 @@ class ListBinderTest extends TestCase {
 		$sut->bindListData([], $document);
 
 		self::assertSame("", $document->querySelector("ul")->innerHTML);
+	}
+
+	public function testBindListData_kvpList():void {
+		$kvpList = [
+			["userId" => 543, "username" => "win95", "orderCount" => 55],
+			["userId" => 559, "username" => "seafoam", "orderCount" => 30],
+			["userId" => 274, "username" => "hammatime", "orderCount" => 23],
+		];
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$orderList = $document->querySelector("ul");
+
+		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->method("get")
+			->willReturn($templateElement);
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($kvpList, $orderList);
+
+		foreach($orderList->children as $i => $li) {
+			/** @var HTMLLiElement $li */
+			self::assertEquals($kvpList[$i]["userId"], $li->querySelector("h3 span")->textContent);
+			self::assertEquals($kvpList[$i]["username"], $li->querySelector("h2 span")->textContent);
+			self::assertEquals($kvpList[$i]["orderCount"], $li->querySelector("p span")->textContent);
+		}
 	}
 }

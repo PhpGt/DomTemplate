@@ -39,15 +39,16 @@ class ListBinder {
 		$binder = new ElementBinder();
 		$i = -1;
 		foreach($listData as $i => $listItem) {
-			$key = null;
-			$value = null;
-
-			if(!is_array($listItem)) {
-				$value = $listItem;
-			}
-
 			$t = $templateItem->insertTemplate();
-			$binder->bind($key, $value, $t);
+
+			if($this->isKVP($listItem)) {
+				foreach($listItem as $key => $value) {
+					$binder->bind($key, $value, $t);
+				}
+			}
+			else {
+				$binder->bind(null, $listItem, $t);
+			}
 		}
 
 		return $i + 1;
@@ -71,5 +72,29 @@ class ListBinder {
 		$template = $this->templateCollection->get($context, $templateName);
 		$parent = $template->getTemplateParent();
 		$parent->innerHTML = trim($parent->innerHTML);
+	}
+
+	private function isKVP(mixed $item):bool {
+		if(is_scalar($item)) {
+			return false;
+		}
+
+		if(is_array($item)) {
+			$firstKey = array_key_first($item);
+
+			if(is_string($firstKey)) {
+				return true;
+			}
+			return false;
+		}
+
+		if($item instanceof Iterator) {
+			return true;
+		}
+		elseif(is_object($item)) {
+			return true;
+		}
+
+		return true;
 	}
 }
