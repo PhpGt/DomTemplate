@@ -173,7 +173,7 @@ HTML;
 	const HTML_LIST_TEMPLATE = <<<HTML
 <!doctype html>
 <ul>
-	<li data-template>Template item!</li>
+	<li data-template data-bind:text>Template item!</li>
 </ul>
 HTML;
 

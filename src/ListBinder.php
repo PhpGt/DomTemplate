@@ -6,10 +6,20 @@ use Gt\Dom\Element;
 use Iterator;
 
 class ListBinder {
+	public function __construct(
+		private TemplateCollection $templateCollection
+	) {
+	}
+
+	/**
+	 * @param iterable $listData
+	 * @param Document|Element $context
+	 * @param string|null $templateName
+	 * @return int
+	 */
 	public function bindListData(
 		iterable $listData,
 		Document|Element $context,
-		TemplateCollection $templateCollection,
 		?string $templateName = null
 	):int {
 		if($this->isEmpty($listData)) {
@@ -25,13 +35,27 @@ class ListBinder {
 			$attributeNameValue .= "='$templateName'";
 		}
 
-		$templateItem = $templateCollection->get(
+		$templateItem = $this->templateCollection->get(
 			$context,
 			$templateName
 		);
 
+		$binder = new ElementBinder();
+		$i = null;
 		foreach($listData as $i => $listItem) {
+			$key = null;
+			$value = null;
+
+			if(!is_array($listItem)) {
+				$value = $listItem;
+			}
+
 			$t = $templateItem->insertTemplate();
+			$binder->bind($key, $value, $t);
+		}
+
+		if(is_null($i)) {
+			return 0;
 		}
 
 		return $i + 1;

@@ -1,7 +1,6 @@
 <?php
 namespace Gt\DomTemplate;
 
-use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
 use Gt\Dom\Element;
 use Gt\Dom\Facade\DOMTokenListFactory;
@@ -9,10 +8,7 @@ use Gt\Dom\Node;
 use Gt\Dom\XPathResult;
 
 class ElementBinder {
-	public function __construct(
-		private DocumentBinder $ownerDocumentBinder
-	) {
-	}
+	private TableBinder $tableBinder;
 
 	public function bind(
 		?string $key,
@@ -163,7 +159,10 @@ class ElementBinder {
 			break;
 
 		case "table":
-			$this->ownerDocumentBinder->bindTable($bindValue, $element);
+			if(!isset($this->tableBinder)) {
+				$this->tableBinder = new TableBinder();
+			}
+			$this->tableBinder->bindTableData($bindValue, $element);
 			break;
 
 		default:

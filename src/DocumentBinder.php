@@ -12,17 +12,20 @@ class DocumentBinder {
 	private ElementBinder $elementBinder;
 	private TableBinder $tableBinder;
 	private ListBinder $listBinder;
+	private TemplateCollection $templateCollection;
 
 	public function __construct(
 		private Document $document,
 		private array $config = [],
 		?ElementBinder $elementBinder = null,
 		?TableBinder $tableBinder = null,
-		?ListBinder $listBinder = null
+		?ListBinder $listBinder = null,
+		?TemplateCollection $templateCollection = null,
 	) {
+		$this->templateCollection = $templateCollection ?? new TemplateCollection();
 		$this->elementBinder = $elementBinder ?? new ElementBinder($this);
 		$this->tableBinder = $tableBinder ?? new TableBinder();
-		$this->listBinder = $listBinder ?? new ListBinder();
+		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
 	}
 
 	/**

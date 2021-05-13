@@ -7,6 +7,7 @@ use Gt\Dom\HTMLElement\HTMLTableCellElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
 use Gt\Dom\HTMLElement\HTMLTableSectionElement;
+use Stringable;
 
 class TableBinder {
 	/**

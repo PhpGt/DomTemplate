@@ -17,11 +17,10 @@ class ListBinderTest extends TestCase {
 		$templateCollection->expects(self::never())
 			->method("get");
 
-		$sut = new ListBinder();
+		$sut = new ListBinder($templateCollection);
 		$boundCount = $sut->bindListData(
 			[],
-			$document,
-			$templateCollection
+			$document
 		);
 		self::assertSame(0, $boundCount);
 	}
@@ -36,12 +35,11 @@ class ListBinderTest extends TestCase {
 				throw new TableElementNotFoundInContextException();
 			});
 
-		$sut = new ListBinder();
+		$sut = new ListBinder($templateCollection);
 		self::expectException(TableElementNotFoundInContextException::class);
 		$sut->bindListData(
 			["one", "two", "three"],
 			$document,
-			$templateCollection,
 			"missing"
 		);
 	}
@@ -64,11 +62,10 @@ class ListBinderTest extends TestCase {
 		);
 
 		$testData = ["one", "two", "three"];
-		$sut = new ListBinder();
+		$sut = new ListBinder($templateCollection);
 		$boundCount = $sut->bindListData(
 			$testData,
-			$document,
-			$templateCollection
+			$document
 		);
 
 		self::assertSame(count($testData), $boundCount);
@@ -77,5 +74,9 @@ class ListBinderTest extends TestCase {
 			$ul->children,
 			"The correct number of LI elements should have been inserted into the UL"
 		);
+
+		foreach($testData as $i => $value) {
+			self::assertSame($value, $ul->children[$i]->textContent);
+		}
 	}
 }
