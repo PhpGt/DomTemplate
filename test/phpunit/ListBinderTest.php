@@ -192,4 +192,29 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($kvpList[$i]->{"orderCount"}, $li->querySelector("p span")->textContent);
 		}
 	}
+
+	public function testBindListData_kvpList_instanceObject():void {
+		$kvpList = [
+			new class { public int $userId = 543; public string $username = "win95"; public int $orderCount = 55; },
+			new class { public int $userId = 559; public string $username = "seafoam"; public int $orderCount = 30; },
+			new class { public int $userId = 274; public string $username = "hammatime"; public int $orderCount = 23; },
+		];
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$orderList = $document->querySelector("ul");
+
+		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->method("get")
+			->willReturn($templateElement);
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($kvpList, $orderList);
+
+		foreach($orderList->children as $i => $li) {
+			/** @var HTMLLiElement $li */
+			self::assertEquals($kvpList[$i]->{"userId"}, $li->querySelector("h3 span")->textContent);
+			self::assertEquals($kvpList[$i]->{"username"}, $li->querySelector("h2 span")->textContent);
+			self::assertEquals($kvpList[$i]->{"orderCount"}, $li->querySelector("p span")->textContent);
+		}
+	}
 }
