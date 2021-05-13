@@ -5,13 +5,8 @@ use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
 use Gt\Dom\Element;
 use Gt\Dom\Facade\DOMTokenListFactory;
-use Gt\Dom\HTMLElement\HTMLTableCellElement;
-use Gt\Dom\HTMLElement\HTMLTableElement;
-use Gt\Dom\HTMLElement\HTMLTableRowElement;
-use Gt\Dom\HTMLElement\HTMLTableSectionElement;
 use Gt\Dom\Node;
 use Gt\Dom\XPathResult;
-use Stringable;
 
 class DocumentBinder {
 	private TableBinder $tableBinder;
