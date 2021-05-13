@@ -3,6 +3,7 @@ namespace Gt\DomTemplate\Test;
 
 use ArrayIterator;
 use Gt\Dom\HTMLElement\HTMLLiElement;
+use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\TemplateCollection;
@@ -215,6 +216,129 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($kvpList[$i]->{"userId"}, $li->querySelector("h3 span")->textContent);
 			self::assertEquals($kvpList[$i]->{"username"}, $li->querySelector("h2 span")->textContent);
 			self::assertEquals($kvpList[$i]->{"orderCount"}, $li->querySelector("p span")->textContent);
+		}
+	}
+
+	public function testBindListData_kvpList_instanceObjectWithBindAttributeMethods():void {
+		$kvpList = [
+			new class {
+				#[Bind("userId")]
+				public function getId():int {
+					return 534;
+				}
+				#[Bind("username")]
+				public function getUsername():string {
+					return "win95";
+				}
+				#[Bind("this-matches-nothing")]
+				public function getNothing():string {
+					return "nothing!";
+				}
+				#[Bind("orderCount")]
+				public function getTotalOrders():int {
+					return 55;
+				}
+			},
+			new class {
+				#[Bind("userId")]
+				public function getId():int {
+					return 559;
+				}
+				#[Bind("username")]
+				public function getUsername():string {
+					return "seafoam";
+				}
+				#[Bind("orderCount")]
+				public function getTotalOrders():int {
+					return 30;
+				}
+			},
+			new class {
+				#[Bind("userId")]
+				public function getId():int {
+					return 274;
+				}
+				#[Bind("username")]
+				public function getUsername():string {
+					return "hammatime";
+				}
+				#[Bind("orderCount")]
+				public function getTotalOrders():int {
+					return 23;
+				}
+			},
+		];
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$orderList = $document->querySelector("ul");
+
+		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->method("get")
+			->willReturn($templateElement);
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($kvpList, $orderList);
+
+		foreach($orderList->children as $i => $li) {
+			/** @var HTMLLiElement $li */
+			self::assertEquals($kvpList[$i]->getId(), $li->querySelector("h3 span")->textContent);
+			self::assertEquals($kvpList[$i]->getUsername(), $li->querySelector("h2 span")->textContent);
+			self::assertEquals($kvpList[$i]->getTotalOrders(), $li->querySelector("p span")->textContent);
+		}
+	}
+
+	public function testBindListData_kvpList_instanceObjectWithBindAttributeProperties():void {
+		$kvpList = [
+			new class {
+				#[Bind("userId")]
+				public int $id = 534;
+
+				#[Bind("username")]
+				public string $user = "win95";
+
+				#[Bind("this-matches-nothing")]
+				public string $nothing = "nothing!";
+
+				#[Bind("orderCount")]
+				public int $totalOrders = 55;
+			},
+			new class {
+				#[Bind("userId")]
+				public int $id = 559;
+
+				#[Bind("username")]
+				public string $user = "seafoam";
+
+				#[Bind("orderCount")]
+				public int $totalOrders = 30;
+			},
+			new class {
+				#[Bind("userId")]
+				public int $id = 274;
+
+				#[Bind("username")]
+				public string $user = "hammatime";
+
+				#[Bind("orderCount")]
+				public int $totalOrders = 23;
+			},
+		];
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$orderList = $document->querySelector("ul");
+
+		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->method("get")
+			->willReturn($templateElement);
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($kvpList, $orderList);
+
+		foreach($orderList->children as $i => $li) {
+			/** @var HTMLLiElement $li */
+			self::assertEquals($kvpList[$i]->id, $li->querySelector("h3 span")->textContent);
+			self::assertEquals($kvpList[$i]->user, $li->querySelector("h2 span")->textContent);
+			self::assertEquals($kvpList[$i]->totalOrders, $li->querySelector("p span")->textContent);
 		}
 	}
 }

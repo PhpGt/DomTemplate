@@ -4,6 +4,9 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Iterator;
+use ReflectionAttribute;
+use ReflectionClass;
+use ReflectionMethod;
 
 class ListBinder {
 	public function __construct(
@@ -41,7 +44,10 @@ class ListBinder {
 		foreach($listData as $i => $listItem) {
 			$t = $templateItem->insertTemplate();
 
-			if($this->isKVP($listItem)) {
+			if($this->isBindable($listItem)) {
+				$binder->handleBindable($listItem, $t);
+			}
+			elseif($this->isKVP($listItem)) {
 				foreach($listItem as $key => $value) {
 					$binder->bind($key, $value, $t);
 				}
@@ -96,5 +102,31 @@ class ListBinder {
 		}
 
 		return true;
+	}
+
+	private function isBindable(mixed $item):bool {
+		if(is_scalar($item) || is_array($item)) {
+			return false;
+		}
+
+		/** @var array<ReflectionAttribute> $attributeList */
+		$attributeList = [];
+
+		$refClass = new ReflectionClass($item);
+		foreach($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $refMethod) {
+			array_push($attributeList, ...$refMethod->getAttributes());
+		}
+
+		foreach($refClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $refProperty) {
+			array_push($attributeList, ...$refProperty->getAttributes());
+		}
+
+		foreach($attributeList as $attribute) {
+			if($attribute->getName() === Bind::class) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

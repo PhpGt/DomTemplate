@@ -6,6 +6,9 @@ use Gt\Dom\Element;
 use Gt\Dom\Facade\DOMTokenListFactory;
 use Gt\Dom\Node;
 use Gt\Dom\XPathResult;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
 
 class ElementBinder {
 	private TableBinder $tableBinder;
@@ -22,6 +25,68 @@ class ElementBinder {
 				$value
 			);
 		}
+	}
+
+	/**
+	 * A "bindable" object is any object with the Gt\DomTemplate\Bind
+	 * Attribute applied to any of its public properties or methods.
+	 * The Attribute's first parameter is required, which sets the property
+	 * or method's bind key. For example, a method called "getTotalMessages"
+	 * could be marked with the #[Bind("message-count")] Attribute, so the
+	 * method will be called whenever the "message-count" bind key is used
+	 * in the document.
+	 */
+	public function handleBindable(
+		object $bindableObject,
+		Element $context
+	):void {
+		$bindKeyList = [];
+		foreach($this->evaluateDataBindElements($context) as $bindElement) {
+			array_push($bindKeyList, ...$this->getBindKeys($bindElement));
+		}
+
+		$refClass = new ReflectionClass($bindableObject);
+		foreach($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $refMethod) {
+			foreach($refMethod->getAttributes(Bind::class) as $refAttribute) {
+				$args = $refAttribute->getArguments();
+				$bindKey = $args[0];
+				if(!in_array($bindKey, $bindKeyList)) {
+					continue;
+				}
+
+				$this->bind(
+					$bindKey,
+					call_user_func([$bindableObject, $refMethod->getName()]),
+					$context
+				);
+			}
+		}
+
+		foreach($refClass->getProperties(ReflectionProperty::IS_PUBLIC) as $refProperty) {
+			foreach($refProperty->getAttributes(Bind::class) as $refAttribute) {
+				$args = $refAttribute->getArguments();
+				$bindKey = $args[0];
+				if(!in_array($bindKey, $bindKeyList)) {
+					continue;
+				}
+
+				$this->bind(
+					$bindKey,
+					$bindableObject->{$refProperty->getName()},
+					$context
+				);
+			}
+		}
+	}
+
+	/** @return array<int, string> */
+	private function getBindKeys(Element $element):array {
+		$bindKeyList = [];
+		foreach($element->attributes as $attributeValue) {
+			array_push($bindKeyList, $attributeValue);
+		}
+
+		return $bindKeyList;
 	}
 
 	private function evaluateDataBindElements(Node $context):XPathResult {
