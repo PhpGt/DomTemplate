@@ -17,7 +17,7 @@ class TableBinderTest extends TestCase {
 	 * Binding table data into an empty table will create all the
 	 * appropriate <thead>, <tbody>, <tr>, <th>, and <td> elements.
 	 */
-	public function testBindKeyValue_table_emptyTable():void {
+	public function testBindTable_emptyTable():void {
 		$sut = new TableBinder();
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 
@@ -49,7 +49,7 @@ class TableBinderTest extends TestCase {
 	 * Binding table data into a table that already has a <thead> element
 	 * will use the existing <th> values to limit which columns are output.
 	 */
-	public function testBindKeyValue_table_existingTHead():void {
+	public function testBindTable_existingTHead():void {
 		$sut = new TableBinder();
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 
@@ -100,7 +100,7 @@ class TableBinderTest extends TestCase {
 		self::assertSame("pollita@php.net", $row3->cells[2]->textContent);
 	}
 
-	public function testBindKeyValue_tableDataNormalised():void {
+	public function testBindTable_dataNormalised():void {
 		$sut = new TableBinder();
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 
@@ -151,7 +151,7 @@ class TableBinderTest extends TestCase {
 	 * be present in the first column of a table:
 	 * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tbody
 	 */
-	public function testBindKeyValue_doubleHeaderTable_shouldEmitTHElementsInRows():void {
+	public function testBindTable_doubleHeader_shouldEmitTHElementsInRows():void {
 		$sut = new TableBinder();
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 
@@ -217,7 +217,7 @@ class TableBinderTest extends TestCase {
 		}
 	}
 
-	public function testBindKeyValue_tableData_nonIterableValue():void {
+	public function testBindTable_nonIterableValue():void {
 		$sut = new TableBinder();
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 
@@ -238,7 +238,7 @@ class TableBinderTest extends TestCase {
 		);
 	}
 
-	public function testBindKeyValue_tableData_doubleHeaderNonIterableValue():void {
+	public function testBindTable_doubleHeaderNonIterableValue():void {
 		$sut = new TableBinder();
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 
@@ -259,7 +259,7 @@ class TableBinderTest extends TestCase {
 		$sut->bindTableData($tableData, $table);
 	}
 
-	public function testBindKeyValue_tableData_assocArrayWithoutIterableColumns():void {
+	public function testBindTable_assocArrayWithoutIterableColumns():void {
 		$sut = new TableBinder();
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 
@@ -277,7 +277,7 @@ class TableBinderTest extends TestCase {
 		$sut->bindTableData($tableData, $table);
 	}
 
-	public function testBindKeyValue_tableData_multipleTables():void {
+	public function testBindTable_multipleTables():void {
 		$sut = new TableBinder();
 		$tableData = [
 			"id" => [34, 35, 25],
@@ -302,43 +302,6 @@ class TableBinderTest extends TestCase {
 				continue;
 			}
 
-			/** @var HTMLTableSectionElement $tbody */
-			$tbody = $table->tBodies[0];
-			$tableDataKeys = array_keys($tableData);
-			foreach($tbody->rows as $rowIndex => $row) {
-				/** @var HTMLTableRowElement $row */
-				foreach($row->cells as $cellIndex => $cell) {
-					$key = $tableDataKeys[$cellIndex];
-					self::assertEquals(
-						$tableData[$key][$rowIndex],
-						$cell->textContent
-					);
-				}
-			}
-		}
-	}
-
-	public function testBindTable_multipleTables():void {
-		$sut = new TableBinder();
-		$tableData = [
-			"id" => [34, 35, 25],
-			"firstName" => ["Derek", "Christoph", "Sara"],
-			"lastName" => ["Rethans", "Becker", "Golemon"],
-			"username" => ["derek", "cmbecker69", "pollita"],
-			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
-		];
-
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
-		$sut->bindTableData(
-			$tableData,
-			$document->getElementById("multi-table-container")
-		);
-
-		$tableList = $document->querySelectorAll("#multi-table-container table");
-		self::assertCount(3, $tableList);
-
-		foreach($tableList as $tableIndex => $table) {
-			/** @var HTMLTableElement $table */
 			/** @var HTMLTableSectionElement $tbody */
 			$tbody = $table->tBodies[0];
 			$tableDataKeys = array_keys($tableData);
