@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\HTMLElement\HTMLAnchorElement;
 use Gt\DomTemplate\PlaceholderBinder;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
@@ -65,5 +66,31 @@ class PlaceholderBinderTest extends TestCase {
 		self::assertStringContainsString("Cody", $document->querySelector("#test1 .greeting")->textContent);
 		self::assertStringContainsString("Cody", $document->querySelector("#test2 .greeting")->textContent);
 		self::assertStringContainsString("Cody", $document->querySelector("#test2a .greeting")->textContent);
+	}
+
+	public function testBind_attribute():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new PlaceholderBinder($document);
+		$testElement = $document->getElementById("test3");
+		/** @var HTMLAnchorElement $link */
+		$link = $testElement->querySelector("a");
+		$sut->bind("repoName", "domtemplate", $testElement);
+		self::assertSame("https://www.php.gt/domtemplate", $link->href);
+	}
+
+	public function testBind_attributeDefault():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$testElement = $document->getElementById("test4");
+		/** @var HTMLAnchorElement $link */
+		$link = $testElement->querySelector("a");
+		self::assertSame(
+			"https://www.php.gt/{{repoName ?? domtemplate}}",
+			$link->href
+		);
+		new PlaceholderBinder($document);
+		self::assertSame(
+			"https://www.php.gt/domtemplate",
+			$link->href
+		);
 	}
 }

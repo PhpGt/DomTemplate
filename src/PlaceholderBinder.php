@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\Text;
@@ -35,13 +36,24 @@ class PlaceholderBinder {
 
 	/**
 	 * @return array<string, PlaceholderText[]> An array who's key is the
-	 * bind key  and value is an array of matching PlaceholderText objects.
+	 * bind key and value is an array of matching PlaceholderText objects.
 	 */
 	private function findPlaceholders(Document $document):array {
 		$placeholderList = [];
 
-		$xpathResult = $document->evaluate("//text()[contains(.,'{{')]");
-		foreach($xpathResult as $text) {
+// The XPath query is split into two, separated by the pipe character (|).
+// The first query: //text()[contains(.,'{{')] finds any Text nodes that contain
+// two opening curly braces.
+// The second query: //@*[contains(.,'{{')] finds any Attr nodes that contain
+// two opening curly braces.
+// NOTE: An Attr node's value is represented by a Text node.
+		$xpathResult = $document->evaluate("//text()[contains(.,'{{')] | //@*[contains(.,'{{')]");
+		foreach($xpathResult as $textOrAttribute) {
+			$text = $textOrAttribute;
+			if($textOrAttribute instanceof Attr) {
+				$text = $textOrAttribute->childNodes[0];
+			}
+
 			/** @var Text $text */
 			$placeholder = $text->splitText(
 				strpos($text->data, "{{")

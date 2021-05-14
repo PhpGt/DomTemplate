@@ -230,6 +230,14 @@ HTML;
 	<p>Now with a default value, with a different use of white space!</p>
 	<p class="greeting">Hello, {{name??you}}!</p>
 </main>
+<main id="test3">
+	<p>This example shows how to bind text into attribute placeholders.</p>
+	<p>For more information, <a href="https://www.php.gt/{{repoName}}">view the docs.</a></p>
+</main>
+<main id="test4">
+	<p>This example shows how to bind text into attribute placeholders.</p>
+	<p>For more information, <a href="https://www.php.gt/{{repoName ?? domtemplate}}">view the docs.</a></p>
+</main>
 HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
