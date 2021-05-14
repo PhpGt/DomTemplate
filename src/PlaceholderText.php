@@ -6,8 +6,6 @@ use Gt\Dom\Text;
 
 class PlaceholderText {
 	private string $bindKey;
-	/** @var string[] */
-	private array $filterList;
 	private ?string $default;
 
 	public function __construct(
@@ -20,19 +18,9 @@ class PlaceholderText {
 		return $this->bindKey;
 	}
 
-	/** @return string[] */
-	public function getFilterList():array {
-		return $this->filterList;
-	}
-
-	public function getDefault():string {
-		return $this->default ?? "";
-	}
-
 	private function process():void {
 		$data = trim($this->originalText->data, "{}");
 		$this->bindKey = $this->parseBindKey($data);
-		$this->filterList = $this->parseFilterList($data);
 		$this->default = $this->parseDefault($data);
 		$this->originalText->data = $this->default ?? $this->bindKey;
 	}
@@ -41,12 +29,6 @@ class PlaceholderText {
 		$bindKey = strtok($data, "?");
 		$bindKey = strtok($bindKey, ":");
 		return trim($bindKey);
-	}
-
-	/** @return string[] */
-	private function parseFilterList(string $data):array {
-		$filterList = explode(":", $data);
-		return array_map("trim", $filterList);
 	}
 
 	private function parseDefault(string $data):?string {
