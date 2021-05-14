@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
 use Gt\Dom\Element;
+use Gt\Dom\Text;
 
 class TemplateCollection {
 	/** @var array<string, TemplateElement> */

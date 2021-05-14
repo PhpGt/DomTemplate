@@ -66,12 +66,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "77271b282fd26cad5dfdee3c583fab8abb95f240"
+                "reference": "47389202e4f0c8d3d2cf2ec4941ca5bdd13dcb69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/77271b282fd26cad5dfdee3c583fab8abb95f240",
-                "reference": "77271b282fd26cad5dfdee3c583fab8abb95f240",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/47389202e4f0c8d3d2cf2ec4941ca5bdd13dcb69",
+                "reference": "47389202e4f0c8d3d2cf2ec4941ca5bdd13dcb69",
                 "shasum": ""
             },
             "require": {
@@ -151,7 +151,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-05-13T16:13:11+00:00"
+            "time": "2021-05-14T08:24:25+00:00"
         },
         {
             "name": "phpgt/propfunc",

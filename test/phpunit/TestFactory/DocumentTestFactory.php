@@ -214,6 +214,23 @@ HTML;
 	</ul>
 </div>
 HTML;
+	const HTML_PLACEHOLDER = <<<HTML
+<!doctype html>
+<main id="test1">
+	<p>This example shows how to bind text into placeholders.</p>
+	<p class="greeting">Hello, {{name}}!</p>
+</main>
+<main id="test2">
+	<p>This example shows how to bind text into placeholders.</p>
+	<p>Now with a default value!</p>
+	<p class="greeting">Hello, {{name ?? you}}!</p>
+</main>
+<main id="test2a">
+	<p>This example shows how to bind text into placeholders.</p>
+	<p>Now with a default value, with a different use of white space!</p>
+	<p class="greeting">Hello, {{name??you}}!</p>
+</main>
+HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

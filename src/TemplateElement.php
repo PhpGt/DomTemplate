@@ -17,7 +17,7 @@ class TemplateElement {
 		$this->originalElement->remove();
 	}
 
-	public function getNewElement():Element {
+	public function getClone():Element {
 		/** @var Element $element */
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$element = $this->originalElement->cloneNode(true);
@@ -30,7 +30,7 @@ class TemplateElement {
 	 * clone.
 	 */
 	public function insertTemplate():Element {
-		$clone = $this->getNewElement();
+		$clone = $this->getClone();
 		$this->templateParent->insertBefore(
 			$clone,
 			$this->templateNextSibling

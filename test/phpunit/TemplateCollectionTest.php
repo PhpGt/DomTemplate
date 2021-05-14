@@ -17,11 +17,16 @@ class TemplateCollectionTest extends TestCase {
 
 	public function testGet_noName():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$ul = $document->querySelector("ul");
+		$ol = $document->querySelector("ol");
+		self::assertCount(1, $ul->children);
+		self::assertCount(1, $ol->children);
 		$sut = new TemplateCollection($document);
+		self::assertCount(0, $ul->children);
+		self::assertCount(1, $ol->children);
 		$templateElement = $sut->get($document);
 		$inserted = $templateElement->insertTemplate();
 		self::assertSame("LI", $inserted->tagName);
-		$ul = $document->querySelector("ul");
 		self::assertSame($ul, $templateElement->getTemplateParent());
 		self::assertSame($ul, $inserted->parentElement);
 	}
@@ -45,5 +50,4 @@ class TemplateCollectionTest extends TestCase {
 			$templateElement->getTemplateParent()
 		);
 	}
-
 }

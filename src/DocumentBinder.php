@@ -2,14 +2,11 @@
 namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
-use Gt\Dom\DOMTokenList;
 use Gt\Dom\Element;
-use Gt\Dom\Facade\DOMTokenListFactory;
-use Gt\Dom\Node;
-use Gt\Dom\XPathResult;
 
 class DocumentBinder {
 	private ElementBinder $elementBinder;
+	private PlaceholderBinder $placeholderBinder;
 	private TableBinder $tableBinder;
 	private ListBinder $listBinder;
 	private TemplateCollection $templateCollection;
@@ -18,12 +15,14 @@ class DocumentBinder {
 		private Document $document,
 		private array $config = [],
 		?ElementBinder $elementBinder = null,
+		?PlaceholderBinder $placeholderBinder = null,
 		?TableBinder $tableBinder = null,
 		?ListBinder $listBinder = null,
 		?TemplateCollection $templateCollection = null,
 	) {
 		$this->templateCollection = $templateCollection ?? new TemplateCollection($document);
 		$this->elementBinder = $elementBinder ?? new ElementBinder();
+		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder($document);
 		$this->tableBinder = $tableBinder ?? new TableBinder();
 		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
 	}
@@ -85,6 +84,7 @@ class DocumentBinder {
 		}
 
 		$this->elementBinder->bind($key, $value, $context);
+		$this->placeholderBinder->bind($key, $value, $context);
 	}
 
 	private function isIndexedArray(mixed $data):bool {
