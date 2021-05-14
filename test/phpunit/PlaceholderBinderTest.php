@@ -47,4 +47,23 @@ class PlaceholderBinderTest extends TestCase {
 		self::assertSame("Hello, Cody!", $greetingElement->textContent);
 		self::assertSame('<p class="greeting">Hello, Cody!</p>', $greetingElement->outerHTML);
 	}
+
+	public function testBind_contextDoesNotLeak():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$greetingElement = $document->querySelector("#test2 .greeting");
+		$sut = new PlaceholderBinder($document);
+		$sut->bind("name", "Cody", $greetingElement);
+		self::assertStringContainsString("Cody", $document->querySelector("#test2 .greeting")->textContent);
+		self::assertStringNotContainsString("Cody", $document->querySelector("#test1 .greeting")->textContent);
+		self::assertStringNotContainsString("Cody", $document->querySelector("#test2a .greeting")->textContent);
+	}
+
+	public function testBind_noContextBindsAll():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new PlaceholderBinder($document);
+		$sut->bind("name", "Cody");
+		self::assertStringContainsString("Cody", $document->querySelector("#test1 .greeting")->textContent);
+		self::assertStringContainsString("Cody", $document->querySelector("#test2 .greeting")->textContent);
+		self::assertStringContainsString("Cody", $document->querySelector("#test2a .greeting")->textContent);
+	}
 }

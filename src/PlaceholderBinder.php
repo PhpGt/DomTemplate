@@ -9,15 +9,21 @@ class PlaceholderBinder {
 	/** @var array<string, PlaceholderText[]> */
 	private array $placeholderList;
 
-	public function __construct(Document $document) {
+	public function __construct(
+		private Document $document
+	) {
 		$this->placeholderList = $this->findPlaceholders($document);
 	}
 
 	public function bind(
 		?string $key,
 		mixed $value,
-		Element $context
+		Document|Element $context = null
 	):void {
+		if(is_null($context)) {
+			$context = $this->document->documentElement;
+		}
+
 		foreach($this->placeholderList[$key] ?? [] as $placeholderText) {
 			if(!$placeholderText->isWithinContext($context)) {
 				continue;
