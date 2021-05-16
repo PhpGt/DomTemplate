@@ -36,7 +36,7 @@ class ElementBinder {
 	 * method will be called whenever the "message-count" bind key is used
 	 * in the document.
 	 */
-	public function handleBindable(
+	public function handleBindAttributes(
 		object $bindableObject,
 		Element $context
 	):void {

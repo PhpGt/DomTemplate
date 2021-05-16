@@ -239,6 +239,26 @@ HTML;
 	<p>For more information, <a href="https://www.php.gt/{{repoName ?? domtemplate}}">view the docs.</a></p>
 </main>
 HTML;
+	const HTML_MUSIC = <<<HTML
+<!doctype>
+<h1>Music library</h1>
+
+<ul>
+	<li data-template>
+		<h2 data-bind:text>Artist name</h2>
+		
+		<ul>
+			<li data-template>
+				<h3 data-bind:text>Album name</h3>
+				
+				<ol>
+					<li data-template data-bind:text>Track name</li>
+				</ol>
+			</li>
+		</ul>
+	</li>
+</ul>
+HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

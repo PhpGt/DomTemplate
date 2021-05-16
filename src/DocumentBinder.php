@@ -33,7 +33,7 @@ class DocumentBinder {
 	 */
 	public function bindValue(
 		mixed $value,
-		Element $context = null
+		?Element $context = null
 	):void {
 		$this->bind(null, $value, $context);
 	}
@@ -45,7 +45,7 @@ class DocumentBinder {
 	public function bindKeyValue(
 		string $key,
 		mixed $value,
-		Element $context = null
+		?Element $context = null
 	):void {
 		$this->bind($key, $value, $context);
 	}
@@ -56,7 +56,7 @@ class DocumentBinder {
 	 */
 	public function bindData(
 		mixed $kvp,
-		Element $context = null
+		?Element $context = null
 	):void {
 		if($this->isIndexedArray($kvp)) {
 			throw new IncompatibleBindDataException("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
@@ -69,9 +69,17 @@ class DocumentBinder {
 
 	public function bindTable(
 		mixed $tableData,
-		Element $context = null
+		?Element $context = null
 	):void {
 		$this->tableBinder->bindTableData($tableData, $context);
+	}
+
+	public function bindList(
+		iterable $listData,
+		?Element $context = null,
+		?string $templateName = null
+	):int {
+		return $this->listBinder->bindListData($listData, $context, $templateName);
 	}
 
 	private function bind(

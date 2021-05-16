@@ -15,8 +15,7 @@ class ListBinderTest extends TestCase {
 	public function testBindList_emptyList():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
 
-		$templateCollection = self::createMock(TemplateCollection::class);
-
+		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$boundCount = $sut->bindListData(
 			[],
@@ -341,4 +340,7 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($kvpList[$i]->totalOrders, $li->querySelector("p span")->textContent);
 		}
 	}
+
+// TODO: Test <ul> <li data-template="good">Good item</li> <li data-template="bad">Bad item</li> </ul>
+// The next sibling of "good" will not exist any more - so if there's a data-template tag on the next sibling, go to the next next sibling.
 }

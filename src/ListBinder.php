@@ -44,8 +44,8 @@ class ListBinder {
 		foreach($listData as $i => $listItem) {
 			$t = $templateItem->insertTemplate();
 
-			if($this->isBindable($listItem)) {
-				$binder->handleBindable($listItem, $t);
+			if($this->hasBindAttributes($listItem)) {
+				$binder->handleBindAttributes($listItem, $t);
 			}
 			elseif($this->isKVP($listItem)) {
 				foreach($listItem as $key => $value) {
@@ -104,7 +104,7 @@ class ListBinder {
 		return true;
 	}
 
-	private function isBindable(mixed $item):bool {
+	private function hasBindAttributes(mixed $item):bool {
 		if(is_scalar($item) || is_array($item)) {
 			return false;
 		}
