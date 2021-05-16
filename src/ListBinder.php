@@ -40,17 +40,21 @@ class ListBinder {
 		);
 
 		$binder = new ElementBinder();
+		$nestedCount = 0;
 		$i = -1;
-		foreach($listData as $i => $listItem) {
+		foreach($listData as $listKey => $listItem) {
+			$i++;
 			$t = $templateItem->insertTemplate();
 
 // If the $listItem's first value is iterable, then treat this as a nested list.
 			if($this->isNested($listItem)) {
-				$this->bindListData(
+				$binder->bind(null, $listKey, $t);
+				$nestedCount += $this->bindListData(
 					$listItem,
 					$t,
 					$templateName
 				);
+				continue;
 			}
 
 			if($this->hasBindAttributes($listItem)) {
@@ -66,7 +70,7 @@ class ListBinder {
 			}
 		}
 
-		return $i + 1;
+		return $nestedCount + $i + 1;
 	}
 
 	private function isEmpty(iterable $listData):bool {
@@ -142,7 +146,7 @@ class ListBinder {
 	private function isNested(mixed $item):bool {
 		if(is_array($item)) {
 			$key = array_key_first($item);
-			return is_iterable($item[$key]);
+			return is_int($key) || is_iterable($item[$key]);
 		}
 		elseif($item instanceof Iterator) {
 			return is_iterable($item->current());

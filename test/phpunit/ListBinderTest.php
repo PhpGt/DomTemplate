@@ -342,6 +342,40 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindListData_nestedList():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MUSIC_NO_TEMPLATE_NAMES);
+		$templateCollection = new TemplateCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData(TestData::MUSIC, $document);
+
+		$artistNameArray = array_keys(TestData::MUSIC);
+		foreach($document->querySelectorAll("body>ul>li") as $i => $artistElement) {
+			$artistName = $artistNameArray[$i];
+			self::assertEquals(
+				$artistName,
+				$artistElement->querySelector("h2")->textContent
+			);
+
+			$albumNameArray = array_keys(TestData::MUSIC[$artistName]);
+			foreach($artistElement->querySelectorAll("ul>li") as $j => $albumElement) {
+				$albumName = $albumNameArray[$j];
+				self::assertEquals(
+					$albumName,
+					$albumElement->querySelector("h3")->textContent
+				);
+
+				$trackNameArray = TestData::MUSIC[$artistName][$albumName];
+				foreach($albumElement->querySelectorAll("ol>li") as $k => $trackElement) {
+					$trackName = $trackNameArray[$k];
+					self::assertEquals(
+						$trackName,
+						$trackElement->textContent
+					);
+				}
+			}
+		}
+	}
+
 // TODO: Test <ul> <li data-template="good">Good item</li> <li data-template="bad">Bad item</li> </ul>
 // The next sibling of "good" will not exist any more - so if there's a data-template tag on the next sibling, go to the next next sibling.
 }

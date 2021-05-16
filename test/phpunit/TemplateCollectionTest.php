@@ -57,6 +57,9 @@ class TemplateCollectionTest extends TestCase {
 	 * Instead of jumping into the implementation of recursive nested list
 	 * binding, we're going to manually iterate over a data source and
 	 * bind the appropriate elements by their explicit template name.
+	 *
+	 * This is a manually-bound version of
+	 * ListBinderTest::testBindListData_nestedList()
 	 */
 	public function testBindListData_nestedList_manual():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES);
@@ -78,7 +81,7 @@ class TemplateCollectionTest extends TestCase {
 					$trackElement = $trackTemplate->insertTemplate();
 					$elementBinder->bind(
 						null,
-						($trackNumber + 1) . " - $trackName",
+						$trackName,
 						$trackElement
 					);
 				}
@@ -105,7 +108,7 @@ class TemplateCollectionTest extends TestCase {
 				foreach($albumElement->querySelectorAll("ol>li") as $k => $trackElement) {
 					$trackName = $trackNameArray[$k];
 					self::assertEquals(
-						($k + 1) . " - $trackName",
+						$trackName,
 						$trackElement->textContent
 					);
 				}

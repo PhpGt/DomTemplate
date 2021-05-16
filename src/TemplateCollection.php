@@ -54,13 +54,20 @@ class TemplateCollection {
 			$name = $templateElement->getTemplateName() ?? $nodePath;
 			$this->elementKVP[$name] = $templateElement;
 		}
+
+		$this->elementKVP = array_reverse($this->elementKVP, true);
 	}
 
 	private function findMatch(Element $context):TemplateElement {
-		$contextPath = new NodePathExtractor($context);
+		$contextPath = (string)(new NodePathExtractor($context));
+		$contextPath = preg_replace("/(\[\d+\])/","", $contextPath);
 
 		foreach($this->elementKVP as $name => $element) {
 			if($name[0] !== "/") {
+				continue;
+			}
+
+			if($contextPath === $name) {
 				continue;
 			}
 
@@ -68,7 +75,7 @@ class TemplateCollection {
 				continue;
 			}
 
-			$xpathResult = $context->ownerDocument->evaluate($name);
+			$xpathResult = $context->ownerDocument->evaluate($contextPath);
 			if($xpathResult->valid()) {
 				return $element;
 			}
