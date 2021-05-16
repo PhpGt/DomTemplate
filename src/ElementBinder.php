@@ -36,8 +36,8 @@ class ElementBinder {
 	 * method will be called whenever the "message-count" bind key is used
 	 * in the document.
 	 */
-	public function handleBindAttributes(
-		object $bindableObject,
+	public function bindFromAttributes(
+		object $objectWithAttributes,
 		Element $context
 	):void {
 		$bindKeyList = [];
@@ -45,7 +45,7 @@ class ElementBinder {
 			array_push($bindKeyList, ...$this->getBindKeys($bindElement));
 		}
 
-		$refClass = new ReflectionClass($bindableObject);
+		$refClass = new ReflectionClass($objectWithAttributes);
 		foreach($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $refMethod) {
 			foreach($refMethod->getAttributes(Bind::class) as $refAttribute) {
 				$args = $refAttribute->getArguments();
@@ -56,7 +56,7 @@ class ElementBinder {
 
 				$this->bind(
 					$bindKey,
-					call_user_func([$bindableObject, $refMethod->getName()]),
+					call_user_func([$objectWithAttributes, $refMethod->getName()]),
 					$context
 				);
 			}
@@ -72,7 +72,7 @@ class ElementBinder {
 
 				$this->bind(
 					$bindKey,
-					$bindableObject->{$refProperty->getName()},
+					$objectWithAttributes->{$refProperty->getName()},
 					$context
 				);
 			}

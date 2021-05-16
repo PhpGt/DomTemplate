@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\DomTemplate\ElementBinder;
 use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\TemplateElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
@@ -49,5 +50,66 @@ class TemplateCollectionTest extends TestCase {
 			$document->getElementById("prog-lang-list"),
 			$templateElement->getTemplateParent()
 		);
+	}
+
+	/**
+	 * Baby steps...(this comment was written as part of DomTemplate's TDD).
+	 * Instead of jumping into the implementation of recursive nested list
+	 * binding, we're going to manually iterate over a data source and
+	 * bind the appropriate elements by their explicit template name.
+	 */
+	public function testBindListData_nestedList_manual():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES);
+		$templateCollection = new TemplateCollection($document);
+		$elementBinder = new ElementBinder();
+
+		foreach(TestData::MUSIC as $artistName => $albumList) {
+			$artistTemplate = $templateCollection->get($document, "artist");
+			$artistElement = $artistTemplate->insertTemplate();
+			$elementBinder->bind(null, $artistName, $artistElement);
+
+			foreach($albumList as $albumName => $trackList) {
+				$albumTemplate = $templateCollection->get($document, "album");
+				$albumElement = $albumTemplate->insertTemplate();
+				$elementBinder->bind(null, $albumName, $albumElement);
+
+				foreach($trackList as $trackNumber => $trackName) {
+					$trackTemplate = $templateCollection->get($document, "track");
+					$trackElement = $trackTemplate->insertTemplate();
+					$elementBinder->bind(
+						null,
+						($trackNumber + 1) . " - $trackName",
+						$trackElement
+					);
+				}
+			}
+		}
+
+		$artistNameArray = array_keys(TestData::MUSIC);
+		foreach($document->querySelectorAll("body>ul>li") as $i => $artistElement) {
+			$artistName = $artistNameArray[$i];
+			self::assertEquals(
+				$artistName,
+				$artistElement->querySelector("h2")->textContent
+			);
+
+			$albumNameArray = array_keys(TestData::MUSIC[$artistName]);
+			foreach($artistElement->querySelectorAll("ul>li") as $j => $albumElement) {
+				$albumName = $albumNameArray[$j];
+				self::assertEquals(
+					$albumName,
+					$albumElement->querySelector("h3")->textContent
+				);
+
+				$trackNameArray = TestData::MUSIC[$artistName][$albumName];
+				foreach($albumElement->querySelectorAll("ol>li") as $k => $trackElement) {
+					$trackName = $trackNameArray[$k];
+					self::assertEquals(
+						($k + 1) . " - $trackName",
+						$trackElement->textContent
+					);
+				}
+			}
+		}
 	}
 }

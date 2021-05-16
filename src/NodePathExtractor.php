@@ -1,13 +1,13 @@
 <?php
 namespace Gt\DomTemplate;
 
-use Gt\Dom\Element;
+use Gt\Dom\Node;
 use Gt\Dom\Facade\NodeClass\DOMElementFacade;
 use Stringable;
 
 class NodePathExtractor implements Stringable {
 	public function __construct(
-		private Element $element
+		private Node $element
 	) {
 	}
 

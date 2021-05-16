@@ -44,8 +44,17 @@ class ListBinder {
 		foreach($listData as $i => $listItem) {
 			$t = $templateItem->insertTemplate();
 
+// If the $listItem's first value is iterable, then treat this as a nested list.
+			if($this->isNested($listItem)) {
+				$this->bindListData(
+					$listItem,
+					$t,
+					$templateName
+				);
+			}
+
 			if($this->hasBindAttributes($listItem)) {
-				$binder->handleBindAttributes($listItem, $t);
+				$binder->bindFromAttributes($listItem, $t);
 			}
 			elseif($this->isKVP($listItem)) {
 				foreach($listItem as $key => $value) {
@@ -125,6 +134,18 @@ class ListBinder {
 			if($attribute->getName() === Bind::class) {
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	private function isNested(mixed $item):bool {
+		if(is_array($item)) {
+			$key = array_key_first($item);
+			return is_iterable($item[$key]);
+		}
+		elseif($item instanceof Iterator) {
+			return is_iterable($item->current());
 		}
 
 		return false;

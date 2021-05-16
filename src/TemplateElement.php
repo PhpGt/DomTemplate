@@ -3,16 +3,20 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
 use Gt\Dom\Node;
+use Gt\Dom\NodeList;
 
 class TemplateElement {
-	private ?Element $templateParent;
-	private ?Node $templateNextSibling;
+	private string $templateParentPath;
+	private ?string $templateNextSiblingPath;
 
 	public function __construct(
 		private Element $originalElement
 	) {
-		$this->templateParent = $this->originalElement->parentElement;
-		$this->templateNextSibling = $this->originalElement->nextSibling;
+		$this->templateParentPath = new NodePathExtractor($this->originalElement->parentElement);
+		$this->templateNextSiblingPath =
+			is_null($this->originalElement->nextSibling)
+			? null
+			: new NodePathExtractor($this->originalElement->nextSibling);
 
 		$this->originalElement->remove();
 	}
@@ -31,31 +35,49 @@ class TemplateElement {
 	 */
 	public function insertTemplate():Element {
 		$clone = $this->getClone();
-		$this->templateParent->insertBefore(
+		$templateParent = $this->getTemplateParent();
+		$templateParent->insertBefore(
 			$clone,
-			$this->templateNextSibling
+			$this->getTemplateNextSibling()
 		);
 
 		return $clone;
 	}
 
 	public function getTemplateParent():Element {
-		return $this->templateParent;
+		$matches = $this->originalElement->ownerDocument->evaluate(
+			$this->templateParentPath
+		);
+		do {
+			/** @var Element $parent */
+			$parent = $matches->current();
+			$matches->next();
+		}
+		while($matches->valid());
+		return $parent;
 	}
 
-	public function getTemplateName():string {
+	public function getTemplateNextSibling():?Node {
+		$matches = $this->originalElement->ownerDocument->evaluate(
+			$this->templateNextSiblingPath
+		);
+		$sibling = null;
+		while($matches->valid()) {
+			$sibling = $matches->current();
+			$matches->next();
+		}
+		return $sibling;
+	}
+
+	public function getTemplateName():?string {
 		$templateName = $this->originalElement->getAttribute("data-template");
 		if($templateName === "") {
-			return $this->calculateTemplatePath($this->templateParent);
+			return null;
 		}
 		elseif($templateName[0] === "/") {
 			throw new InvalidTemplateElementNameException("A template's name must not start with a forward slash (\"$templateName\")");
 		}
 
 		return $templateName;
-	}
-
-	private function calculateTemplatePath(Element $element):string {
-		return new NodePathExtractor($element);
 	}
 }

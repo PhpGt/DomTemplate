@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use ArrayIterator;
 use Gt\Dom\HTMLElement\HTMLLiElement;
 use Gt\DomTemplate\Bind;
+use Gt\DomTemplate\ElementBinder;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\TemplateCollection;

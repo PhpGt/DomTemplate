@@ -239,7 +239,28 @@ HTML;
 	<p>For more information, <a href="https://www.php.gt/{{repoName ?? domtemplate}}">view the docs.</a></p>
 </main>
 HTML;
-	const HTML_MUSIC = <<<HTML
+	const HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES = <<<HTML
+<!doctype>
+<h1>Music library</h1>
+
+<ul>
+	<li data-template="artist">
+		<h2 data-bind:text>Artist name</h2>
+		
+		<ul>
+			<li data-template="album">
+				<h3 data-bind:text>Album name</h3>
+				
+				<ol>
+					<li data-template="track" data-bind:text>Track name</li>
+				</ol>
+			</li>
+		</ul>
+	</li>
+</ul>
+HTML;
+
+	const HTML_MUSIC_NO_TEMPLATE_NAMES = <<<HTML
 <!doctype>
 <h1>Music library</h1>
 

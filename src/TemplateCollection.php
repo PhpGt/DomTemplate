@@ -35,9 +35,24 @@ class TemplateCollection {
 	}
 
 	private function extractTemplates(Document $document):void {
+		$dataTemplateArray = [];
 		foreach($document->querySelectorAll("[data-template]") as $element) {
+			$nodePath = new NodePathExtractor($element);
+			$dataTemplateArray[(string)$nodePath] = $element;
+		}
+
+		uksort($dataTemplateArray,
+			fn(string $a, string $b):int => (
+				(strlen($a) > strlen($b))
+				? -1
+				: 1
+			)
+		);
+
+		foreach($dataTemplateArray as $nodePath => $element) {
 			$templateElement = new TemplateElement($element);
-			$this->elementKVP[$templateElement->getTemplateName()] = $templateElement;
+			$name = $templateElement->getTemplateName() ?? $nodePath;
+			$this->elementKVP[$name] = $templateElement;
 		}
 	}
 
