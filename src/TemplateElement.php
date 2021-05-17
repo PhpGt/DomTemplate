@@ -3,7 +3,6 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
 use Gt\Dom\Node;
-use Gt\Dom\NodeList;
 
 class TemplateElement {
 	private string $templateParentPath;
@@ -71,7 +70,7 @@ class TemplateElement {
 
 	public function getTemplateName():?string {
 		$templateName = $this->originalElement->getAttribute("data-template");
-		if($templateName === "") {
+		if(strlen($templateName) === 0) {
 			return null;
 		}
 		elseif($templateName[0] === "/") {
