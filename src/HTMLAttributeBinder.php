@@ -12,19 +12,19 @@ class HTMLAttributeBinder {
 	public function bind(
 		?string $key,
 		mixed $value,
-		Document|Element $context
+		Document|Element $element
 	):void {
-		if($context instanceof Document) {
-			$context = $context->documentElement;
+		if($element instanceof Document) {
+			$element = $element->documentElement;
 		}
 
-		foreach($context->attributes as $attrName => $attrValue) {
+		foreach($element->attributes as $attrName => $attrValue) {
 			if(!str_starts_with($attrName, "data-bind")) {
 				continue;
 			}
 
 			if(!strstr($attrName, ":")) {
-				$tag = $this->getHTMLTag($context);
+				$tag = $this->getHTMLTag($element);
 				throw new InvalidBindPropertyException("$tag Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
 			}
 
@@ -50,7 +50,7 @@ class HTMLAttributeBinder {
 			}
 
 			$this->setBindProperty(
-				$context,
+				$element,
 				substr(
 					$attrName,
 					strpos($attrName, ":") + 1
