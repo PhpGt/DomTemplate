@@ -63,6 +63,15 @@ class ListBinder {
 			elseif($this->isKVP($listItem)) {
 				foreach($listItem as $key => $value) {
 					$binder->bind($key, $value, $t);
+
+					if($this->isNested($value)) {
+						$binder->bind(null, $key, $t);
+						$nestedCount += $this->bindListData(
+							$value,
+							$t,
+							$templateName
+						);
+					}
 				}
 			}
 			else {

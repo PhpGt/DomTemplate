@@ -22,7 +22,7 @@ class DocumentBinder {
 	) {
 		$this->templateCollection = $templateCollection ?? new TemplateCollection($document);
 		$this->elementBinder = $elementBinder ?? new ElementBinder();
-		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder($document);
+		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
 		$this->tableBinder = $tableBinder ?? new TableBinder();
 		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
 	}

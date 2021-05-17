@@ -12,11 +12,11 @@ class TemplateElement {
 	public function __construct(
 		private Element $originalElement
 	) {
-		$this->templateParentPath = new NodePathExtractor($this->originalElement->parentElement);
+		$this->templateParentPath = new NodePathCalculator($this->originalElement->parentElement);
 		$this->templateNextSiblingPath =
 			is_null($this->originalElement->nextSibling)
 			? null
-			: new NodePathExtractor($this->originalElement->nextSibling);
+			: new NodePathCalculator($this->originalElement->nextSibling);
 
 		$this->originalElement->remove();
 	}

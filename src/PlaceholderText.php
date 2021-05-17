@@ -45,7 +45,10 @@ class PlaceholderText {
 		return $context->contains($this->originalText);
 	}
 
-	public function setValue(mixed $value):void {
-		$this->originalText->data = (string)$value;
+	public function setKeyValue(?string $key, mixed $value):void {
+		if($this->bindKey === $key
+		|| is_null($key)) {
+			$this->originalText->data = (string)$value;
+		}
 	}
 }

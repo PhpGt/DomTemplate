@@ -37,7 +37,7 @@ class TemplateCollection {
 	private function extractTemplates(Document $document):void {
 		$dataTemplateArray = [];
 		foreach($document->querySelectorAll("[data-template]") as $element) {
-			$nodePath = new NodePathExtractor($element);
+			$nodePath = new NodePathCalculator($element);
 			$dataTemplateArray[(string)$nodePath] = $element;
 		}
 
@@ -59,7 +59,7 @@ class TemplateCollection {
 	}
 
 	private function findMatch(Element $context):TemplateElement {
-		$contextPath = (string)(new NodePathExtractor($context));
+		$contextPath = (string)(new NodePathCalculator($context));
 		$contextPath = preg_replace("/(\[\d+\])/","", $contextPath);
 
 		foreach($this->elementKVP as $name => $element) {

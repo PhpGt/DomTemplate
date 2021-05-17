@@ -50,4 +50,28 @@ class TestData {
 			],
 		]
 	];
+
+	const STUDENTS = [
+		[
+			"firstName" => "Freddie",
+			"lastName" => "Williams",
+			"modules" => [
+				"Programming 1", "Networking Fundamentals", "Computational Logic"
+			]
+		],
+		[
+			"firstName" => "Melissa",
+			"lastName" => "Adams",
+			"modules" => [
+				"Computational Mathematics", "Networks and Security", "Graphics I"
+			]
+		],
+		[
+			"firstName" => "Sofia",
+			"lastName" => "Reid",
+			"modules" => [
+				"Databases", "Programming 2", "Networking Fundamentals"
+			]
+		],
+	];
 }

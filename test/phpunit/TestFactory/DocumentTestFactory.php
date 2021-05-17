@@ -240,7 +240,7 @@ HTML;
 </main>
 HTML;
 	const HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES = <<<HTML
-<!doctype>
+<!doctype html>
 <h1>Music library</h1>
 
 <ul>
@@ -261,7 +261,7 @@ HTML;
 HTML;
 
 	const HTML_MUSIC_NO_TEMPLATE_NAMES = <<<HTML
-<!doctype>
+<!doctype html>
 <h1>Music library</h1>
 
 <ul>
@@ -280,6 +280,27 @@ HTML;
 	</li>
 </ul>
 HTML;
+
+	const HTML_STUDENT_LIST = <<<HTML
+<!doctype html>
+<h1>List of students:</h1>
+<ul>
+	<li data-template>
+		<dl>
+			<dt>Student name</dt>
+			<dd>{{firstName}} {{lastName}}</dd>
+			
+			<dt>Current modules</dt>
+			<dd>
+				<ul>
+					<li data-template data-bind:text>Module name</li>
+				</ul>		
+			</dd>
+		</dl>
+	</li>
+</ul>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

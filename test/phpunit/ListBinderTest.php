@@ -375,6 +375,14 @@ class ListBinderTest extends TestCase {
 			}
 		}
 	}
+//
+//	public function testBindListData_nestedList_withKvps():void {
+//		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_STUDENT_LIST);
+//		$templateCollection = new TemplateCollection($document);
+//		$sut = new ListBinder($templateCollection);
+//		$sut->bindListData(TestData::STUDENTS, $document);
+//		echo $document;die();
+//	}
 
 // TODO: Test <ul> <li data-template="good">Good item</li> <li data-template="bad">Bad item</li> </ul>
 // The next sibling of "good" will not exist any more - so if there's a data-template tag on the next sibling, go to the next next sibling.

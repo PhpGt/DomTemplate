@@ -76,7 +76,7 @@ class TemplateCollectionTest extends TestCase {
 				$albumElement = $albumTemplate->insertTemplate();
 				$elementBinder->bind(null, $albumName, $albumElement);
 
-				foreach($trackList as $trackNumber => $trackName) {
+				foreach($trackList as $trackName) {
 					$trackTemplate = $templateCollection->get($document, "track");
 					$trackElement = $trackTemplate->insertTemplate();
 					$elementBinder->bind(
