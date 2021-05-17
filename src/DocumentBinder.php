@@ -79,6 +79,10 @@ class DocumentBinder {
 		?Element $context = null,
 		?string $templateName = null
 	):int {
+		if(!$context) {
+			$context = $this->document;
+		}
+
 		return $this->listBinder->bindListData($listData, $context, $templateName);
 	}
 

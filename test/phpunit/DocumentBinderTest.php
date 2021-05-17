@@ -361,4 +361,18 @@ class DocumentBinderTest extends TestCase {
 			}
 		}
 	}
+
+	public function testBindList():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$sut = new DocumentBinder($document);
+
+		$listData = ["One", "Two", "Three"];
+		$sut->bindList($listData);
+
+		$liElementList = $document->querySelectorAll("ul li");
+
+		foreach($listData as $i => $listItem) {
+			self::assertSame($listItem, $liElementList[$i]->textContent);
+		}
+	}
 }
