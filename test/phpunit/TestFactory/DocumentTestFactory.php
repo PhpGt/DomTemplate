@@ -301,6 +301,20 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_LANGUAGE = <<<HTML
+<!doctype html>
+<html data-bind:lang="language">
+<head>
+	<meta charset="utf-8" />
+	<title>Language test</title>
+</head>
+<body>
+	<h1>Just a simple language test</h1>
+	<p>Take a look at the "lang" attribute of the HTML element.</p>
+</body>
+</html>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
