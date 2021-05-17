@@ -288,10 +288,10 @@ HTML;
 	<li data-template>
 		<dl>
 			<dt>Student name</dt>
-			<dd>{{firstName}} {{lastName}}</dd>
+			<dd class="name">{{firstName}} {{lastName}}</dd>
 			
 			<dt>Current modules</dt>
-			<dd>
+			<dd class="modules">
 				<ul>
 					<li data-template data-bind:text>Module name</li>
 				</ul>		

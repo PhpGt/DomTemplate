@@ -14,20 +14,21 @@ class ElementBinder {
 	private HTMLAttributeBinder $htmlAttributeBinder;
 	private HTMLAttributeCollection $htmlAttributeCollection;
 	private PlaceholderBinder $placeholderBinder;
-	private PlaceholderCollection $placeholderCollection;
 
 	public function __construct(
 		?HTMLAttributeBinder $htmlAttributeBinder = null,
 		?HTMLAttributeCollection $htmlAttributeCollection = null,
 		?PlaceholderBinder $placeholderBinder = null,
-		?PlaceholderCollection $placeholderCollection = null,
 	) {
 		$this->htmlAttributeBinder = $htmlAttributeBinder ?? new HTMLAttributeBinder();
 		$this->htmlAttributeCollection = $htmlAttributeCollection ?? new HTMLAttributeCollection();
 		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
-		$this->placeholderCollection = $placeholderCollection ?? new PlaceholderCollection();
 	}
 
+	/**
+	 * Binds an Element and its children according to any HTML "data-bind"
+	 * attributes found, and any {{placeholder}} text.
+	 */
 	public function bind(
 		?string $key,
 		mixed $value,
@@ -36,9 +37,8 @@ class ElementBinder {
 		foreach($this->htmlAttributeCollection->find($context) as $element) {
 			$this->htmlAttributeBinder->bind($key, $value, $element);
 		}
-		foreach($this->placeholderCollection->find($context) as $element) {
-			$this->placeholderBinder->bind($key, $value, $element);
-		}
+
+		$this->placeholderBinder->bind($key, $value, $context);
 	}
 
 	/**
@@ -50,7 +50,7 @@ class ElementBinder {
 	 * method will be called whenever the "message-count" bind key is used
 	 * in the document.
 	 */
-	public function bindFromAttributes(
+	public function bindMethodPropertyAttributes(
 		object $objectWithAttributes,
 		Element $context
 	):void {

@@ -58,7 +58,7 @@ class ListBinder {
 			}
 
 			if($this->hasBindAttributes($listItem)) {
-				$binder->bindFromAttributes($listItem, $t);
+				$binder->bindMethodPropertyAttributes($listItem, $t);
 			}
 			elseif($this->isKVP($listItem)) {
 				foreach($listItem as $key => $value) {

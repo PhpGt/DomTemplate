@@ -22,7 +22,6 @@ class PlaceholderText {
 		$data = trim($this->originalText->data, "{}");
 		$this->bindKey = $this->parseBindKey($data);
 		$this->default = $this->parseDefault($data);
-		$this->originalText->data = $this->default ?? $this->bindKey;
 	}
 
 	private function parseBindKey(string $data):string {
@@ -45,10 +44,7 @@ class PlaceholderText {
 		return $context->contains($this->originalText);
 	}
 
-	public function setKeyValue(?string $key, mixed $value):void {
-		if($this->bindKey === $key
-		|| is_null($key)) {
-			$this->originalText->data = (string)$value;
-		}
+	public function setValue(mixed $value):void {
+		$this->originalText->data = (string)$value;
 	}
 }
