@@ -60,13 +60,13 @@ class TemplateCollection {
 
 	private function findMatch(Element $context):TemplateElement {
 		$contextPath = (string)(new NodePathCalculator($context));
-		$contextPath = preg_replace("/(\[\d+\])/","", $contextPath);
+		$contextPath = preg_replace(
+			"/(\[\d+\])/",
+			"",
+			$contextPath
+		);
 
 		foreach($this->elementKVP as $name => $element) {
-			if($name[0] !== "/") {
-				continue;
-			}
-
 			if($contextPath === $name) {
 				continue;
 			}
@@ -75,12 +75,17 @@ class TemplateCollection {
 				continue;
 			}
 
-			$xpathResult = $context->ownerDocument->evaluate($contextPath);
+			$xpathResult = $context->ownerDocument->evaluate(
+				$contextPath
+			);
+
 			if($xpathResult->valid()) {
 				return $element;
 			}
 		}
 
-		throw new TemplateElementNotFoundInContextException("There is no unnamed template element in the context element ({$context->tagName}).");
+		throw new TemplateElementNotFoundInContextException(
+			"There is no unnamed template element in the context element ({$context->tagName})."
+		);
 	}
 }
