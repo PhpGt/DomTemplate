@@ -40,10 +40,6 @@ class PlaceholderText {
 		return trim($default);
 	}
 
-	public function isWithinContext(Element $context):bool {
-		return $context->contains($this->originalText);
-	}
-
 	public function setValue(mixed $value):void {
 		$this->originalText->data = (string)$value;
 	}
