@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
 use Gt\Dom\Element;
+use Iterator;
 
 class DocumentBinder {
 	private ElementBinder $elementBinder;
@@ -11,6 +12,9 @@ class DocumentBinder {
 	private ListBinder $listBinder;
 	private TemplateCollection $templateCollection;
 
+	/**
+	 * @param array<string, string> $config
+	 */
 	public function __construct(
 		private Document $document,
 		private array $config = [],
@@ -74,6 +78,9 @@ class DocumentBinder {
 		$this->tableBinder->bindTableData($tableData, $context);
 	}
 
+	/**
+	 * @param Iterator<mixed> $listData
+	 */
 	public function bindList(
 		iterable $listData,
 		?Element $context = null,

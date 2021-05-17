@@ -15,12 +15,7 @@ class ListBinder {
 	) {
 	}
 
-	/**
-	 * @param iterable $listData
-	 * @param Document|Element $context
-	 * @param string|null $templateName
-	 * @return int
-	 */
+	/** @param Iterator<mixed> $listData */
 	public function bindListData(
 		iterable $listData,
 		Document|Element $context,
@@ -83,12 +78,13 @@ class ListBinder {
 		return $nestedCount + $i + 1;
 	}
 
+	/** @param Iterator<mixed>|array<mixed> $listData */
 	private function isEmpty(iterable $listData):bool {
 		if(is_array($listData)) {
 			return is_null(array_key_first($listData));
 		}
 		else {
-			/** @var Iterator $listData */
+			/** @var Iterator<mixed> $listData */
 			$listData->rewind();
 			return !$listData->valid();
 		}

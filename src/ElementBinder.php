@@ -35,6 +35,7 @@ class ElementBinder {
 		Element $context
 	):void {
 		foreach($this->htmlAttributeCollection->find($context) as $element) {
+			/** @var Element $element */
 			$this->htmlAttributeBinder->bind($key, $value, $element);
 		}
 
@@ -56,6 +57,7 @@ class ElementBinder {
 	):void {
 		$bindKeyList = [];
 		foreach($this->htmlAttributeCollection->find($context) as $bindElement) {
+			/** @var Element $bindElement */
 			array_push($bindKeyList, ...$this->getBindKeys($bindElement));
 		}
 
