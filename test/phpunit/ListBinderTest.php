@@ -2,6 +2,8 @@
 namespace Gt\DomTemplate\Test;
 
 use ArrayIterator;
+use DateInterval;
+use DateTime;
 use Gt\Dom\HTMLElement\HTMLLiElement;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\ElementBinder;
@@ -11,6 +13,7 @@ use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\TemplateElement;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
+use Stringable;
 
 class ListBinderTest extends TestCase {
 	public function testBindList_emptyList():void {
@@ -394,6 +397,53 @@ class ListBinderTest extends TestCase {
 					$moduleElement->textContent
 				);
 			}
+		}
+	}
+
+	public function testBindListData_iterativeSomething():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SEQUENCES);
+		$templateCollection = new TemplateCollection($document);
+		$listData = [
+			"Primes" => new ArrayIterator([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71]),
+			"Fibonacci" => new ArrayIterator([0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765]),
+		];
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($listData, $document);
+
+		$listDataKeys = array_keys($listData);
+		foreach($document->querySelectorAll("ul>li") as $i => $sequenceLI) {
+			self::assertEquals($listDataKeys[$i], $sequenceLI->querySelector("h2")->textContent);
+
+			foreach($sequenceLI->querySelectorAll("ol>li") as $j => $numberLI) {
+				self::assertEquals($listData[$listDataKeys[$i]][$j], $numberLI->textContent);
+			}
+		}
+	}
+
+	public function testBindListData_dateTime():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DATES);
+		$templateCollection = new TemplateCollection($document);
+		$listData = [];
+
+		$dateTime = new DateTime();
+		$currentYear = $dateTime->format("Y");
+		$dateTime->setDate($currentYear, 1, 1);
+
+		while($dateTime->format("Y") === $currentYear) {
+			array_push($listData, new class(clone $dateTime) implements Stringable {
+				public function __construct(private DateTime $dateTime) {}
+				public function __toString():string {
+					return $this->dateTime->format("F: l");
+				}
+			});
+			$dateTime->add(new DateInterval("P1M"));
+		}
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($listData, $document);
+
+		foreach($document->querySelectorAll("li") as $i => $li) {
+			self::assertSame((string)$listData[$i], $li->textContent);
 		}
 	}
 

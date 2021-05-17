@@ -314,6 +314,26 @@ HTML;
 </body>
 </html>
 HTML;
+	const HTML_SEQUENCES = <<<HTML
+<!doctype html>
+<h1>Numerical sequences</h1>
+<ul>
+	<li data-template>
+		<h2 data-bind:text>Sequence name</h2>
+		
+		<ol>
+			<li data-template data-bind:text>0</li>		
+		</ol>	
+	</li>
+</ul>
+HTML;
+	const HTML_DATES = <<<HTML
+<!doctype html>
+<h1>Month starting days for each month this year:</h1>
+<ul>
+	<li data-template data-bind:text></li>
+</ul>
+HTML;
 
 
 	public static function createHTML(string $html = ""):HTMLDocument {

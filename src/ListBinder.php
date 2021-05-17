@@ -7,6 +7,7 @@ use Iterator;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use Stringable;
 
 class ListBinder {
 	public function __construct(
@@ -107,20 +108,8 @@ class ListBinder {
 			return false;
 		}
 
-		if(is_array($item)) {
-			$firstKey = array_key_first($item);
-
-			if(is_string($firstKey)) {
-				return true;
-			}
+		if($item instanceof Stringable) {
 			return false;
-		}
-
-		if($item instanceof Iterator) {
-			return true;
-		}
-		elseif(is_object($item)) {
-			return true;
 		}
 
 		return true;
@@ -158,7 +147,7 @@ class ListBinder {
 			return is_int($key) || is_iterable($item[$key]);
 		}
 		elseif($item instanceof Iterator) {
-			return is_iterable($item->current());
+			return true;
 		}
 
 		return false;
