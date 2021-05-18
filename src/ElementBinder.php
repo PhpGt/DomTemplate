@@ -36,6 +36,7 @@ class ElementBinder {
 	):void {
 		foreach($this->htmlAttributeCollection->find($context) as $element) {
 			/** @var Element $element */
+			$this->htmlAttributeBinder->expandAttributes($element);
 			$this->htmlAttributeBinder->bind($key, $value, $element);
 		}
 

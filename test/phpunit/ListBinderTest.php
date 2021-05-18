@@ -447,6 +447,25 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindListData_todoList():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TODO);
+		$templateCollection = new TemplateCollection($document);
+		$data = TestData::TODO_DATA;
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($data, $document);
+
+		$todoLiElements = $document->querySelectorAll("ul>li");
+		foreach($data as $i => $todoItem) {
+			/** @var HTMLLiElement $li */
+			$li = $todoLiElements[$i];
+			self::assertEquals($todoItem["id"], $li->querySelector("[name=id]")->value);
+			self::assertEquals($todoItem["title"], $li->querySelector("[name=title]")->value);
+			if($todoItem["completedAt"]) {
+				self::assertTrue($li->classList->contains("completed"));
+			}
+		}
+	}
+
 // TODO: Test <ul> <li data-template="good">Good item</li> <li data-template="bad">Bad item</li> </ul>
 // The next sibling of "good" will not exist any more - so if there's a data-template tag on the next sibling, go to the next next sibling.
 }

@@ -39,7 +39,7 @@ class HTMLAttributeBinder {
 			else {
 // If there is a key specified, and the bind attribute's value doesn't match,
 // skip this attribute.
-				$trimmedAttrValue = ltrim($attrValue, ":!?@");
+				$trimmedAttrValue = ltrim($attrValue, ":!?");
 				$trimmedAttrValue = strtok($trimmedAttrValue, " ");
 				if($key !== $trimmedAttrValue) {
 					continue;
@@ -58,6 +58,26 @@ class HTMLAttributeBinder {
 				$value,
 				$modifier
 			);
+		}
+	}
+
+	public function expandAttributes(Element $element):void {
+		foreach($element->attributes as $attrName => $attrValue) {
+			if(!str_starts_with($attrName, "data-bind:")) {
+				continue;
+			}
+
+			if(strlen($attrValue) === 0) {
+				continue;
+			}
+
+			if($attrValue[0] === "@") {
+				$otherAttrName = substr($attrValue, 1);
+				$element->setAttribute(
+					$attrName,
+					$element->getAttribute($otherAttrName)
+				);
+			}
 		}
 	}
 

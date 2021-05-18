@@ -74,4 +74,24 @@ class TestData {
 			]
 		],
 	];
+
+	const TODO_DATA = [
+		[
+			"id" => 100,
+			"title" => "Create DOM facade",
+			"completedAt" => "2021-05-18 10:03:57",
+		], [
+			"id" => 101,
+			"title" => "Bind data to the DOM",
+			"completedAt" => "2021-05-18 16:32:20",
+		], [
+			"id" => 102,
+			"title" => "Bundle into WebEngine",
+			"completedAt" => null,
+		], [
+			"id" => 103,
+			"title" => "Release WebEngine v4",
+			"completedAt" => null,
+		]
+	];
 }

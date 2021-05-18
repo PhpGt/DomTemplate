@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpPropertyOnlyWrittenInspection */
 namespace Gt\DomTemplate;
 
 use Attribute;

@@ -335,6 +335,28 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_TODO = <<<HTML
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>TODO LIST!</title>
+</head>
+<body>
+	<h1>TODO LIST!</h1>
+	<ul>
+		<li data-template data-bind:class=":completedAt completed">
+			<form method="post">
+				<input type="hidden" name="id" data-bind:value="@name" />
+				<input name="title" data-bind:value="@name" />
+				<button name="do" value="complete">Complete</button>
+				<button name="do" value="delete">Delete</button>
+			</form>
+		</li>
+	</ul>
+</body>
+</html>
+HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
