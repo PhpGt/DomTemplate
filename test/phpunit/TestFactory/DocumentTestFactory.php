@@ -358,6 +358,14 @@ HTML;
 </html>
 HTML;
 
+	const HTML_GOOD_BAD = <<<HTML
+<!doctype html>
+<p>The following list of "good" and "bad" templates is intentionally formatted like this.</p>
+<p>There should be no whitespace, and therefore the template siblings must not include other template items.</p>
+<ul><li data-template="good"><i>GOOD</i> <span data-bind:text>Good message</span></li><li data-template="bad"><i>BAD</i> <span data-bind:text>Bad message</span></li></ul>
+HTML;
+
+
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
 	}

@@ -466,6 +466,27 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
-// TODO: Test <ul> <li data-template="good">Good item</li> <li data-template="bad">Bad item</li> </ul>
-// The next sibling of "good" will not exist any more - so if there's a data-template tag on the next sibling, go to the next next sibling.
+	public function testBindListData_multipleTemplateSiblings():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_GOOD_BAD);
+		$templateCollection = new TemplateCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData(["Good news 1", "Good news 2"], $document, "good");
+		$sut->bindListData(["Bad news 1", "Bad news 2"], $document, "bad");
+		$sut->bindListData(["Good news 3", "Good news 4"], $document, "good");
+		$sut->bindListData(["Bad news 3", "Bad news 4"], $document, "bad");
+
+		$expected = [
+			"Good news 1",
+			"Good news 2",
+			"Bad news 1",
+			"Bad news 2",
+			"Good news 3",
+			"Good news 4",
+			"Bad news 3",
+			"Bad news 4",
+		];
+		foreach($document->querySelectorAll("li") as $i => $li) {
+			self::assertEquals($expected[$i], $li->querySelector("span")->textContent);
+		}
+	}
 }

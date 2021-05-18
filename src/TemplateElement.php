@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
 use Gt\Dom\Node;
+use Gt\Dom\Text;
 
 class TemplateElement {
 	private string $templateParentPath;
@@ -12,8 +13,17 @@ class TemplateElement {
 		private Element $originalElement
 	) {
 		$this->templateParentPath = new NodePathCalculator($this->originalElement->parentElement);
+
+		$siblingContext = $this->originalElement;
+		while($siblingContext = $siblingContext->nextSibling) {
+			/** @var Element|Text $siblingContext */
+			if($siblingContext instanceof Text
+			|| !$siblingContext->hasAttribute("data-template")) {
+				break;
+			}
+		}
 		$this->templateNextSiblingPath =
-			is_null($this->originalElement->nextSibling)
+			is_null($siblingContext)
 			? null
 			: new NodePathCalculator($this->originalElement->nextSibling);
 
@@ -57,6 +67,10 @@ class TemplateElement {
 	}
 
 	public function getTemplateNextSibling():?Node {
+		if(is_null($this->templateNextSiblingPath)) {
+			return null;
+		}
+
 		$matches = $this->originalElement->ownerDocument->evaluate(
 			$this->templateNextSiblingPath
 		);
