@@ -358,6 +358,37 @@ HTML;
 </html>
 HTML;
 
+	const HTML_TODO_CUSTOM_ELEMENT = <<<HTML
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>TODO LIST!</title>
+</head>
+<body>
+	<h1>TODO LIST!</h1>
+	<todo-list />
+</body>
+</html>
+HTML;
+
+	const HTML_TODO_COMPONENT_TODO_LIST = <<<HTML
+<ul>
+	<todo-list-item data-template data-bind:class=":completedAt completed" />
+</ul>
+HTML;
+
+	const HTML_TODO_COMPONENT_TODO_LIST_ITEM = <<<HTML
+<li>
+	<form method="post">
+		<input type="hidden" name="id" data-bind:value="@name" />
+		<input name="title" data-bind:value="@name" />
+		<button name="do" value="complete">Complete</button>
+		<button name="do" value="delete">Delete</button>
+	</form>
+</li>
+HTML;
+
 	const HTML_GOOD_BAD = <<<HTML
 <!doctype html>
 <p>The following list of "good" and "bad" templates is intentionally formatted like this.</p>

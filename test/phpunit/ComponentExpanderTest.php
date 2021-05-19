@@ -32,6 +32,21 @@ class ComponentExpanderTest extends TestCase {
 		self::assertSame($html, $expandedElements[0]->innerHTML);
 	}
 
+	public function testExpand_recursive():void {
+		$modularContent = self::mockModularContent(
+			"_component", [
+				"todo-list" => DocumentTestFactory::HTML_TODO_COMPONENT_TODO_LIST,
+				"todo-list-item" => DocumentTestFactory::HTML_TODO_COMPONENT_TODO_LIST_ITEM,
+			]
+		);
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TODO_CUSTOM_ELEMENT);
+		$sut = new ComponentExpander($document, $modularContent);
+		$expandedElements = $sut->expand();
+		self::assertCount(2, $expandedElements);
+		self::assertSame("TODO-LIST", $expandedElements[0]->tagName);
+		self::assertSame("TODO-LIST-ITEM", $expandedElements[1]->tagName);
+	}
+
 	/**
 	 * @param array<string, string> $contentFiles Associative array where
 	 * the key is the modular content's name, and the value is its content.
