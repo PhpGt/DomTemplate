@@ -67,4 +67,30 @@ class PartialExpanderTest extends ModularContentTestCase {
 		$sut = new PartialExpander($document, $modularContent, $commentIni);
 		self::assertEmpty($sut->expand());
 	}
+
+	public function testExpand_recursive():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE);
+		$modularContent = self::mockModularContent(
+			"_partial", [
+				"extended-page" => DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE_BASE,
+				"partial-base" => DocumentTestFactory::HTML_PARTIAL_VIEW,
+			]
+		);
+		$sut = new PartialExpander($document, $modularContent);
+		$sut->expand();
+		echo $document;die();
+		$body = $document->body;
+		$main = $body->querySelector("main");
+		$outer = $main->querySelector(".outer");
+		$inner = $outer->querySelector(".inner");
+
+		self::assertStringContainsString(
+			"This is an inner DIV",
+			$inner->querySelector("p")->textContent
+		);
+		self::assertStringContainsString(
+			"This is the outer DIV",
+			$outer->querySelector("p")->textContent
+		);
+	}
 }

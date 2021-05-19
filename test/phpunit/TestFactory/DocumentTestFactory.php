@@ -449,6 +449,23 @@ title=My website, extended...
 </aside>
 HTML;
 
+	const HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE = <<<HTML
+<!-- 
+extends=extended-page
+-->
+<div class="inner">
+	<p>This is an inner DIV element that will be placed into the "extended page" partial.</p>
+</div>
+HTML;
+
+	const HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE_BASE = <<<HTML
+<!-- extends=partial-base -->
+<div class="outer">
+	<p>This is the outer DIV element that will be placed into the base partial view.</p>
+	<div data-partial></div>
+</div>
+HTML;
+
 	const HTML_COMMENT_WITHOUT_INI_DATA_PARTIAL_VIEW = <<<HTML
 <!-- 
 This is just a message to test ini parsing. 
@@ -462,7 +479,6 @@ Oh yeah!
 	Some useful links can be put here.
 </aside>
 HTML;
-
 	const HTML_COMPONENT = <<<HTML
 <!doctype html>
 <h1>Component test</h1>

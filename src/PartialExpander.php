@@ -2,33 +2,30 @@
 namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
+use Gt\Dom\Element;
 use Gt\Dom\HTMLElement\HTMLElement;
 
 class PartialExpander extends ModularContentExpander {
-	private CommentIni $commentIni;
-
-	public function __construct(
-		Document $document,
-		ModularContent $modularContent,
-		CommentIni $commentIni = null
-	) {
-		parent::__construct($document, $modularContent);
-		$this->commentIni = $commentIni ?? new CommentIni($document);
-	}
-
 	/**
 	 * @return string[] A list of names of partials that have been expanded,
 	 * in the order that they were expanded.
 	 */
-	public function expand():array {
+	public function expand(Element $context = null):array {
 		$expandedPartialArray = [];
 
-		$extends = $this->commentIni->get("extends");
+		if(!$context) {
+			$context = $this->document->documentElement;
+		}
+
+// TODO: Recursively expand the documents.
+		$commentIni = new CommentIni($context);
+		$extends = $commentIni->get("extends");
 		if(is_null($extends)) {
 			return $expandedPartialArray;
 		}
 
 		$partialDocument = $this->modularContent->getHTMLDocument($extends);
+
 // TODO: Import any HEAD elements that can be extracted from $this->document
 // content, such as having an inline <title> element.
 		/** @var HTMLElement $importedHTMLRoot */

@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Comment;
 use Gt\Dom\Document;
+use Gt\Dom\Element;
 use Gt\Dom\NodeFilter;
 use Throwable;
 
@@ -11,10 +12,15 @@ class CommentIni {
 	private ?array $iniData;
 
 	public function __construct(
-		private Document $document
+		Document|Element $context
 	) {
-		$walker = $document->createTreeWalker(
-			$document,
+		if($context instanceof Element) {
+			$context = $context->ownerDocument;
+		}
+		/** @var Document $context */
+
+		$walker = $context->createTreeWalker(
+			$context,
 			NodeFilter::SHOW_COMMENT
 		);
 
