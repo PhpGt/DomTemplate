@@ -1,0 +1,57 @@
+<?php
+namespace Gt\DomTemplate\Test;
+
+use Gt\DomTemplate\ComponentExpander;
+use Gt\DomTemplate\ModularContent;
+use Gt\DomTemplate\ModularContentFileNotFoundException;
+use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+
+class ComponentExpanderTest extends TestCase {
+	public function testExpand_doesNothingWhenNoMatchingFiles():void {
+		$modularContent = self::mockModularContent("_component");
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_COMPONENT);
+		$sut = new ComponentExpander($document, $modularContent);
+		self::assertEmpty($sut->expand());
+	}
+
+	public function testExpand_returnsArrayOfExpandedElements():void {
+		$html = "<h2>This has been replaced!</h2> <p>If you can read this, your custom element is working!</p>";
+
+		$modularContent = self::mockModularContent(
+			"_component", [
+				"custom-element" => $html
+			]
+		);
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_COMPONENT);
+		$sut = new ComponentExpander($document, $modularContent);
+		$expandedElements = $sut->expand();
+		self::assertCount(1, $expandedElements);
+		self::assertSame("CUSTOM-ELEMENT", $expandedElements[0]->tagName);
+		self::assertSame($html, $expandedElements[0]->innerHTML);
+	}
+
+	/**
+	 * @param array<string, string> $contentFiles Associative array where
+	 * the key is the modular content's name, and the value is its content.
+	 */
+	private function mockModularContent(
+		string $dirName,
+		array $contentFiles = []
+	):MockObject|ModularContent {
+		$mock = self::createMock(ModularContent::class);
+		$mock->method("getContent")
+			->willReturnCallback(
+				function(string $name) use($contentFiles) {
+					$content = $contentFiles[$name] ?? null;
+					if(is_null($content)) {
+						throw new ModularContentFileNotFoundException();
+					}
+
+					return $content;
+				}
+			);
+		return $mock;
+	}
+}

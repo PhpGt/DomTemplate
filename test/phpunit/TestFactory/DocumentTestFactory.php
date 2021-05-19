@@ -432,6 +432,15 @@ Oh yeah!
 </aside>
 HTML;
 
+	const HTML_COMPONENT = <<<HTML
+<!doctype html>
+<h1>Component test</h1>
+<p>This test shows how a custom element can be injected into the document.</p>
+<custom-element />
+<p>If there's matching modular content in the _compnent directory, the above element will be filled with its content.</p>
+HTML;
+
+
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
 	}
