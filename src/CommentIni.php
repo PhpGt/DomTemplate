@@ -7,6 +7,7 @@ use Gt\Dom\NodeFilter;
 use Throwable;
 
 class CommentIni {
+	/** @var array<string, array<string, string>|string>|null */
 	private ?array $iniData;
 
 	public function __construct(
