@@ -365,6 +365,72 @@ HTML;
 <ul><li data-template="good"><i>GOOD</i> <span data-bind:text>Good message</span></li><li data-template="bad"><i>BAD</i> <span data-bind:text>Bad message</span></li></ul>
 HTML;
 
+	const HTML_PARTIAL_VIEW = <<<HTML
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title data-bind:test="title">My website</title>
+</head>
+<body>
+	<header>
+		<h1>My website!</h1>
+	</header>
+	<main data-partial>
+		The page content will go in here.
+	</main>
+	<footer>
+		<p>Thank you for visiting!</p>
+	</footer>
+</body>
+</html>
+HTML;
+
+	const HTML_EXTENDS_PARTIAL_VIEW = <<<HTML
+<!-- 
+extends=base-page
+
+[vars]
+title=My website, extended... 
+-->
+<article>
+	<h1>Hello from within a sub-template!</h1>
+	<p>This piece of HTML should be placed within the appropriate template.</p>
+</article>
+<aside>
+	Some useful links can be put here.
+</aside>
+HTML;
+
+	const HTML_INCORRECTLY_EXTENDS_PARTIAL_VIEW = <<<HTML
+<article>
+	<h1>Hello from within a sub-template!</h1>
+	<p>This piece of HTML should be placed within the appropriate template.</p>
+</article>
+<!-- 
+extends=base-page
+
+[vars]
+title=My website, extended... 
+-->
+<aside>
+	Some useful links can be put here.
+</aside>
+HTML;
+
+	const HTML_COMMENT_WITHOUT_INI_DATA_PARTIAL_VIEW = <<<HTML
+<!-- 
+This is just a message to test ini parsing. 
+Oh yeah!
+-->
+<article>
+	<h1>Hello from within a sub-template!</h1>
+	<p>This piece of HTML should be placed within the appropriate template.</p>
+</article>
+<aside>
+	Some useful links can be put here.
+</aside>
+HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
