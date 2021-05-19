@@ -1,7 +1,10 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
-use Gt\DomTemplate\ModularContentExpander;
+use Gt\Dom\HTMLDocument;
+use Gt\DomTemplate\CommentIni;
+use Gt\DomTemplate\ModularContent;
+use Gt\DomTemplate\ModularContentFileNotFoundException;
 use Gt\DomTemplate\PartialExpander;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 
@@ -17,6 +20,7 @@ class PartialExpanderTest extends ModularContentTestCase {
 			$document,
 			$modularContent
 		);
+		self::expectException(ModularContentFileNotFoundException::class);
 		self::assertEmpty($sut->expand());
 	}
 
@@ -50,5 +54,17 @@ class PartialExpanderTest extends ModularContentTestCase {
 		);
 
 		self::assertSame("Hello from within a sub-template!", $mainElement->querySelector("h1")->textContent);
+	}
+
+	public function testExpand_noExtendsSectionOfCommentIni():void {
+		$document = self::createMock(HTMLDocument::class);
+		$modularContent = self::createMock(ModularContent::class);
+		$commentIni = self::createMock(CommentIni::class);
+		$commentIni->method("get")
+			->with("extends")
+			->willReturn(null);
+
+		$sut = new PartialExpander($document, $modularContent, $commentIni);
+		self::assertEmpty($sut->expand());
 	}
 }

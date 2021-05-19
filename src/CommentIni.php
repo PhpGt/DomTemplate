@@ -19,6 +19,7 @@ class CommentIni {
 		);
 
 		$ini = null;
+		$commentNodeToRemove = null;
 
 		while($commentNode = $walker->nextNode()) {
 			/** @var Comment $commentNode */
@@ -26,7 +27,7 @@ class CommentIni {
 
 			try {
 				$ini = parse_ini_string($data, true);
-				$commentNode->parentNode->removeChild($commentNode);
+				$commentNodeToRemove = $commentNode;
 			}
 			catch(Throwable) {
 				$ini = null;
@@ -42,6 +43,10 @@ class CommentIni {
 					throw new CommentIniInvalidDocumentLocationException("A Comment INI must only appear as the first node of the HTML.");
 				}
 			}
+		}
+
+		if($commentNodeToRemove) {
+			$commentNodeToRemove->parentNode->removeChild($commentNodeToRemove);
 		}
 
 		$this->iniData = $ini;

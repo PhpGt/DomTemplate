@@ -47,6 +47,19 @@ class ModularContentTest extends TestCase {
 		);
 	}
 
+	public function testGetHTMLDocument():void {
+		$expectedContent = "<!doctype html><h1>Test file contents</h1>";
+		$dir = $this->baseDir . "/" . uniqid("_partial");
+		mkdir($dir);
+		file_put_contents("$dir/test.html", $expectedContent);
+		$sut = new ModularContent($dir);
+		$document = $sut->getHTMLDocument("test");
+		self::assertSame(
+			"Test file contents",
+			$document->querySelector("h1")->textContent
+		);
+	}
+
 	protected function removeTempDir():void {
 		exec("rm -rf " . $this->baseDir);
 	}

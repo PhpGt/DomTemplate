@@ -10,5 +10,6 @@ abstract class ModularContentExpander {
 	) {
 	}
 
+	/** @return array<int, mixed> */
 	abstract public function expand():array;
 }
