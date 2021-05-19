@@ -1,6 +1,8 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\HTMLDocument;
+
 class ModularContent {
 	public function __construct(
 		private string $dirPath
@@ -17,5 +19,9 @@ class ModularContent {
 		}
 
 		return file_get_contents($filePath);
+	}
+
+	public function getHTMLDocument(string $name):HTMLDocument {
+		return new HTMLDocument($this->getContent($name));
 	}
 }

@@ -3,19 +3,12 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
 use Gt\Dom\Element;
-use Gt\Dom\HTMLElement\HTMLElement;
 use Throwable;
 
-class ComponentExpander {
-	public function __construct(
-		private Document $document,
-		private ModularContent $modularContent
-	) {
-	}
-
+class ComponentExpander extends ModularContentExpander {
 	/** @return Element[] */
 	public function expand(Element $context = null):array {
-		$expandedComponents = [];
+		$expandedComponentArray = [];
 
 		if(is_null($context)) {
 			$context = $this->document->documentElement;
@@ -35,16 +28,16 @@ class ComponentExpander {
 			try {
 				$content = $this->modularContent->getContent($name);
 				$element->innerHTML = $content;
-				array_push($expandedComponents, $element);
+				array_push($expandedComponentArray, $element);
 				$recursiveExpandedComponents = $this->expand($element);
-				$expandedComponents = array_merge(
-					$expandedComponents,
+				$expandedComponentArray = array_merge(
+					$expandedComponentArray,
 					$recursiveExpandedComponents
 				);
 			}
 			catch(Throwable) {}
 		}
 
-		return $expandedComponents;
+		return $expandedComponentArray;
 	}
 }

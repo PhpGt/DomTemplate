@@ -26,6 +26,7 @@ class CommentIni {
 
 			try {
 				$ini = parse_ini_string($data, true);
+				$commentNode->parentNode->removeChild($commentNode);
 			}
 			catch(Throwable) {
 				$ini = null;
