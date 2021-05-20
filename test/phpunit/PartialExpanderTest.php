@@ -60,12 +60,8 @@ class PartialExpanderTest extends ModularContentTestCase {
 	public function testExpand_noExtendsSectionOfCommentIni():void {
 		$document = DocumentTestFactory::createHTML();
 		$modularContent = self::createMock(ModularContent::class);
-		$commentIni = self::createMock(CommentIni::class);
-		$commentIni->method("get")
-			->with("extends")
-			->willReturn(null);
 
-		$sut = new PartialExpander($document, $modularContent, $commentIni);
+		$sut = new PartialExpander($document, $modularContent);
 		self::assertEmpty($sut->expand());
 	}
 
@@ -92,5 +88,6 @@ class PartialExpanderTest extends ModularContentTestCase {
 			"This is the outer DIV",
 			$outer->querySelector("p")->textContent
 		);
+		self::assertSame("This title was set in the inner partial view.", $document->title);
 	}
 }

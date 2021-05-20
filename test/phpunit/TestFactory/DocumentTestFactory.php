@@ -453,6 +453,7 @@ HTML;
 <!-- 
 extends=extended-page
 -->
+<title>This title was set in the inner partial view.</title>
 <div class="inner">
 	<p>This is an inner DIV element that will be placed into the "extended page" partial.</p>
 </div>

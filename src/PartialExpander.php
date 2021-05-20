@@ -1,7 +1,6 @@
 <?php
 namespace Gt\DomTemplate;
 
-use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\HTMLElement\HTMLElement;
@@ -32,6 +31,10 @@ class PartialExpander extends ModularContentExpander {
 		while(true);
 
 		foreach($partialDocumentArray as $partialDocument) {
+			if($currentTitle = $this->document->title) {
+				$partialDocument->title = $currentTitle;
+			}
+
 			/** @var HTMLElement $importedRoot */
 			$importedRoot = $this->document->importNode(
 				$partialDocument->documentElement,
@@ -58,7 +61,5 @@ class PartialExpander extends ModularContentExpander {
 		}
 
 		return array_keys($partialDocumentArray);
-// TODO: Import any HEAD elements that can be extracted from $this->document
-// content, such as having an inline <title> element.
 	}
 }
