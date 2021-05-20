@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
 use Gt\Dom\Element;
+use Gt\Dom\HTMLDocument;
 use Gt\Dom\HTMLElement\HTMLElement;
 
 class PartialExpander extends ModularContentExpander {
@@ -11,42 +12,53 @@ class PartialExpander extends ModularContentExpander {
 	 * in the order that they were expanded.
 	 */
 	public function expand(Element $context = null):array {
-		$expandedPartialArray = [];
-
 		if(!$context) {
 			$context = $this->document->documentElement;
 		}
 
-// TODO: Recursively expand the documents.
-		$commentIni = new CommentIni($context);
-		$extends = $commentIni->get("extends");
-		if(is_null($extends)) {
-			return $expandedPartialArray;
+		/** @var HTMLDocument[] $partialDocumentArray */
+		$partialDocumentArray = [];
+		do {
+			$commentIni = new CommentIni($context);
+			$extends = $commentIni->get("extends");
+			if(is_null($extends)) {
+				break;
+			}
+
+			$partialDocument = $this->modularContent->getHTMLDocument($extends);
+			$partialDocumentArray[$extends] = $partialDocument;
+			$context = $partialDocument;
+		}
+		while(true);
+
+		foreach($partialDocumentArray as $partialDocument) {
+			/** @var HTMLElement $importedRoot */
+			$importedRoot = $this->document->importNode(
+				$partialDocument->documentElement,
+				true
+			);
+			$injectionPoint = $importedRoot->querySelector("[data-partial]");
+
+// Move all the current document's content into the newly-imported injection point:
+			while($child = $this->document->body->firstChild) {
+				$injectionPoint->appendChild($child);
+			}
+
+// Remove everything from the current document element, to replace with the
+// newly imported and newly injected partial document elements.
+			while($child = $this->document->documentElement->firstChild) {
+				$child->parentNode->removeChild($child);
+			}
+
+// Attach all the newly-imported nodes back to the current document, now with
+// our current document already injected at the correct node.
+			while($child = $importedRoot->firstChild) {
+				$this->document->documentElement->appendChild($child);
+			}
 		}
 
-		$partialDocument = $this->modularContent->getHTMLDocument($extends);
-
+		return array_keys($partialDocumentArray);
 // TODO: Import any HEAD elements that can be extracted from $this->document
 // content, such as having an inline <title> element.
-		/** @var HTMLElement $importedHTMLRoot */
-		$importedHTMLRoot = $this->document->importNode(
-			$partialDocument->documentElement,
-			true
-		);
-		$importedPartialElement = $importedHTMLRoot->querySelector("[data-partial]");
-		while($bodyElement = $this->document->body->firstChild) {
-			$importedPartialElement->appendChild($bodyElement);
-		}
-
-		while($firstChild = $this->document->documentElement->firstChild) {
-			$firstChild->parentNode->removeChild($firstChild);
-		}
-
-		while($partialFirstChild = $importedHTMLRoot->firstChild) {
-			$this->document->documentElement->appendChild($partialFirstChild);
-		}
-
-		array_push($expandedPartialArray, $extends);
-		return $expandedPartialArray;
 	}
 }

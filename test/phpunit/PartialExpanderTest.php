@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\CommentIni;
 use Gt\DomTemplate\ModularContent;
@@ -57,7 +58,7 @@ class PartialExpanderTest extends ModularContentTestCase {
 	}
 
 	public function testExpand_noExtendsSectionOfCommentIni():void {
-		$document = self::createMock(HTMLDocument::class);
+		$document = DocumentTestFactory::createHTML();
 		$modularContent = self::createMock(ModularContent::class);
 		$commentIni = self::createMock(CommentIni::class);
 		$commentIni->method("get")
@@ -78,7 +79,6 @@ class PartialExpanderTest extends ModularContentTestCase {
 		);
 		$sut = new PartialExpander($document, $modularContent);
 		$sut->expand();
-		echo $document;die();
 		$body = $document->body;
 		$main = $body->querySelector("main");
 		$outer = $main->querySelector(".outer");
