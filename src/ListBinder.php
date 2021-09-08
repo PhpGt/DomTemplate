@@ -7,6 +7,7 @@ use Iterator;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionProperty;
 use Stringable;
 
 class ListBinder {
@@ -116,7 +117,7 @@ class ListBinder {
 			return false;
 		}
 
-		/** @var array<ReflectionAttribute> $attributeList */
+		/** @var array<ReflectionAttribute<object>> $attributeList */
 		$attributeList = [];
 
 		$refClass = new ReflectionClass($item);
@@ -124,7 +125,7 @@ class ListBinder {
 			array_push($attributeList, ...$refMethod->getAttributes());
 		}
 
-		foreach($refClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $refProperty) {
+		foreach($refClass->getProperties(ReflectionProperty::IS_PUBLIC) as $refProperty) {
 			array_push($attributeList, ...$refProperty->getAttributes());
 		}
 
