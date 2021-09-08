@@ -1,4 +1,6 @@
 <?php
 namespace Gt\DomTemplate;
 
-class IncompatibleBindDataException extends DomTemplateException {}
+class IncompatibleBindDataException extends DomTemplateException {
+
+}
