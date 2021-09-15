@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92f5ba390a50649e9c67eb801c8f1c5a",
+    "content-hash": "acb6c6452e97fcbc7779757961593524",
     "packages": [
         {
             "name": "phpgt/cssxpath",
@@ -62,16 +62,16 @@
         },
         {
             "name": "phpgt/dom",
-            "version": "v3.0.0-RC2",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "c68e4085c00e9944e22e64e90ae99a86b097d8f3"
+                "reference": "cbe5a007908dd24bea14c1eeeccf8cc8f83a225f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/c68e4085c00e9944e22e64e90ae99a86b097d8f3",
-                "reference": "c68e4085c00e9944e22e64e90ae99a86b097d8f3",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/cbe5a007908dd24bea14c1eeeccf8cc8f83a225f",
+                "reference": "cbe5a007908dd24bea14c1eeeccf8cc8f83a225f",
                 "shasum": ""
             },
             "require": {
@@ -143,7 +143,7 @@
             "description": "The modern DOM API for PHP projects.",
             "support": {
                 "issues": "https://github.com/PhpGt/Dom/issues",
-                "source": "https://github.com/PhpGt/Dom/tree/v3.0.0-RC2"
+                "source": "https://github.com/PhpGt/Dom/tree/v3.0.0"
             },
             "funding": [
                 {
@@ -151,7 +151,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-09-06T17:02:36+00:00"
+            "time": "2021-09-15T18:35:06+00:00"
         },
         {
             "name": "phpgt/propfunc",
@@ -714,33 +714,33 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.13.0",
+            "version": "1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "be1996ed8adc35c3fd795488a653f4b518be70ea"
+                "reference": "d86dfc2e2a3cd366cee475e52c6bb3bbc371aa0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/be1996ed8adc35c3fd795488a653f4b518be70ea",
-                "reference": "be1996ed8adc35c3fd795488a653f4b518be70ea",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/d86dfc2e2a3cd366cee475e52c6bb3bbc371aa0e",
+                "reference": "d86dfc2e2a3cd366cee475e52c6bb3bbc371aa0e",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.2",
-                "php": "^7.2 || ~8.0, <8.1",
+                "php": "^7.2 || ~8.0, <8.2",
                 "phpdocumentor/reflection-docblock": "^5.2",
                 "sebastian/comparator": "^3.0 || ^4.0",
                 "sebastian/recursion-context": "^3.0 || ^4.0"
             },
             "require-dev": {
-                "phpspec/phpspec": "^6.0",
+                "phpspec/phpspec": "^6.0 || ^7.0",
                 "phpunit/phpunit": "^8.0 || ^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.11.x-dev"
+                    "dev-master": "1.x-dev"
                 }
             },
             "autoload": {
@@ -775,9 +775,9 @@
             ],
             "support": {
                 "issues": "https://github.com/phpspec/prophecy/issues",
-                "source": "https://github.com/phpspec/prophecy/tree/1.13.0"
+                "source": "https://github.com/phpspec/prophecy/tree/1.14.0"
             },
-            "time": "2021-03-17T13:42:18+00:00"
+            "time": "2021-09-10T09:02:12+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -2419,9 +2419,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phpgt/dom": 5
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -2429,5 +2427,5 @@
         "ext-dom": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
