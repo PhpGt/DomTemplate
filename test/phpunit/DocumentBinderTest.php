@@ -6,6 +6,7 @@ use Gt\Dom\HTMLElement\HTMLImageElement;
 use Gt\Dom\HTMLElement\HTMLParagraphElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
+use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
@@ -374,5 +375,26 @@ class DocumentBinderTest extends TestCase {
 		foreach($listData as $i => $listItem) {
 			self::assertSame($listItem, $liElementList[$i]->textContent);
 		}
+	}
+
+	public function testBindData_objectWithAttribute():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+
+		$userObject = new class {
+			#[Bind("username")]
+			public function getUser():string {
+				return "some_username";
+			}
+
+			#[Bind("email")]
+			public function getEmailAddress():string {
+				return "test@example.com";
+			}
+		};
+
+		$sut->bindData($userObject);
+		self::assertSame("some_username", $document->getElementById("dd1")->textContent);
+		self::assertSame("test@example.com", $document->getElementById("dd2")->textContent);
 	}
 }

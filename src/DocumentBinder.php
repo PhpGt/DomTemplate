@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Iterator;
+use ReflectionObject;
 
 class DocumentBinder {
 	private ElementBinder $elementBinder;
@@ -66,6 +67,16 @@ class DocumentBinder {
 			throw new IncompatibleBindDataException("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
 		}
 
+		if(is_object($kvp) && !is_iterable($kvp)) {
+			$refObj = new ReflectionObject($kvp);
+			foreach($refObj->getMethods() as $refMethod) {
+				foreach($refMethod->getAttributes(Bind::class) as $refAttr) {
+					$bindName = $refAttr->getArguments()[0];
+					$kvp->$bindName = $refMethod->getClosure($kvp);
+				}
+			}
+		}
+
 		foreach($kvp as $key => $value) {
 			$this->bindKeyValue($key, $value, $context);
 		}
@@ -100,6 +111,10 @@ class DocumentBinder {
 	):void {
 		if(!$context) {
 			$context = $this->document->documentElement;
+		}
+
+		if(is_callable($value)) {
+			$value = call_user_func($value);
 		}
 
 		$this->elementBinder->bind($key, $value, $context);
