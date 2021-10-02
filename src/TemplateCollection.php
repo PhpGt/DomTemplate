@@ -3,7 +3,6 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
 use Gt\Dom\Element;
-use Gt\Dom\Text;
 
 class TemplateCollection {
 	/** @var array<string, TemplateElement> */
@@ -50,6 +49,7 @@ class TemplateCollection {
 		);
 
 		foreach($dataTemplateArray as $nodePath => $element) {
+			/** @var Element $element */
 			$templateElement = new TemplateElement($element);
 			$name = $templateElement->getTemplateName() ?? $nodePath;
 			$this->elementKVP[$name] = $templateElement;
