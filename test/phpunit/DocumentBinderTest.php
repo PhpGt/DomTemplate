@@ -1,6 +1,8 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\Element;
+use Gt\Dom\HTMLCollection;
 use Gt\Dom\HTMLElement\HTMLButtonElement;
 use Gt\Dom\HTMLElement\HTMLImageElement;
 use Gt\Dom\HTMLElement\HTMLParagraphElement;
@@ -396,5 +398,86 @@ class DocumentBinderTest extends TestCase {
 		$sut->bindData($userObject);
 		self::assertSame("some_username", $document->getElementById("dd1")->textContent);
 		self::assertSame("test@example.com", $document->getElementById("dd2")->textContent);
+	}
+
+	public function testBindList_objectListWithAttributes():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$sut = new DocumentBinder($document);
+
+		$userObjectList = [
+			new class {
+				#[Bind("userId")]
+				public function getId():int {
+					return 111;
+				}
+
+				#[Bind("username")]
+				public function getUser():string {
+					return "firstUser";
+				}
+
+				#[Bind("orderCount")]
+				public function ordersCompleted():int {
+					return 3;
+				}
+			},
+
+			new class {
+				#[Bind("userId")]
+				public function getId():int {
+					return 512;
+				}
+
+				#[Bind("username")]
+				public function getUser():string {
+					return "userTheSecond";
+				}
+
+				#[Bind("orderCount")]
+				public function ordersCompleted():int {
+					return 10;
+				}
+			},
+
+			new class {
+				#[Bind("userId")]
+				public function getId():int {
+					return 660;
+				}
+
+				#[Bind("username")]
+				public function getUser():string {
+					return "th3rd";
+				}
+
+				#[Bind("orderCount")]
+				public function ordersCompleted():int {
+					return 0;
+				}
+			}
+		];
+		$sut->bindList($userObjectList);
+
+		/** @var HTMLCollection<Element> $liCollection */
+		$liCollection = $document->querySelectorAll("#orders>ul>li");
+
+		self::assertCount(3, $liCollection);
+		self::assertEquals("firstUser", $liCollection[0]->querySelector("h2 span")->textContent);
+		self::assertEquals(111, $liCollection[0]->querySelector("h3 span")->textContent);
+		self::assertEquals(3, $liCollection[0]->querySelector("p span")->textContent);
+		self::assertEquals("user-111", $liCollection[0]->id);
+		self::assertEquals("/orders/111", $liCollection[0]->querySelector("a")->href);
+
+		self::assertEquals("userTheSecond", $liCollection[1]->querySelector("h2 span")->textContent);
+		self::assertEquals(512, $liCollection[1]->querySelector("h3 span")->textContent);
+		self::assertEquals(10, $liCollection[1]->querySelector("p span")->textContent);
+		self::assertEquals("user-512", $liCollection[1]->id);
+		self::assertEquals("/orders/512", $liCollection[1]->querySelector("a")->href);
+
+		self::assertEquals("th3rd", $liCollection[2]->querySelector("h2 span")->textContent);
+		self::assertEquals(660, $liCollection[2]->querySelector("h3 span")->textContent);
+		self::assertEquals(0, $liCollection[2]->querySelector("p span")->textContent);
+		self::assertEquals("user-660", $liCollection[2]->id);
+		self::assertEquals("/orders/660", $liCollection[2]->querySelector("a")->href);
 	}
 }
