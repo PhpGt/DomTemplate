@@ -465,13 +465,19 @@ class DocumentBinderTest extends TestCase {
 		self::assertEquals("firstUser", $liCollection[0]->querySelector("h2 span")->textContent);
 		self::assertEquals(111, $liCollection[0]->querySelector("h3 span")->textContent);
 		self::assertEquals(3, $liCollection[0]->querySelector("p span")->textContent);
+		self::assertEquals("user-111", $liCollection[0]->id);
+		self::assertEquals("/orders/111", $liCollection[0]->querySelector("a")->href);
 
 		self::assertEquals("userTheSecond", $liCollection[1]->querySelector("h2 span")->textContent);
 		self::assertEquals(512, $liCollection[1]->querySelector("h3 span")->textContent);
 		self::assertEquals(10, $liCollection[1]->querySelector("p span")->textContent);
+		self::assertEquals("user-512", $liCollection[1]->id);
+		self::assertEquals("/orders/512", $liCollection[1]->querySelector("a")->href);
 
 		self::assertEquals("th3rd", $liCollection[2]->querySelector("h2 span")->textContent);
 		self::assertEquals(660, $liCollection[2]->querySelector("h3 span")->textContent);
 		self::assertEquals(0, $liCollection[2]->querySelector("p span")->textContent);
+		self::assertEquals("user-660", $liCollection[2]->id);
+		self::assertEquals("/orders/660", $liCollection[2]->querySelector("a")->href);
 	}
 }

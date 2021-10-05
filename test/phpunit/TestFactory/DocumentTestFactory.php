@@ -206,10 +206,10 @@ HTML;
 <div id="orders">
 	<h1>Most active users</h1>
 	<ul>
-		<li data-template>
+		<li id="user-{{userId}}" data-template>
 			<h2>Username: <span data-bind:text="username">username</span></h2>
 			<h3>ID: <span data-bind:text="userId">000</span></h3>
-			<p>Number of orders: <span data-bind:text="orderCount">0</span></p>
+			<p>Number of orders: <span data-bind:text="orderCount">0</span>, <a href="/orders/{{userId}}">view</a></p>
 		</li>
 	</ul>
 </div>
