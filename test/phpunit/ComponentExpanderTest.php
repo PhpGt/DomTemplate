@@ -46,4 +46,17 @@ class ComponentExpanderTest extends ModularContentTestCase {
 		self::assertSame("TODO-LIST", $expandedElements[0]->tagName);
 		self::assertSame("TODO-LIST-ITEM", $expandedElements[1]->tagName);
 	}
+
+	public function testExpand_empty():void {
+		$modularContent = self::mockModularContent(
+			"_component", [
+				"empty-component" => "",
+			]
+		);
+		$document = DocumentTestFactory::createHTML("<!doctype html><html><body><empty-component /></body></html>");
+		$sut = new ComponentExpander($document, $modularContent);
+		$expandedElements = $sut->expand();
+		self::assertCount(1, $expandedElements);
+		self::assertEquals("<empty-component></empty-component>", $document->body->innerHTML);
+	}
 }
