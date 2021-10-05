@@ -57,22 +57,28 @@ class ListBinder {
 			if($this->hasBindAttributes($listItem)) {
 				$binder->bindMethodPropertyAttributes($listItem, $t);
 			}
-			elseif($this->isKVP($listItem)) {
-				foreach($listItem as $key => $value) {
-					$binder->bind($key, $value, $t);
+			else {
+				if(method_exists($listItem, "asArray")) {
+					$listItem = $listItem->asArray();
+				}
 
-					if($this->isNested($value)) {
-						$binder->bind(null, $key, $t);
-						$nestedCount += $this->bindListData(
-							$value,
-							$t,
-							$templateName
-						);
+				if($this->isKVP($listItem)) {
+					foreach($listItem as $key => $value) {
+						$binder->bind($key, $value, $t);
+
+						if($this->isNested($value)) {
+							$binder->bind(null, $key, $t);
+							$nestedCount += $this->bindListData(
+								$value,
+								$t,
+								$templateName
+							);
+						}
 					}
 				}
-			}
-			else {
-				$binder->bind(null, $listItem, $t);
+				else {
+					$binder->bind(null, $listItem, $t);
+				}
 			}
 		}
 

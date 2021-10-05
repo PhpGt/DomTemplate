@@ -480,4 +480,55 @@ class DocumentBinderTest extends TestCase {
 		self::assertEquals("user-660", $liCollection[2]->id);
 		self::assertEquals("/orders/660", $liCollection[2]->querySelector("a")->href);
 	}
+
+	public function testBindData_castToArray():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+
+		$row = new class {
+			private string $username = "g105b";
+			private string $email = "greg.bowler@g105b.com";
+			private string $category = "Unit Test";
+
+			public function asArray():array {
+				return get_object_vars($this);
+			}
+		};
+
+		$sut->bindData($row);
+
+		self::assertEquals("g105b", $document->querySelector("#dd1")->textContent);
+		self::assertEquals("greg.bowler@g105b.com", $document->querySelector("#dd2")->textContent);
+		self::assertEquals("Unit Test", $document->querySelector("#dd3")->textContent);
+	}
+
+	public function testBindList_castToArray():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$sut = new DocumentBinder($document);
+
+		$row1 = new class {
+			private int $userId = 123;
+			private string $username = "firstUser";
+			private int $orderCount = 4;
+
+			public function asArray():array {
+				return get_object_vars($this);
+			}
+		};
+		$row2 = new class {
+			private int $userId = 456;
+			private string $username = "secondUser";
+			private int $orderCount = 16;
+
+			public function asArray():array {
+				return get_object_vars($this);
+			}
+		};
+
+		$sut->bindList([$row1, $row2]);
+
+		self::assertCount(2, $document->querySelectorAll("li"));
+		self::assertEquals("firstUser", $document->querySelector("li#user-123 h2 span")->textContent);
+		self::assertEquals("secondUser", $document->querySelector("li#user-456 h2 span")->textContent);
+	}
 }
