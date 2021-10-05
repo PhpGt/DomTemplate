@@ -58,7 +58,7 @@ class ListBinder {
 				$binder->bindMethodPropertyAttributes($listItem, $t);
 			}
 			else {
-				if(method_exists($listItem, "asArray")) {
+				if(is_object($listItem) && method_exists($listItem, "asArray")) {
 					$listItem = $listItem->asArray();
 				}
 

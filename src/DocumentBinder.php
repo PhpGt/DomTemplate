@@ -67,7 +67,7 @@ class DocumentBinder {
 			throw new IncompatibleBindDataException("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
 		}
 
-		if(method_exists($kvp, "asArray")) {
+		if(is_object($kvp) && method_exists($kvp, "asArray")) {
 			$kvp = $kvp->asArray();
 		}
 
