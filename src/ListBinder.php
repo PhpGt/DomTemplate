@@ -4,16 +4,16 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Iterator;
-use ReflectionAttribute;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
 use Stringable;
 
 class ListBinder {
+	private BindableCache $bindableCache;
+
 	public function __construct(
-		private TemplateCollection $templateCollection
+		private TemplateCollection $templateCollection,
+		?BindableCache $bindableCache = null
 	) {
+		$this->bindableCache = $bindableCache ?? new BindableCache();
 	}
 
 	/** @param Iterator<mixed> $listData */
@@ -56,6 +56,11 @@ class ListBinder {
 
 			if(is_object($listItem) && method_exists($listItem, "asArray")) {
 				$listItem = $listItem->asArray();
+			}
+			elseif(is_object($listItem) && !is_iterable($listItem)) {
+				if($this->bindableCache->isBindable($listItem)) {
+					$listItem = $this->bindableCache->convertToKvp($listItem);
+				}
 			}
 
 			if($this->isKVP($listItem)) {
