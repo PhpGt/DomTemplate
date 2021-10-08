@@ -71,16 +71,6 @@ class DocumentBinder {
 			$kvp = $kvp->asArray();
 		}
 
-		if(is_object($kvp) && !is_iterable($kvp)) {
-			$refObj = new ReflectionObject($kvp);
-			foreach($refObj->getMethods() as $refMethod) {
-				foreach($refMethod->getAttributes(Bind::class) as $refAttr) {
-					$bindName = $refAttr->getArguments()[0];
-					$kvp->$bindName = $refMethod->getClosure($kvp);
-				}
-			}
-		}
-
 		foreach($kvp as $key => $value) {
 			$this->bindKeyValue($key, $value, $context);
 		}
