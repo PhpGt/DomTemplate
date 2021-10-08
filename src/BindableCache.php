@@ -14,7 +14,7 @@ class BindableCache {
 	 */
 	private array $classAttributes;
 	/**
-	 * @var array<string, null> A cache of class names that are known to
+	 * @var array<string, bool> A cache of class names that are known to
 	 * NOT be bindable (to avoid having to check with reflection each time).
 	 */
 	private array $nonBindableClasses;
@@ -59,7 +59,7 @@ class BindableCache {
 		}
 
 		if(empty($attributeCache)) {
-			$this->nonBindableClasses[$object::class] = null;
+			$this->nonBindableClasses[$object::class] = true;
 			return false;
 		}
 
