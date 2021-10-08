@@ -379,6 +379,14 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindList_emptyLeavesNoWhiteSpace():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$sut = new DocumentBinder($document);
+		$listData = [];
+		$sut->bindList($listData);
+		self::assertEquals("", $document->querySelector("ul")->innerHTML);
+	}
+
 	public function testBindData_objectWithAttribute():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);

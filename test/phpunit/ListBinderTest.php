@@ -28,6 +28,14 @@ class ListBinderTest extends TestCase {
 		self::assertSame(0, $boundCount);
 	}
 
+	public function testBindList_empty_shouldHaveNoWhitespace():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$templateCollection = new TemplateCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData([], $document);
+		self::assertSame("", $document->querySelector("ul")->innerHTML);
+	}
+
 	public function testBindList_emptyList_iterator():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
 
