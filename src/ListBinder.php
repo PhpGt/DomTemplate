@@ -54,31 +54,26 @@ class ListBinder {
 				continue;
 			}
 
-			if($this->hasBindAttributes($listItem)) {
-				$binder->bindMethodPropertyAttributes($listItem, $t);
+			if(is_object($listItem) && method_exists($listItem, "asArray")) {
+				$listItem = $listItem->asArray();
 			}
-			else {
-				if(is_object($listItem) && method_exists($listItem, "asArray")) {
-					$listItem = $listItem->asArray();
-				}
 
-				if($this->isKVP($listItem)) {
-					foreach($listItem as $key => $value) {
-						$binder->bind($key, $value, $t);
+			if($this->isKVP($listItem)) {
+				foreach($listItem as $key => $value) {
+					$binder->bind($key, $value, $t);
 
-						if($this->isNested($value)) {
-							$binder->bind(null, $key, $t);
-							$nestedCount += $this->bindListData(
-								$value,
-								$t,
-								$templateName
-							);
-						}
+					if($this->isNested($value)) {
+						$binder->bind(null, $key, $t);
+						$nestedCount += $this->bindListData(
+							$value,
+							$t,
+							$templateName
+						);
 					}
 				}
-				else {
-					$binder->bind(null, $listItem, $t);
-				}
+			}
+			else {
+				$binder->bind(null, $listItem, $t);
 			}
 		}
 
@@ -116,32 +111,6 @@ class ListBinder {
 		}
 
 		return true;
-	}
-
-	private function hasBindAttributes(mixed $item):bool {
-		if(is_scalar($item) || is_array($item)) {
-			return false;
-		}
-
-		/** @var array<ReflectionAttribute<object>> $attributeList */
-		$attributeList = [];
-
-		$refClass = new ReflectionClass($item);
-		foreach($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $refMethod) {
-			array_push($attributeList, ...$refMethod->getAttributes());
-		}
-
-		foreach($refClass->getProperties(ReflectionProperty::IS_PUBLIC) as $refProperty) {
-			array_push($attributeList, ...$refProperty->getAttributes());
-		}
-
-		foreach($attributeList as $attribute) {
-			if($attribute->getName() === Bind::class) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private function isNested(mixed $item):bool {
