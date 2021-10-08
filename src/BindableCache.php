@@ -1,10 +1,12 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\DomTemplate\Test\BindGetter;
 use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionObject;
 use ReflectionProperty;
+use function PHPUnit\Framework\stringStartsWith;
 
 class BindableCache {
 	/**
@@ -42,7 +44,7 @@ class BindableCache {
 			$methodName = $refMethod->getName();
 
 			foreach($refAttributes as $refAttr) {
-				$bindKey = $refAttr->getArguments()[0];
+				$bindKey = $this->getBindKey($refAttr, $refMethod);
 				$attributeCache[$bindKey]
 					= fn(object $object) => $object->$methodName();
 			}
@@ -52,7 +54,7 @@ class BindableCache {
 			$propName = $refProp->getName();
 
 			foreach($refAttributes as $refAttr) {
-				$bindKey = $refAttr->getArguments()[0];
+				$bindKey = $this->getBindKey($refAttr);
 				$attributeCache[$bindKey]
 					= fn(object $object) => $object->$propName;
 			}
@@ -71,6 +73,10 @@ class BindableCache {
 	public function convertToKvp(object $object):array {
 		$kvp = [];
 
+		if(!$this->isBindable($object)) {
+			return [];
+		}
+
 		foreach($this->classAttributes[$object::class] as $key => $closure) {
 			$kvp[$key] = $closure($object);
 		}
@@ -78,11 +84,32 @@ class BindableCache {
 		return $kvp;
 	}
 
+	/** @return array<ReflectionAttribute> */
 	private function getBindAttributes(ReflectionMethod|ReflectionProperty $ref):array {
 		return array_filter(
 			$ref->getAttributes(),
 			fn(ReflectionAttribute $refAttr) =>
 				$refAttr->getName() === Bind::class
+				|| $refAttr->getName() === BindGetter::class
 		);
+	}
+
+	private function getBindKey(
+		ReflectionAttribute $refAttr,
+		?ReflectionMethod $refMethod = null,
+	):string {
+		if($refAttr->getName() === BindGetter::class && $refMethod) {
+			$methodName = $refMethod->getName();
+			if(!str_starts_with($methodName, "get")) {
+				throw new BindGetterMethodDoesNotStartWithGetException(
+					"Method $methodName has the BindGetter Attribute, but its name doesn't start with \"get\". For help, see https://www.php.gt/domtemplate/bindgetter"
+				);
+			}
+			return lcfirst(
+				substr($methodName, 3)
+			);
+		}
+
+		return $refAttr->getArguments()[0];
 	}
 }

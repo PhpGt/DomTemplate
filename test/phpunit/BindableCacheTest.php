@@ -3,6 +3,7 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\BindableCache;
+use Gt\DomTemplate\BindGetterMethodDoesNotStartWithGetException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -33,5 +34,43 @@ class BindableCacheTest extends TestCase {
 		self::assertTrue($sut->isBindable($obj1));
 		self::assertTrue($sut->isBindable($obj1));
 		self::assertTrue($sut->isBindable($obj2));
+	}
+
+	public function testConvertToKvp_getter():void {
+		$obj = new class {
+			#[BindGetter]
+			public function getName():string {
+				return "Test Name";
+			}
+		};
+
+		$sut = new BindableCache();
+		$kvp = $sut->convertToKvp($obj);
+		self::assertEquals("Test Name", $kvp["name"]);
+	}
+
+	public function testConvertToKvp_getterDoesNotStartWithGet():void {
+		$obj = new class {
+			#[BindGetter]
+			public function retrieveName():string {
+				return "Test Name";
+			}
+		};
+
+		$sut = new BindableCache();
+		self::expectException(BindGetterMethodDoesNotStartWithGetException::class);
+		self::expectExceptionMessage("Method retrieveName has the BindGetter Attribute, but its name doesn't start with \"get\".");
+		$sut->convertToKvp($obj);
+	}
+
+	public function testConvertToKvp_notBindable():void {
+		$obj = new class {
+			public function getName():string {
+				return "Test";
+			}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([], $sut->convertToKvp($obj));
 	}
 }
