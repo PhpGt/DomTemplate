@@ -4,16 +4,16 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Iterator;
-use ReflectionAttribute;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
 use Stringable;
 
 class ListBinder {
+	private BindableCache $bindableCache;
+
 	public function __construct(
-		private TemplateCollection $templateCollection
+		private TemplateCollection $templateCollection,
+		?BindableCache $bindableCache = null
 	) {
+		$this->bindableCache = $bindableCache ?? new BindableCache();
 	}
 
 	/** @param Iterator<mixed> $listData */
@@ -54,31 +54,31 @@ class ListBinder {
 				continue;
 			}
 
-			if($this->hasBindAttributes($listItem)) {
-				$binder->bindMethodPropertyAttributes($listItem, $t);
+			if(is_object($listItem) && method_exists($listItem, "asArray")) {
+				$listItem = $listItem->asArray();
 			}
-			else {
-				if(is_object($listItem) && method_exists($listItem, "asArray")) {
-					$listItem = $listItem->asArray();
+			elseif(is_object($listItem) && !is_iterable($listItem)) {
+				if($this->bindableCache->isBindable($listItem)) {
+					$listItem = $this->bindableCache->convertToKvp($listItem);
 				}
+			}
 
-				if($this->isKVP($listItem)) {
-					foreach($listItem as $key => $value) {
-						$binder->bind($key, $value, $t);
+			if($this->isKVP($listItem)) {
+				foreach($listItem as $key => $value) {
+					$binder->bind($key, $value, $t);
 
-						if($this->isNested($value)) {
-							$binder->bind(null, $key, $t);
-							$nestedCount += $this->bindListData(
-								$value,
-								$t,
-								$templateName
-							);
-						}
+					if($this->isNested($value)) {
+						$binder->bind(null, $key, $t);
+						$nestedCount += $this->bindListData(
+							$value,
+							$t,
+							$templateName
+						);
 					}
 				}
-				else {
-					$binder->bind(null, $listItem, $t);
-				}
+			}
+			else {
+				$binder->bind(null, $listItem, $t);
 			}
 		}
 
@@ -116,32 +116,6 @@ class ListBinder {
 		}
 
 		return true;
-	}
-
-	private function hasBindAttributes(mixed $item):bool {
-		if(is_scalar($item) || is_array($item)) {
-			return false;
-		}
-
-		/** @var array<ReflectionAttribute<object>> $attributeList */
-		$attributeList = [];
-
-		$refClass = new ReflectionClass($item);
-		foreach($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $refMethod) {
-			array_push($attributeList, ...$refMethod->getAttributes());
-		}
-
-		foreach($refClass->getProperties(ReflectionProperty::IS_PUBLIC) as $refProperty) {
-			array_push($attributeList, ...$refProperty->getAttributes());
-		}
-
-		foreach($attributeList as $attribute) {
-			if($attribute->getName() === Bind::class) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private function isNested(mixed $item):bool {

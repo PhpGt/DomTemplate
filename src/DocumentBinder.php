@@ -12,6 +12,7 @@ class DocumentBinder {
 	private TableBinder $tableBinder;
 	private ListBinder $listBinder;
 	private TemplateCollection $templateCollection;
+	private BindableCache $bindableCache;
 
 	/**
 	 * @param array<string, string> $config
@@ -24,12 +25,14 @@ class DocumentBinder {
 		?TableBinder $tableBinder = null,
 		?ListBinder $listBinder = null,
 		?TemplateCollection $templateCollection = null,
+		?BindableCache $bindableCache = null
 	) {
 		$this->templateCollection = $templateCollection ?? new TemplateCollection($document);
 		$this->elementBinder = $elementBinder ?? new ElementBinder();
 		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
 		$this->tableBinder = $tableBinder ?? new TableBinder();
 		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
+		$this->bindableCache = $bindableCache ?? new BindableCache();
 	}
 
 	/**
@@ -72,12 +75,8 @@ class DocumentBinder {
 		}
 
 		if(is_object($kvp) && !is_iterable($kvp)) {
-			$refObj = new ReflectionObject($kvp);
-			foreach($refObj->getMethods() as $refMethod) {
-				foreach($refMethod->getAttributes(Bind::class) as $refAttr) {
-					$bindName = $refAttr->getArguments()[0];
-					$kvp->$bindName = $refMethod->getClosure($kvp);
-				}
+			if($this->bindableCache->isBindable($kvp)) {
+				$kvp = $this->bindableCache->convertToKvp($kvp);
 			}
 		}
 
