@@ -531,4 +531,11 @@ class DocumentBinderTest extends TestCase {
 		self::assertEquals("firstUser", $document->querySelector("li#user-123 h2 span")->textContent);
 		self::assertEquals("secondUser", $document->querySelector("li#user-456 h2 span")->textContent);
 	}
+
+	public function testBindValue_callable():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$sut = new DocumentBinder($document);
+		$sut->bindValue(fn() => "test");
+		self::assertSame("test", $document->querySelector("output")->textContent);
+	}
 }
