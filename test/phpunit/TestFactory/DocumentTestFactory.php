@@ -488,6 +488,40 @@ HTML;
 <p>If there's matching modular content in the _compnent directory, the above element will be filled with its content.</p>
 HTML;
 
+	const HTML_TRANSPORT_ROUTES = <<<HTML
+<!doctype html>
+<h1>Transport Routes</h1>
+<form>
+	<label>
+		<span>From:</span>
+		<input name="from" data-bind:value="@name" required />
+	</label>
+	<label>
+		<span>To:</span>
+		<input name="to" data-bind:value="@name" required />
+	</label>
+	<button name="do" value="route">Route!</button>
+</form>
+
+<ul>
+	<li data-template>
+		<p data-bind:text="method">Type</p>
+		<time data-bind:text="duration">Type</time>
+		
+		<ol>
+			<li data-template>
+				<a href="/route/step/{{}}">
+					<time data-bind:text="time">00:00</time>
+					<span data-bind:text="location">Somewhere</span>
+				</a>
+			</li>
+		</ol>	
+	</li>
+</ul>
+HTML;
+
+
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

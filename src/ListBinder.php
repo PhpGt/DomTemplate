@@ -20,7 +20,8 @@ class ListBinder {
 	public function bindListData(
 		iterable $listData,
 		Document|Element $context,
-		?string $templateName = null
+		?string $templateName = null,
+		?callable $callback = null,
 	):int {
 		if($context instanceof Document) {
 			$context = $context->documentElement;
@@ -64,6 +65,14 @@ class ListBinder {
 			}
 
 			if($this->isKVP($listItem)) {
+				if($callback) {
+					$listItem = call_user_func(
+						$callback,
+						$t,
+						$listItem,
+						$listKey,
+					);
+				}
 				foreach($listItem as $key => $value) {
 					$binder->bind($key, $value, $t);
 

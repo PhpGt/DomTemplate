@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use ArrayIterator;
 use DateInterval;
 use DateTime;
+use Gt\Dom\Element;
 use Gt\Dom\HTMLElement\HTMLLiElement;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\ElementBinder;
