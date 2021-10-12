@@ -7,6 +7,7 @@ use Gt\DomTemplate\CommentIni;
 use Gt\DomTemplate\ModularContent;
 use Gt\DomTemplate\ModularContentFileNotFoundException;
 use Gt\DomTemplate\PartialExpander;
+use Gt\DomTemplate\PartialInjectionPointNotFoundException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 
 class PartialExpanderTest extends ModularContentTestCase {
@@ -100,6 +101,8 @@ class PartialExpanderTest extends ModularContentTestCase {
 			]
 		);
 		$sut = new PartialExpander($document, $modularContent);
+		self::expectException(PartialInjectionPointNotFoundException::class);
+		self::expectExceptionMessage("The current view extends the partial \"base-page\", but there is no element marked with `data-partial`.");
 		$sut->expand();
 	}
 }
