@@ -488,6 +488,53 @@ HTML;
 <p>If there's matching modular content in the _compnent directory, the above element will be filled with its content.</p>
 HTML;
 
+	const HTML_TRANSPORT_ROUTES = <<<HTML
+<!doctype html>
+<h1>Transport Routes</h1>
+<form>
+	<label>
+		<span>From:</span>
+		<input name="from" data-bind:value="@name" required />
+	</label>
+	<label>
+		<span>To:</span>
+		<input name="to" data-bind:value="@name" required />
+	</label>
+	<button name="do" value="route">Route!</button>
+</form>
+
+<ul>
+	<li data-template>
+		<p data-bind:text="method">Type</p>
+		<time data-bind:text="duration">Type</time>
+		
+		<ol>
+			<li data-template>
+				<a href="/route/step/{{}}">
+					<time data-bind:text="time">00:00</time>
+					<span data-bind:text="location">Somewhere</span>
+				</a>
+			</li>
+		</ol>	
+	</li>
+</ul>
+HTML;
+
+	const HTML_SALES = <<<HTML
+<!doctype html>
+<h1>Sales</h1>
+<ul>
+	<li data-template>
+		<p class="name">Item: <span data-bind:text="name">Item name</span></p>
+		<p class="count">Sale count: <span data-bind:text="count">0</span></p>
+		<p class="price">Price per item: £<span data-bind:text="price">0.00</span></p>
+		<p class="cost">Cost per item: £<span data-bind:text="cost">0.00</span></p>
+		<p class="profit">Total profit: £<span data-bind:text="profit">0.00</span></p>
+	</li>
+</ul>
+HTML;
+
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
