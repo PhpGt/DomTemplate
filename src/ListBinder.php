@@ -37,7 +37,7 @@ class ListBinder {
 			$templateName
 		);
 
-		$binder = new ElementBinder();
+		$elementBinder = new ElementBinder();
 		$nestedCount = 0;
 		$i = -1;
 		foreach($listData as $listKey => $listItem) {
@@ -46,7 +46,7 @@ class ListBinder {
 
 // If the $listItem's first value is iterable, then treat this as a nested list.
 			if($this->isNested($listItem)) {
-				$binder->bind(null, $listKey, $t);
+				$elementBinder->bind(null, $listKey, $t);
 				$nestedCount += $this->bindListData(
 					$listItem,
 					$t,
@@ -73,11 +73,14 @@ class ListBinder {
 						$listKey,
 					);
 				}
+
+				$elementBinder->bind(null, $listKey, $t);
+
 				foreach($listItem as $key => $value) {
-					$binder->bind($key, $value, $t);
+					$elementBinder->bind($key, $value, $t);
 
 					if($this->isNested($value)) {
-						$binder->bind(null, $key, $t);
+						$elementBinder->bind(null, $key, $t);
 						$nestedCount += $this->bindListData(
 							$value,
 							$t,
@@ -87,7 +90,7 @@ class ListBinder {
 				}
 			}
 			else {
-				$binder->bind(null, $listItem, $t);
+				$elementBinder->bind(null, $listItem, $t);
 			}
 		}
 
