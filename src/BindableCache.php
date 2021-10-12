@@ -84,7 +84,7 @@ class BindableCache {
 		return $kvp;
 	}
 
-	/** @return array<ReflectionAttribute> */
+	/** @return array<ReflectionAttribute<Bind|BindGetter>> */
 	private function getBindAttributes(ReflectionMethod|ReflectionProperty $ref):array {
 		return array_filter(
 			$ref->getAttributes(),
@@ -94,6 +94,7 @@ class BindableCache {
 		);
 	}
 
+	/** @param ReflectionAttribute<Bind|BindGetter> $refAttr */
 	private function getBindKey(
 		ReflectionAttribute $refAttr,
 		?ReflectionMethod $refMethod = null,
