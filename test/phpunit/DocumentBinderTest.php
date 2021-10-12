@@ -706,4 +706,44 @@ class DocumentBinderTest extends TestCase {
 			self::assertEquals($profitValue, $li->querySelector(".profit span")->textContent);
 		}
 	}
+
+	public function testCleanBindAttributes_dataBind():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData([
+			"username" => "codyboy123",
+			"email" => "codyboy@g105b.com",
+			"category" => "cat",
+		]);
+		$sut->cleanBindAttributes();
+
+		foreach($document->querySelectorAll("dd") as $dd) {
+			self::assertCount(1, $dd->attributes);
+		}
+
+		self::assertStringNotContainsString(
+			"data-bind:text",
+			$document->documentElement->innerHTML
+		);
+	}
+
+	public function testCleanBindAttributes_dataTemplate():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$sut = new DocumentBinder($document);
+		$sut->bindList(["One", "Two", "Three", "Four"]);
+		$sut->cleanBindAttributes();
+
+		foreach($document->querySelectorAll("ul>li") as $li) {
+			self::assertCount(0, $li->attributes);
+		}
+
+		self::assertStringNotContainsString(
+			"data-bind:text",
+			$document->documentElement->innerHTML
+		);
+		self::assertStringNotContainsString(
+			"data-template",
+			$document->documentElement->innerHTML
+		);
+	}
 }

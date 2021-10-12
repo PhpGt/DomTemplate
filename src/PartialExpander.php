@@ -15,7 +15,7 @@ class PartialExpander extends ModularContentExpander {
 			$context = $this->document->documentElement;
 		}
 
-		/** @var HTMLDocument[] $partialDocumentArray */
+		/** @var array<string, HTMLDocument> $partialDocumentArray */
 		$partialDocumentArray = [];
 		do {
 			$commentIni = new CommentIni($context);
@@ -30,7 +30,7 @@ class PartialExpander extends ModularContentExpander {
 		}
 		while(true);
 
-		foreach($partialDocumentArray as $partialDocument) {
+		foreach($partialDocumentArray as $extends => $partialDocument) {
 			if($currentTitle = $this->document->title) {
 				$partialDocument->title = $currentTitle;
 			}
@@ -40,7 +40,15 @@ class PartialExpander extends ModularContentExpander {
 				$partialDocument->documentElement,
 				true
 			);
-			$injectionPoint = $importedRoot->querySelector("[data-partial]");
+			$partialElementList = $importedRoot->querySelectorAll("[data-partial]");
+			if(count($partialElementList) > 1) {
+				throw new PartialInjectionMultiplePointException("The current view extends the partial \"$extends\", but there is more than one element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
+			}
+			$injectionPoint = $partialElementList[0] ?? null;
+
+			if(!$injectionPoint) {
+				throw new PartialInjectionPointNotFoundException("The current view extends the partial \"$extends\", but there is no element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
+			}
 
 // Move all the current document's content into the newly-imported injection point:
 			while($child = $this->document->body->firstChild) {
