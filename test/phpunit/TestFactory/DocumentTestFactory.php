@@ -520,6 +520,19 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_SALES = <<<HTML
+<!doctype html>
+<h1>Sales</h1>
+<ul>
+	<li data-template>
+		<p class="name">Item: <span data-bind:text="name">Item name</span></p>
+		<p class="count">Sale count: <span data-bind:text="count">0</span></p>
+		<p class="price">Price per item: £<span data-bind:text="price">0.00</span></p>
+		<p class="cost">Cost per item: £<span data-bind:text="cost">0.00</span></p>
+		<p class="profit">Total profit: £<span data-bind:text="profit">0.00</span></p>
+	</li>
+</ul>
+HTML;
 
 
 
