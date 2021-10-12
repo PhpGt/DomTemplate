@@ -41,10 +41,13 @@ class PartialExpander extends ModularContentExpander {
 				true
 			);
 			$partialElementList = $importedRoot->querySelectorAll("[data-partial]");
+			if(count($partialElementList) > 1) {
+				throw new PartialInjectionMultiplePointException("The current view extends the partial \"$extends\", but there is more than one element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
+			}
 			$injectionPoint = $partialElementList[0] ?? null;
 
 			if(!$injectionPoint) {
-				throw new PartialInjectionPointNotFoundException("The current view extends the partial \"$extends\", but there is no element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partial");
+				throw new PartialInjectionPointNotFoundException("The current view extends the partial \"$extends\", but there is no element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
 			}
 
 // Move all the current document's content into the newly-imported injection point:

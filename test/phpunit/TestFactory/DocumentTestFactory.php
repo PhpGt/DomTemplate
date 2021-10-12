@@ -417,6 +417,32 @@ HTML;
 </html>
 HTML;
 
+	const HTML_INCORRECT_PARTIAL_VIEW = <<<HTML
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title data-bind:test="title">My website</title>
+</head>
+<body>
+	<header>
+		<h1>My website!</h1>
+	</header>
+	<main data-partial>
+		The page content will go in here.
+	</main>
+	<div>
+		<article data-partial>
+			But, there's another partial element here, so things will break.
+		</article>	
+	</div>
+	<footer>
+		<p>Thank you for visiting!</p>
+	</footer>
+</body>
+</html>
+HTML;
+
 	const HTML_EXTENDS_PARTIAL_VIEW = <<<HTML
 <!-- 
 extends=base-page
@@ -432,6 +458,7 @@ title=My website, extended...
 	Some useful links can be put here.
 </aside>
 HTML;
+
 
 	const HTML_INCORRECTLY_EXTENDS_PARTIAL_VIEW = <<<HTML
 <article>
