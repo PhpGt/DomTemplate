@@ -90,4 +90,16 @@ class PartialExpanderTest extends ModularContentTestCase {
 		);
 		self::assertSame("This title was set in the inner partial view.", $document->title);
 	}
+
+	public function testExpand_noDataPartialElement():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$modularContent = self::mockModularContent(
+			"_partial", [
+// Here, the HTML_COMPONENT isn't expected, because there is no data-partial element.
+				"base-page" => DocumentTestFactory::HTML_COMPONENT,
+			]
+		);
+		$sut = new PartialExpander($document, $modularContent);
+		$sut->expand();
+	}
 }
