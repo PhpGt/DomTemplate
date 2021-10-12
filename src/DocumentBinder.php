@@ -109,6 +109,7 @@ class DocumentBinder {
 		return $this->listBinder->bindListData($listData, $context, $templateName);
 	}
 
+	/** @param iterable<mixed> $listData */
 	public function bindListCallback(
 		iterable $listData,
 		callable $callback,
