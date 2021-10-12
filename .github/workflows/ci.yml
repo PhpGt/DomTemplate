@@ -63,6 +63,6 @@ jobs:
       - name: PHP Static Analysis
         uses: php-actions/phpstan@v3
         with:
-          php_version: 8.0
+          version: 0.12.42
           path: src/
           level: 6
