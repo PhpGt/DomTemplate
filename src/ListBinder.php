@@ -16,7 +16,7 @@ class ListBinder {
 		$this->bindableCache = $bindableCache ?? new BindableCache();
 	}
 
-	/** @param Iterator<mixed> $listData */
+	/** @param iterable<mixed> $listData */
 	public function bindListData(
 		iterable $listData,
 		Document|Element $context,
@@ -97,7 +97,7 @@ class ListBinder {
 		return $nestedCount + $i + 1;
 	}
 
-	/** @param Iterator<mixed>|array<mixed> $listData */
+	/** @param iterable<mixed>|array<mixed> $listData */
 	private function isEmpty(iterable $listData):bool {
 		if(is_array($listData)) {
 			return is_null(array_key_first($listData));

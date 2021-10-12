@@ -4,9 +4,6 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
-use Gt\Dom\XPathResult;
-use Iterator;
-use ReflectionObject;
 
 class DocumentBinder {
 	private ElementBinder $elementBinder;
@@ -95,7 +92,7 @@ class DocumentBinder {
 	}
 
 	/**
-	 * @param Iterator<mixed> $listData
+	 * @param iterable<mixed> $listData
 	 */
 	public function bindList(
 		iterable $listData,
