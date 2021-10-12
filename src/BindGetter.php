@@ -1,5 +1,5 @@
 <?php
-namespace Gt\DomTemplate\Test;
+namespace Gt\DomTemplate;
 
 use Attribute;
 
