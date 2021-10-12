@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use ArrayIterator;
 use DateInterval;
 use DateTime;
+use Gt\Dom\Element;
 use Gt\Dom\HTMLElement\HTMLLiElement;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\ElementBinder;
@@ -495,6 +496,51 @@ class ListBinderTest extends TestCase {
 		];
 		foreach($document->querySelectorAll("li") as $i => $li) {
 			self::assertEquals($expected[$i], $li->querySelector("span")->textContent);
+		}
+	}
+
+	public function testBindListData_callback():void {
+		$salesData = [
+			[
+				"name" => "Cactus",
+				"count" => 14,
+				"price" => 5.50,
+				"cost" => 3.55,
+			],
+			[
+				"name" => "Succulent",
+				"count" => 9,
+				"price" => 3.50,
+				"cost" => 2.10,
+			]
+		];
+		$salesCallback = function(Element $template, array $listItem, string $key):array {
+			$totalPrice = $listItem["price"] * $listItem["count"];
+			$totalCost = $listItem["cost"] * $listItem["count"];
+
+			$listItem["profit"] = round($totalPrice - $totalCost, 2);
+			return $listItem;
+		};
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SALES);
+		$templateCollection = new TemplateCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData(
+			$salesData,
+			$document,
+			callback: $salesCallback
+		);
+
+		$salesLiList = $document->querySelectorAll("ul>li");
+		self::assertCount(count($salesData), $salesLiList);
+		foreach($salesData as $i => $sale) {
+			$li = $salesLiList[$i];
+			$profitValue = round(($sale["count"] * $sale["price"]) - ($sale["count"] * $sale["cost"]), 2);
+			self::assertEquals($sale["name"], $li->querySelector(".name span")->textContent);
+			self::assertEquals($sale["count"], $li->querySelector(".count span")->textContent);
+			self::assertEquals($sale["price"], $li->querySelector(".price span")->textContent);
+			self::assertEquals($sale["cost"], $li->querySelector(".cost span")->textContent);
+			self::assertEquals($profitValue, $li->querySelector(".profit span")->textContent);
 		}
 	}
 }

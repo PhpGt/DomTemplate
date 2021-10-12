@@ -28,10 +28,12 @@ class PlaceholderBinder {
 		);
 
 		foreach($xpathResult as $attributeOrText) {
+			/** @var Text|Attr $text */
 			$text = $attributeOrText;
 			if($text instanceof Attr) {
 				$text = $text->firstChild;
 			}
+
 			/** @var Text $text */
 			$placeholder = $text->splitText(
 				strpos($text->data, "{{")
@@ -41,7 +43,8 @@ class PlaceholderBinder {
 			);
 
 			$placeholderText = new PlaceholderText($placeholder);
-			if($key !== $placeholderText->getBindKey()) {
+			if((string)$key !== $placeholderText->getBindKey()) {
+				$text->parentNode->nodeValue = $text->wholeText;
 				continue;
 			}
 

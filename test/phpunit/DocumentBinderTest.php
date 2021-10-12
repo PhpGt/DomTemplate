@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use DateInterval;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLCollection;
 use Gt\Dom\HTMLElement\HTMLButtonElement;
@@ -12,7 +13,9 @@ use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
+use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
+use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -545,5 +548,162 @@ class DocumentBinderTest extends TestCase {
 		$sut = new DocumentBinder($document);
 		$sut->bindValue(fn() => "test");
 		self::assertSame("test", $document->querySelector("output")->textContent);
+	}
+
+	public function testBindList_complexHTML():void {
+		$from = "Slitting Mill";
+		$to = "Clipstone";
+
+		$routesData = [
+			[
+				"duration" => new DateInterval("PT3H58M"),
+				"method" => "Train",
+				"steps" => [
+					"rtv471" => [
+						"time" => "07:02",
+						"location" => "Rugeley Trent Valley",
+					],
+					"ltv991" => [
+						"time" => "07:49",
+						"location" => "Lichfield Trent Valley",
+					],
+					"tem010" => [
+						"time" => "08:03",
+						"location" => "Tamworth",
+					],
+					"csy001" => [
+						"time" => "09:03",
+						"location" => "Chesterfield",
+					],
+					"ep090" => [
+						"time" => "09:42",
+						"location" => "Eastwood Park",
+					],
+					"mnn310" => [
+						"time" => "10:25",
+						"location" => "Mansfield",
+					],
+					"c0390" => [
+						"time" => "11:00",
+						"location" => "Clipstone",
+					]
+				]
+			], [
+				"duration" => new DateInterval("PT4H11M"),
+				"method" => "Bus",
+				"steps" => [
+					"stv472" => [
+						"time" => "06:20",
+						"location" => "Rugeley Trent Valley",
+					],
+					"ltv050" => [
+						"time" => "07:40",
+						"location" => "Lichfield City Centre",
+					],
+					"ltv921" => [
+						"time" => "08:00",
+						"location" => "Mosley Street",
+					],
+					"sd094" => [
+						"time" => "08:18",
+						"location" => "Burton-on-Trent"
+					],
+					"ng001" => [
+						"time" => "09:06",
+						"location" => "Nottingham",
+					],
+					"mnn310" => [
+						"time" => "10:01",
+						"location" => "Mansfield",
+					],
+					"c0353" => [
+						"time" => "10:31",
+						"location" => "Greendale Crescent",
+					]
+				]
+			]
+		];
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TRANSPORT_ROUTES);
+		$sut = new DocumentBinder($document);
+		$sut->bindKeyValue("from", $from);
+		$sut->bindKeyValue("to", $to);
+
+		$callback = function(
+			Element $templateElement,
+			array $kvp,
+			int|string $key,
+		):array {
+			if($duration = $kvp["duration"]) {
+				/** @var DateInterval $duration */
+				$kvp["duration"] = $duration->format("%H:%m");
+			}
+
+			return $kvp;
+		};
+
+		$sut->bindListCallback($routesData, $callback);
+		$routeLiList = $document->querySelectorAll("ul>li");
+		self::assertCount(2, $routeLiList);
+		self::assertCount(count($routesData[0]["steps"]), $routeLiList[0]->querySelectorAll("ol>li"));
+		self::assertCount(count($routesData[1]["steps"]), $routeLiList[1]->querySelectorAll("ol>li"));
+
+		foreach($routesData as $i => $route) {
+			self::assertEquals($route["method"], $routeLiList[$i]->querySelector("p")->textContent);
+			self::assertEquals($route["duration"]->format("%H:%m"), $routeLiList[$i]->querySelector("time")->textContent);
+			$stepLiList = $routeLiList[$i]->querySelectorAll("ol>li");
+			$j = 0;
+
+			foreach($route["steps"] as $id => $step) {
+				$stepLi = $stepLiList[$j];
+				self::assertEquals($step["time"], $stepLi->querySelector("time")->textContent);
+				self::assertEquals($step["location"], $stepLi->querySelector("span")->textContent);
+				self::assertEquals("/route/step/$id", $stepLi->querySelector("a")->href);
+				$j++;
+			}
+		}
+	}
+
+	public function testBindListData_callback():void {
+		$salesData = [
+			[
+				"name" => "Cactus",
+				"count" => 14,
+				"price" => 5.50,
+				"cost" => 3.55,
+			],
+			[
+				"name" => "Succulent",
+				"count" => 9,
+				"price" => 3.50,
+				"cost" => 2.10,
+			]
+		];
+		$salesCallback = function(Element $template, array $listItem, string $key):array {
+			$totalPrice = $listItem["price"] * $listItem["count"];
+			$totalCost = $listItem["cost"] * $listItem["count"];
+
+			$listItem["profit"] = round($totalPrice - $totalCost, 2);
+			return $listItem;
+		};
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SALES);
+		$sut = new DocumentBinder($document);
+		$sut->bindListCallback(
+			$salesData,
+			$salesCallback
+		);
+
+		$salesLiList = $document->querySelectorAll("ul>li");
+		self::assertCount(count($salesData), $salesLiList);
+		foreach($salesData as $i => $sale) {
+			$li = $salesLiList[$i];
+			$profitValue = round(($sale["count"] * $sale["price"]) - ($sale["count"] * $sale["cost"]), 2);
+			self::assertEquals($sale["name"], $li->querySelector(".name span")->textContent);
+			self::assertEquals($sale["count"], $li->querySelector(".count span")->textContent);
+			self::assertEquals($sale["price"], $li->querySelector(".price span")->textContent);
+			self::assertEquals($sale["cost"], $li->querySelector(".cost span")->textContent);
+			self::assertEquals($profitValue, $li->querySelector(".profit span")->textContent);
+		}
 	}
 }

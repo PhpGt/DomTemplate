@@ -107,6 +107,24 @@ class DocumentBinder {
 		return $this->listBinder->bindListData($listData, $context, $templateName);
 	}
 
+	public function bindListCallback(
+		iterable $listData,
+		callable $callback,
+		?Element $context = null,
+		?string $templateName = null
+	):int {
+		if(!$context) {
+			$context = $this->document;
+		}
+
+		return $this->listBinder->bindListData(
+			$listData,
+			$context,
+			$templateName,
+			$callback
+		);
+	}
+
 	private function bind(
 		?string $key,
 		mixed $value,
