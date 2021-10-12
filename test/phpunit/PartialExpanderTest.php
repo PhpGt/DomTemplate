@@ -7,6 +7,8 @@ use Gt\DomTemplate\CommentIni;
 use Gt\DomTemplate\ModularContent;
 use Gt\DomTemplate\ModularContentFileNotFoundException;
 use Gt\DomTemplate\PartialExpander;
+use Gt\DomTemplate\PartialInjectionMultiplePointException;
+use Gt\DomTemplate\PartialInjectionPointNotFoundException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 
 class PartialExpanderTest extends ModularContentTestCase {
@@ -89,5 +91,32 @@ class PartialExpanderTest extends ModularContentTestCase {
 			$outer->querySelector("p")->textContent
 		);
 		self::assertSame("This title was set in the inner partial view.", $document->title);
+	}
+
+	public function testExpand_noDataPartialElement():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$modularContent = self::mockModularContent(
+			"_partial", [
+// Here, the HTML_COMPONENT isn't expected, because there is no data-partial element.
+				"base-page" => DocumentTestFactory::HTML_COMPONENT,
+			]
+		);
+		$sut = new PartialExpander($document, $modularContent);
+		self::expectException(PartialInjectionPointNotFoundException::class);
+		self::expectExceptionMessage("The current view extends the partial \"base-page\", but there is no element marked with `data-partial`.");
+		$sut->expand();
+	}
+
+	public function testExpand_multipleDataPartialElements():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$modularContent = self::mockModularContent(
+			"_partial", [
+				"base-page" => DocumentTestFactory::HTML_INCORRECT_PARTIAL_VIEW,
+			]
+		);
+		$sut = new PartialExpander($document, $modularContent);
+		self::expectException(PartialInjectionMultiplePointException::class);
+		self::expectExceptionMessage("The current view extends the partial \"base-page\", but there is more than one element marked with `data-partial`.");
+		$sut->expand();
 	}
 }

@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate\Test;
 
 use Gt\DomTemplate\Bind;
+use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\BindableCache;
 use Gt\DomTemplate\BindGetterMethodDoesNotStartWithGetException;
 use PHPUnit\Framework\TestCase;
