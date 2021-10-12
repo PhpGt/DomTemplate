@@ -1,7 +1,6 @@
 <?php
 namespace Gt\DomTemplate;
 
-use Gt\DomTemplate\Test\BindGetter;
 use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionObject;
