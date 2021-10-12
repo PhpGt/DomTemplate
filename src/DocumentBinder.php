@@ -1,8 +1,10 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
+use Gt\Dom\XPathResult;
 use Iterator;
 use ReflectionObject;
 
@@ -124,6 +126,16 @@ class DocumentBinder {
 			$templateName,
 			$callback
 		);
+	}
+
+	public function cleanBindAttributes():void {
+		$xpathResult = $this->document->evaluate(
+			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-template')]"
+		);
+		foreach($xpathResult as $item) {
+			/** @var Attr $item */
+			$item->ownerElement->removeAttribute($item->name);
+		}
 	}
 
 	private function bind(
