@@ -769,4 +769,22 @@ class DocumentBinderTest extends TestCase {
 			self::assertSame($game, $document->querySelectorAll("#game-list li")[$i]->textContent);
 		}
 	}
+
+	public function testBindListData_twoListsDifferentContexts_withHtmlParents():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES_CLASS_PARENTS);
+		$sut = new DocumentBinder($document);
+
+		$progLangData = ["PHP", "HTML", "bash"];
+		$sut->bindList($progLangData, $document->querySelector(".favourite-list.prog-lang"));
+		$gameData = ["Pac Man", "Mega Man", "Tetris"];
+		$sut->bindList($gameData, $document->querySelector(".favourite-list.game"));
+
+		foreach($progLangData as $i => $progLang) {
+			self::assertSame($progLang, $document->querySelectorAll(".prog-lang li")[$i]->textContent);
+		}
+
+		foreach($gameData as $i => $game) {
+			self::assertSame($game, $document->querySelectorAll(".game li")[$i]->textContent);
+		}
+	}
 }
