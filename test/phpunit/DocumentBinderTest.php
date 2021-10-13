@@ -16,6 +16,7 @@ use Gt\DomTemplate\InvalidBindPropertyException;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\TemplateCollection;
+use Gt\DomTemplate\TemplateElement;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -616,6 +617,10 @@ class DocumentBinderTest extends TestCase {
 						"time" => "10:01",
 						"location" => "Mansfield",
 					],
+					"mnn209" => [
+						"time" => "10:24",
+						"location" => "Kirkby in Ashfield",
+					],
 					"c0353" => [
 						"time" => "10:31",
 						"location" => "Greendale Crescent",
@@ -745,5 +750,23 @@ class DocumentBinderTest extends TestCase {
 			"data-template",
 			$document->documentElement->innerHTML
 		);
+	}
+
+	public function testBindListData_twoListsDifferentContexts():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
+		$sut = new DocumentBinder($document);
+
+		$progLangData = ["PHP", "HTML", "bash"];
+		$sut->bindList($progLangData, $document->getElementById("prog-lang-list"));
+		$gameData = ["Pac Man", "Mega Man", "Tetris"];
+		$sut->bindList($gameData, $document->getElementById("game-list"));
+
+		foreach($progLangData as $i => $progLang) {
+			self::assertSame($progLang, $document->querySelectorAll("#prog-lang-list li")[$i]->textContent);
+		}
+
+		foreach($gameData as $i => $game) {
+			self::assertSame($game, $document->querySelectorAll("#game-list li")[$i]->textContent);
+		}
 	}
 }

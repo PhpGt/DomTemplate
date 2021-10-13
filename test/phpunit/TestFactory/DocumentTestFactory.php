@@ -201,6 +201,24 @@ HTML;
 	</ul>
 </div>
 HTML;
+
+	const HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES = <<<HTML
+<!doctype html>
+<div id="favourites">
+	<h1>My favourite programming languages</h1>
+	<ul id="prog-lang-list">
+		<li data-template data-bind:text>Programming language goes here</li>
+	</ul>
+	
+	<h1>My favourite video games</h1>
+	<div>
+		<ul id="game-list">
+			<li data-template data-bind:text>Video game goes here</li>
+		</ul>
+	</div>
+</div>
+HTML;
+
 	const HTML_USER_ORDER_LIST = <<<HTML
 <!doctype html>
 <div id="orders">

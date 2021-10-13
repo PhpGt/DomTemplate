@@ -143,6 +143,44 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
+	/**
+	 * This is a slightly different test to above, where the context will
+	 * be provided to specify the containing <UL> nodes, because the <LI>
+	 * elements do not identify their own template name.
+	 */
+	public function testBindListData_twoListsDifferentContexts():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
+		$templateElementProgLang = new TemplateElement(
+			$document->querySelector("#prog-lang-list li[data-template]")
+		);
+		$templateElementGame = new TemplateElement(
+			$document->querySelector("#game-list li[data-template]")
+		);
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->expects(self::exactly(2))
+			->method("get")
+			->withConsecutive(
+				[$document->getElementById("prog-lang-list")],
+				[$document->getElementById("game-list")]
+			)
+			->willReturnOnConsecutiveCalls($templateElementProgLang, $templateElementGame);
+
+		$sut = new ListBinder($templateCollection);
+		$progLangData = ["PHP", "HTML", "bash"];
+		$sut->bindListData($progLangData, $document->getElementById("prog-lang-list"));
+		$gameData = ["Pac Man", "Mega Man", "Tetris"];
+		$sut->bindListData($gameData, $document->getElementById("game-list"));
+
+		foreach($progLangData as $i => $progLang) {
+			self::assertSame($progLang, $document->querySelectorAll("#prog-lang-list li")[$i]->textContent);
+		}
+
+		foreach($gameData as $i => $game) {
+			self::assertSame($game, $document->querySelectorAll("#game-list li")[$i]->textContent);
+		}
+	}
+
 	public function testBindListData_empty_parentShouldBeEmpty():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$templateElement = new TemplateElement($document->querySelector("li[data-template]"));
