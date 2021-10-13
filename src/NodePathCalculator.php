@@ -1,8 +1,11 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Element;
+use Gt\Dom\HTMLElement\HTMLElement;
 use Gt\Dom\Node;
 use Gt\Dom\Facade\NodeClass\DOMElementFacade;
+use ReflectionObject;
 use Stringable;
 
 class NodePathCalculator implements Stringable {
@@ -12,11 +15,35 @@ class NodePathCalculator implements Stringable {
 	}
 
 	public function __toString():string {
-		$refObj = new \ReflectionObject($this->element);
-		$refProp = $refObj->getProperty("domNode");
-		$refProp->setAccessible(true);
-		/** @var DOMElementFacade $nativeDomNode */
-		$nativeDomNode = $refProp->getValue($this->element);
-		return $nativeDomNode->getNodePath();
+		$path = "";
+		/** @var Element $context */
+		$context = $this->element;
+
+		do {
+			$contextPath = strtolower($context->tagName);
+
+			if($context->id || $context->className) {
+				$attrPath = "";
+				if($id = $context->id) {
+					$attrPath .= "@id='$id'";
+				}
+
+				foreach($context->classList as $class) {
+					if(strlen($attrPath) !== 0) {
+						$attrPath .= " and ";
+					}
+
+					$attrPath .= "contains(concat(' ',normalize-space(@class),' '),' $class ')";
+				}
+
+				$contextPath .= "[$attrPath]";
+			}
+
+			$path = "/" . $contextPath . $path;
+			$context = $context->parentElement;
+		}
+		while($context && $context instanceof Element);
+
+		return $path;
 	}
 }

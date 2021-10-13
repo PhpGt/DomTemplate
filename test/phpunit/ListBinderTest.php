@@ -79,6 +79,8 @@ class ListBinderTest extends TestCase {
 			->with($document->documentElement, null)
 			->willReturn($templateElement);
 
+		$templateElement->removeOriginalElement();
+
 		$ul = $document->querySelector("ul");
 		self::assertCount(
 			0,
@@ -132,7 +134,49 @@ class ListBinderTest extends TestCase {
 		$progLangData = ["PHP", "HTML", "bash"];
 		$sut->bindListData($progLangData, $document, "prog-lang");
 		$gameData = ["Pac Man", "Mega Man", "Tetris"];
+		$templateElementProgLang->removeOriginalElement();
+		$templateElementGame->removeOriginalElement();
 		$sut->bindListData($gameData, $document, "game");
+
+		foreach($progLangData as $i => $progLang) {
+			self::assertSame($progLang, $document->querySelectorAll("#prog-lang-list li")[$i]->textContent);
+		}
+
+		foreach($gameData as $i => $game) {
+			self::assertSame($game, $document->querySelectorAll("#game-list li")[$i]->textContent);
+		}
+	}
+
+	/**
+	 * This is a slightly different test to above, where the context will
+	 * be provided to specify the containing <UL> nodes, because the <LI>
+	 * elements do not identify their own template name.
+	 */
+	public function testBindListData_twoListsDifferentContexts():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
+		$templateElementProgLang = new TemplateElement(
+			$document->querySelector("#prog-lang-list li[data-template]")
+		);
+		$templateElementGame = new TemplateElement(
+			$document->querySelector("#game-list li[data-template]")
+		);
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->expects(self::exactly(2))
+			->method("get")
+			->withConsecutive(
+				[$document->getElementById("prog-lang-list")],
+				[$document->getElementById("game-list")]
+			)
+			->willReturnOnConsecutiveCalls($templateElementProgLang, $templateElementGame);
+
+		$sut = new ListBinder($templateCollection);
+		$progLangData = ["PHP", "HTML", "bash"];
+		$sut->bindListData($progLangData, $document->getElementById("prog-lang-list"));
+		$gameData = ["Pac Man", "Mega Man", "Tetris"];
+		$templateElementProgLang->removeOriginalElement();
+		$templateElementGame->removeOriginalElement();
+		$sut->bindListData($gameData, $document->getElementById("game-list"));
 
 		foreach($progLangData as $i => $progLang) {
 			self::assertSame($progLang, $document->querySelectorAll("#prog-lang-list li")[$i]->textContent);
@@ -149,6 +193,7 @@ class ListBinderTest extends TestCase {
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
+		$templateElement->removeOriginalElement();
 
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData([], $document);
@@ -169,6 +214,7 @@ class ListBinderTest extends TestCase {
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
+		$templateElement->removeOriginalElement();
 
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData($kvpList, $orderList);
@@ -194,6 +240,7 @@ class ListBinderTest extends TestCase {
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
+		$templateElement->removeOriginalElement();
 
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData($kvpList, $orderList);
@@ -219,6 +266,7 @@ class ListBinderTest extends TestCase {
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
+		$templateElement->removeOriginalElement();
 
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData($kvpList, $orderList);
@@ -287,6 +335,7 @@ class ListBinderTest extends TestCase {
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
+		$templateElement->removeOriginalElement();
 
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData($kvpList, $orderList);
@@ -342,6 +391,7 @@ class ListBinderTest extends TestCase {
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
+		$templateElement->removeOriginalElement();
 
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData($kvpList, $orderList);
@@ -541,6 +591,29 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($sale["price"], $li->querySelector(".price span")->textContent);
 			self::assertEquals($sale["cost"], $li->querySelector(".cost span")->textContent);
 			self::assertEquals($profitValue, $li->querySelector(".profit span")->textContent);
+		}
+	}
+
+	public function testBindList_twoListsSeparatedByElement():void {
+		$blueShades = ["Periwinkle", "Ultramarine", "Liberty", "Navy", "Blurple"];
+		$redShades = ["Brink pink", "Crimson", "Vermilion", "Scarlet"];
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_SUB_LISTS_SEPARATED_BY_ELEMENT);
+		$templateCollection = new TemplateCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($redShades, $document, "red");
+		$sut->bindListData($blueShades, $document, "blue");
+
+		$dtElements = $document->querySelectorAll("dt");
+		$context = $dtElements[0]->nextElementSibling;
+		for($i = 0; $i < count($blueShades); $i++) {
+			self::assertEquals($blueShades[$i], $context->textContent);
+			$context = $context->nextElementSibling;
+		}
+
+		$context = $dtElements[1]->nextElementSibling;
+		for($i = 0; $i < count($redShades); $i++) {
+			self::assertEquals($redShades[$i], $context->textContent);
+			$context = $context->nextElementSibling;
 		}
 	}
 }

@@ -201,6 +201,37 @@ HTML;
 	</ul>
 </div>
 HTML;
+
+	const HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES = <<<HTML
+<!doctype html>
+<div id="favourites">
+	<h1>My favourite programming languages</h1>
+	<ul id="prog-lang-list">
+		<li data-template data-bind:text>Programming language goes here</li>
+	</ul>
+	
+	<h1>My favourite video games</h1>
+	<ul id="game-list">
+		<li data-template data-bind:text>Video game goes here</li>
+	</ul>
+</div>
+HTML;
+
+	const HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES_CLASS_PARENTS = <<<HTML
+<!doctype html>
+<div id="favourites">
+	<h1>My favourite programming languages</h1>
+	<ul class="favourite-list prog-lang">
+		<li data-template data-bind:text>Programming language goes here</li>
+	</ul>
+	
+	<h1>My favourite video games</h1>
+	<ul class="favourite-list game">
+		<li data-template data-bind:text>Video game goes here</li>
+	</ul>
+</div>
+HTML;
+
 	const HTML_USER_ORDER_LIST = <<<HTML
 <!doctype html>
 <div id="orders">
@@ -561,6 +592,18 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_TWO_SUB_LISTS_SEPARATED_BY_ELEMENT = <<<HTML
+<!doctype html>
+<main>
+	<dl>
+		<dt class="blue">Shades of blue</dt>
+		<dd data-template="blue" data-bind:text>Blue</dd>
+		
+		<dt class="red">Shades of red</dt>
+		<dd data-template="red" data-bind:text>Red</dd>
+	</dl>
+</main>
+HTML;
 
 
 	public static function createHTML(string $html = ""):HTMLDocument {

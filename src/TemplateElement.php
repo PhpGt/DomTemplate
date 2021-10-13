@@ -15,18 +15,19 @@ class TemplateElement {
 		$this->templateParentPath = new NodePathCalculator($this->originalElement->parentElement);
 
 		$siblingContext = $this->originalElement;
-		while($siblingContext = $siblingContext->nextSibling) {
+		while($siblingContext = $siblingContext->nextElementSibling) {
 			/** @var Element|Text $siblingContext */
-			if($siblingContext instanceof Text
-			|| !$siblingContext->hasAttribute("data-template")) {
+			if(!$siblingContext->hasAttribute("data-template")) {
 				break;
 			}
 		}
 		$this->templateNextSiblingPath =
 			is_null($siblingContext)
 			? null
-			: new NodePathCalculator($this->originalElement->nextSibling);
+			: new NodePathCalculator($this->originalElement->nextElementSibling);
+	}
 
+	public function removeOriginalElement():void {
 		$this->originalElement->remove();
 	}
 

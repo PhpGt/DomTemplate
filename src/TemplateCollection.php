@@ -36,26 +36,33 @@ class TemplateCollection {
 	private function extractTemplates(Document $document):void {
 		$dataTemplateArray = [];
 		foreach($document->querySelectorAll("[data-template]") as $element) {
-			$nodePath = new NodePathCalculator($element);
-			$dataTemplateArray[(string)$nodePath] = $element;
+			/** @var Element $element */
+			$nodePath = (string)(new NodePathCalculator($element));
+			$templateElement = new TemplateElement($element);
+			$key = $templateElement->getTemplateName() ?? $nodePath;
+			$dataTemplateArray[$key] = $templateElement;
 		}
 
 		uksort($dataTemplateArray,
 			fn(string $a, string $b):int => (
-				(strlen($a) > strlen($b))
+				(substr_count($a, "/") > substr_count($b, "/"))
 				? -1
 				: 1
 			)
 		);
 
-		foreach($dataTemplateArray as $nodePath => $element) {
-			/** @var Element $element */
-			$templateElement = new TemplateElement($element);
-			$name = $templateElement->getTemplateName() ?? $nodePath;
-			$this->elementKVP[$name] = $templateElement;
+		foreach($dataTemplateArray as $template) {
+			$template->removeOriginalElement();
 		}
 
-		$this->elementKVP = array_reverse($this->elementKVP, true);
+//		foreach($dataTemplateArray as $nodePath => $element) {
+//			/** @var Element $element */
+//			$templateElement = new TemplateElement($element);
+//			$name = $templateElement->getTemplateName() ?? $nodePath;
+//			$this->elementKVP[$name] = $templateElement;
+//		}
+
+		$this->elementKVP = array_reverse($dataTemplateArray, true);
 	}
 
 	private function findMatch(Element $context):TemplateElement {
