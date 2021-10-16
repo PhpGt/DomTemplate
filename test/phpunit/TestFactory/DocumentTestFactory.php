@@ -177,6 +177,40 @@ HTML;
 </div>
 HTML;
 
+	const HTML_TABLE_WITH_EXISTING_HEADERS = <<<HTML
+<table id="crud-table">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Forename</th>
+			<th>Surname</th>
+			<th>Country</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr data-template>
+			<td>0</td>
+			<td>Test</td>
+			<td>Testerson</td>
+			<td>Antarctica</td>
+			<td>
+				<form method="post">
+					<input name="id" type="hidden" />
+					<button name="do" value="edit">Edit</button>
+				</form>
+			</td>
+			<td>
+				<form method="post">
+					<input name="id" type="hidden" />
+					<button name="do" value="delete">Delete</button>
+				</form>
+			</td>
+		</tr>
+	</tbody>
+</table>
+HTML;
+
+
 	const HTML_LIST_TEMPLATE = <<<HTML
 <!doctype html>
 <ul>
@@ -604,7 +638,6 @@ HTML;
 	</dl>
 </main>
 HTML;
-
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

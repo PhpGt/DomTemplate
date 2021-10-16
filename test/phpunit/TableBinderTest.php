@@ -373,4 +373,53 @@ class TableBinderTest extends TestCase {
 
 		self::assertCount(4, $document->querySelectorAll("table tr"));
 	}
+
+	/**
+	 * This test uses an HTML snippet that has more <TD> elements than there
+	 * are fields in the data. The <TH> elements are already defined in the
+	 * source HTML though, so it should be easy to understand how the
+	 * data is supposed to be bound.
+	 */
+	public function testBindTableData_kvpCollection():void {
+		$sut = new TableBinder();
+		$tableData = [
+			[
+				"ID" => 55,
+				"Forename" => "Carlos",
+				"Surname" => "Sainz",
+				"Country" => "Spain",
+			],
+// Note that the order of the fields here is different, to test that they are
+// matched correctly to the corresponding TH order.
+			[
+				"Surname" => "Vettel",
+				"Forename" => "Sebastian",
+				"ID" => 5,
+				"Country" => "Germany",
+			],
+		];
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLE_WITH_EXISTING_HEADERS);
+		$sut->bindTableData($tableData, $document);
+
+		$thCollection = $document->querySelectorAll("thead>tr>th");
+		$bodyTrCollection = $document->querySelectorAll("tbody>tr");
+		self::assertCount(count($tableData), $bodyTrCollection);
+
+		$dataFieldCount = count($tableData[0]);
+		foreach($thCollection as $th) {
+			$key = $th->textContent;
+
+			foreach($bodyTrCollection as $tr) {
+				foreach($tr->querySelectorAll("td") as $i => $td) {
+					if($i > $dataFieldCount) {
+						continue;
+					}
+
+					$field = $tableData[$i][$key];
+					self::assertEquals($field, $td->textContent);
+				}
+			}
+		}
+	}
 }

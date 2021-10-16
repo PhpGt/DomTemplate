@@ -18,8 +18,6 @@ class TableBinder {
 		array $tableData,
 		Document|Element $context
 	):void {
-		$tableData = $this->normaliseTableData($tableData);
-
 		if($context instanceof Document) {
 			$context = $context->documentElement;
 		}
@@ -36,7 +34,22 @@ class TableBinder {
 			throw new TableElementNotFoundInContextException();
 		}
 
-		$headerRow = array_shift($tableData);
+		$tableData = $this->normaliseTableData(
+			$tableData,
+			$tableArray[0]
+		);
+
+		if($theadRowElement = $tableArray[0]->querySelector("thead>tr")) {
+			/** @var HTMLTableRowElement $theadRowElement */
+			$headerRow = [];
+			foreach($theadRowElement->cells as $th) {
+				array_push($headerRow, trim($th->textContent));
+			}
+		}
+		else {
+			$headerRow = array_shift($tableData);
+		}
+
 		foreach($tableArray as $table) {
 			/** @var HTMLTableElement $table */
 
@@ -118,36 +131,61 @@ class TableBinder {
 	 * two-dimensional array where the outer array represents the rows, the
 	 * inner array represents the columns.
 	 */
-	private function normaliseTableData(iterable $bindValue):array {
+	private function normaliseTableData(
+		iterable $bindValue,
+		HTMLTableElement $table
+	):array {
 		$normalised = [];
+
+		$tableHeaders = [];
+		foreach($table->querySelectorAll("thead>tr>th") as $th) {
+			$tableHeaders[trim($th->textContent)] = "";
+		}
 
 		reset($bindValue);
 		$key = key($bindValue);
 
 		if(is_int($key)) {
+// TODO: Refactor into separate functions for readability.
 			foreach($bindValue as $i => $value) {
 				if(!is_iterable($value)) {
 					throw new IncorrectTableDataFormat("Row $i data is not iterable.");
 				}
+				/** @var array<string> $row Values of each column on the current normalised row */
 				$row = [];
 
 				foreach($value as $j => $columnValue) {
-// A string key within the inner array indicates "double header" table data.
-					if(is_string($j)) {
-						$doubleHeader = [$j => []];
-						if(!is_iterable($columnValue)) {
-							throw new IncorrectTableDataFormat("Row $i has a string key ($j) but the value is not iterable.");
+					if(isset($tableHeaders[$j])) {
+						if(empty($row)) {
+							$row = array_fill(
+								0,
+								count($tableHeaders),
+								""
+							);
 						}
 
-						foreach($columnValue as $cellValue) {
-							array_push($doubleHeader[$j], $cellValue);
-						}
-						array_push($normalised, $doubleHeader);
+						$rowKeyIndex = array_search($j, array_keys($tableHeaders));
+						$row[$rowKeyIndex] = $columnValue;
 					}
 					else {
-						array_push($row, $columnValue);
+// A string key within the inner array indicates "double header" table data.
+						if(is_string($j)) {
+							$doubleHeader = [$j => []];
+							if(!is_iterable($columnValue)) {
+								throw new IncorrectTableDataFormat("Row $i has a string key ($j) but the value is not iterable.");
+							}
+
+							foreach($columnValue as $cellValue) {
+								array_push($doubleHeader[$j], $cellValue);
+							}
+							array_push($normalised, $doubleHeader);
+						}
+						else {
+							array_push($row, $columnValue);
+						}
 					}
 				}
+
 				if(!empty($row)) {
 					array_push($normalised, $row);
 				}
