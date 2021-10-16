@@ -188,20 +188,20 @@ HTML;
 		</tr>
 	</thead>
 	<tbody>
-		<tr data-template>
+		<tr data-template class="flag-{{Country}}">
 			<td>0</td>
 			<td>Test</td>
 			<td>Testerson</td>
 			<td>Antarctica</td>
 			<td>
 				<form method="post">
-					<input name="id" type="hidden" />
+					<input name="id" type="hidden" data-bind:value="ID" />
 					<button name="do" value="edit">Edit</button>
 				</form>
 			</td>
 			<td>
 				<form method="post">
-					<input name="id" type="hidden" />
+					<input name="id" type="hidden" data-bind:value="ID" />
 					<button name="do" value="delete">Delete</button>
 				</form>
 			</td>

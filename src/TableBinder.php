@@ -10,6 +10,17 @@ use Gt\Dom\HTMLElement\HTMLTableSectionElement;
 use Stringable;
 
 class TableBinder {
+	private ?ElementBinder $elementBinder;
+	private ?BindableCache $bindableCache;
+
+	public function __construct(
+		private ?TemplateCollection $templateCollection = null,
+		?ElementBinder $elementBinder = null,
+		?BindableCache $bindableCache = null
+	) {
+		$this->elementBinder = $elementBinder;
+		$this->bindableCache = $bindableCache;
+	}
 	/**
 	 * @param array<int, array<int, string>>|array<int, array<int|string, string|array<int, mixed>>> $tableData
 	 * @param Element $context
@@ -39,8 +50,9 @@ class TableBinder {
 			$tableArray[0]
 		);
 
-		if($theadRowElement = $tableArray[0]->querySelector("thead>tr")) {
-			/** @var HTMLTableRowElement $theadRowElement */
+		/** @var null|HTMLTableRowElement $theadRowElement */
+		$theadRowElement = $tableArray[0]->querySelector("thead>tr");
+		if($theadRowElement) {
 			$headerRow = [];
 			foreach($theadRowElement->cells as $th) {
 				array_push($headerRow, trim($th->textContent));
@@ -86,30 +98,56 @@ class TableBinder {
 			}
 
 			foreach($tableData as $rowData) {
-				$tr = $tbody->insertRow();
-				/** @var int|string|null $firstKey */
-				$firstKey = key($rowData);
+				try {
+					$template = $this->templateCollection?->get($table);
+				}
+				catch(TemplateElementNotFoundInContextException) {
+					$template = null;
+				}
 
-				foreach($allowedHeaders as $allowedHeader) {
-					$rowIndex = array_search($allowedHeader, $headerRow);
-					$cellTypeToCreate = "td";
+				if($theadRowElement && $template) {
+					/** @var HTMLTableRowElement $tr */
+					$tr = $template->insertTemplate();
 
-					if(is_string($firstKey)) {
-						if($rowIndex === 0) {
-							$columnValue = $firstKey;
-							$cellTypeToCreate = "th";
+					foreach($rowData as $i => $value) {
+						$td = $tr->cells[$i];
+						if($td->children->length === 0) {
+							$td->textContent = $value;
 						}
 						else {
-							$columnValue = $rowData[$firstKey][$rowIndex - 1];
+							$this->elementBinder->bind(null, $value, $td);
 						}
-					}
-					else {
-						$columnValue = $rowData[$rowIndex];
-					}
 
-					$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);
-					$cellElement->textContent = $columnValue;
-					$tr->appendChild($cellElement);
+						$key = $headerRow[$i];
+						$this->elementBinder->bind($key, $value, $tr);
+					}
+				}
+				else {
+					$tr = $tbody->insertRow();
+					/** @var int|string|null $firstKey */
+					$firstKey = key($rowData);
+
+					foreach($allowedHeaders as $allowedHeader) {
+						$rowIndex = array_search($allowedHeader, $headerRow);
+						$cellTypeToCreate = "td";
+
+						if(is_string($firstKey)) {
+							if($rowIndex === 0) {
+								$columnValue = $firstKey;
+								$cellTypeToCreate = "th";
+							}
+							else {
+								$columnValue = $rowData[$firstKey][$rowIndex - 1];
+							}
+						}
+						else {
+							$columnValue = $rowData[$rowIndex];
+						}
+
+						$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);
+						$cellElement->textContent = $columnValue;
+						$tr->appendChild($cellElement);
+					}
 				}
 			}
 		}

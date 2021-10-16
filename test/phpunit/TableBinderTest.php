@@ -1,12 +1,15 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\HTMLCollection;
 use Gt\Dom\HTMLElement\HTMLTableCellElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
 use Gt\Dom\HTMLElement\HTMLTableSectionElement;
+use Gt\DomTemplate\ElementBinder;
 use Gt\DomTemplate\IncorrectTableDataFormat;
 use Gt\DomTemplate\TableBinder;
+use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -381,7 +384,6 @@ class TableBinderTest extends TestCase {
 	 * data is supposed to be bound.
 	 */
 	public function testBindTableData_kvpCollection():void {
-		$sut = new TableBinder();
 		$tableData = [
 			[
 				"ID" => 55,
@@ -400,25 +402,27 @@ class TableBinderTest extends TestCase {
 		];
 
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLE_WITH_EXISTING_HEADERS);
+		$templateCollection = new TemplateCollection($document);
+		$elementBinder = new ElementBinder();
+		$sut = new TableBinder($templateCollection, $elementBinder);
 		$sut->bindTableData($tableData, $document);
 
 		$thCollection = $document->querySelectorAll("thead>tr>th");
+		/** @var HTMLCollection<HTMLTableRowElement> $bodyTrCollection */
 		$bodyTrCollection = $document->querySelectorAll("tbody>tr");
 		self::assertCount(count($tableData), $bodyTrCollection);
 
 		$dataFieldCount = count($tableData[0]);
-		foreach($thCollection as $th) {
+		foreach($thCollection as $i => $th) {
 			$key = $th->textContent;
 
-			foreach($bodyTrCollection as $tr) {
-				foreach($tr->querySelectorAll("td") as $i => $td) {
-					if($i > $dataFieldCount) {
-						continue;
-					}
+			/** @var HTMLTableRowElement $tr */
+			foreach($bodyTrCollection as $j => $tr) {
+				$td = $tr->cells[$i];
+				$expectedValue = $tableData[$j][$key];
 
-					$field = $tableData[$i][$key];
-					self::assertEquals($field, $td->textContent);
-				}
+				$textContent = $td->textContent;
+				self::assertEquals($expectedValue, $textContent);
 			}
 		}
 	}
