@@ -64,16 +64,16 @@ class ListBinder {
 				}
 			}
 
-			if($this->isKVP($listItem)) {
-				if($callback) {
-					$listItem = call_user_func(
-						$callback,
-						$t,
-						$listItem,
-						$listKey,
-					);
-				}
+			if($callback) {
+				$listItem = call_user_func(
+					$callback,
+					$t,
+					$listItem,
+					$listKey,
+				);
+			}
 
+			if($this->isKVP($listItem)) {
 				$elementBinder->bind(null, $listKey, $t);
 
 				foreach($listItem as $key => $value) {

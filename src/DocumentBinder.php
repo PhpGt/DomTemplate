@@ -88,7 +88,10 @@ class DocumentBinder {
 		mixed $tableData,
 		?Element $context = null
 	):void {
-		$this->tableBinder->bindTableData($tableData, $context);
+		$this->tableBinder->bindTableData(
+			$tableData,
+			$context ?? $this->document
+		);
 	}
 
 	/**
