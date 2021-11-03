@@ -33,5 +33,5 @@ function example(DocumentBinder $binder):void {
 $document = new HTMLDocument($html);
 $binder = new DocumentBinder($document);
 example($binder);
-$binder->cleanBindAttributes();
+$binder->cleanDatasets();
 echo $document;
