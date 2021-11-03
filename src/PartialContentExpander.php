@@ -3,10 +3,10 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
 
-abstract class ModularContentExpander {
+abstract class PartialContentExpander {
 	public function __construct(
 		protected Document $document,
-		protected ModularContent $modularContent
+		protected PartialContent $partialContent
 	) {
 	}
 

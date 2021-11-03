@@ -5,7 +5,7 @@ use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Throwable;
 
-class ComponentExpander extends ModularContentExpander {
+class ComponentExpander extends PartialContentExpander {
 	/** @return Element[] */
 	public function expand(Element $context = null):array {
 		$expandedComponentArray = [];
@@ -26,7 +26,7 @@ class ComponentExpander extends ModularContentExpander {
 			$name = strtolower($element->tagName);
 
 			try {
-				$content = $this->modularContent->getContent($name);
+				$content = $this->partialContent->getContent($name);
 				$element->innerHTML = $content;
 				array_push($expandedComponentArray, $element);
 				$recursiveExpandedComponents = $this->expand($element);

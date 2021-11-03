@@ -5,7 +5,7 @@ use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\HTMLElement\HTMLElement;
 
-class PartialExpander extends ModularContentExpander {
+class PartialExpander extends PartialContentExpander {
 	/**
 	 * @return string[] A list of names of partials that have been expanded,
 	 * in the order that they were expanded.
@@ -24,7 +24,7 @@ class PartialExpander extends ModularContentExpander {
 				break;
 			}
 
-			$partialDocument = $this->modularContent->getHTMLDocument($extends);
+			$partialDocument = $this->partialContent->getHTMLDocument($extends);
 			$partialDocumentArray[$extends] = $partialDocument;
 			$context = $partialDocument;
 		}

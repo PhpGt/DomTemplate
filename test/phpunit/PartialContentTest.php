@@ -1,12 +1,12 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
-use Gt\DomTemplate\ModularContent;
-use Gt\DomTemplate\ModularContentDirectoryNotFoundException;
-use Gt\DomTemplate\ModularContentFileNotFoundException;
+use Gt\DomTemplate\PartialContent;
+use Gt\DomTemplate\PartialContentDirectoryNotFoundException;
+use Gt\DomTemplate\PartialContentFileNotFoundException;
 use PHPUnit\Framework\TestCase;
 
-class ModularContentTest extends TestCase {
+class PartialContentTest extends TestCase {
 	private string $baseDir;
 
 	protected function setUp():void {
@@ -21,17 +21,17 @@ class ModularContentTest extends TestCase {
 
 	public function testConstruct_throwsIfDirectoryNotExist():void {
 		$dir = $this->baseDir . "/" . uniqid("random-");
-		self::expectException(ModularContentDirectoryNotFoundException::class);
-		self::expectExceptionMessage("The modular content path does not exist: $dir");
-		new ModularContent($dir);
+		self::expectException(PartialContentDirectoryNotFoundException::class);
+		self::expectExceptionMessage("The partial content path does not exist: $dir");
+		new PartialContent($dir);
 	}
 
 	public function testGetContent_notExists():void {
 		$dir = $this->baseDir . "/" . uniqid("_partial");
 		mkdir($dir);
-		$sut = new ModularContent($dir);
-		self::expectException(ModularContentFileNotFoundException::class);
-		self::expectExceptionMessage("The modular content file does not exist: $dir/nothing.html");
+		$sut = new PartialContent($dir);
+		self::expectException(PartialContentFileNotFoundException::class);
+		self::expectExceptionMessage("The partial content file does not exist: $dir/nothing.html");
 		$sut->getContent("nothing");
 	}
 
@@ -40,7 +40,7 @@ class ModularContentTest extends TestCase {
 		$dir = $this->baseDir . "/" . uniqid("_partial");
 		mkdir($dir);
 		file_put_contents("$dir/test.html", $expectedContent);
-		$sut = new ModularContent($dir);
+		$sut = new PartialContent($dir);
 		self::assertSame(
 			$expectedContent,
 			$sut->getContent("test")
@@ -52,7 +52,7 @@ class ModularContentTest extends TestCase {
 		$dir = $this->baseDir . "/" . uniqid("_partial");
 		mkdir($dir);
 		file_put_contents("$dir/test.html", $expectedContent);
-		$sut = new ModularContent($dir);
+		$sut = new PartialContent($dir);
 		$document = $sut->getHTMLDocument("test");
 		self::assertSame(
 			"Test file contents",
