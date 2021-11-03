@@ -6,7 +6,7 @@ use Gt\Dom\Text;
 
 class PlaceholderText {
 	private string $bindKey;
-	private ?string $default;
+	private ?string $default; /** @phpstan-ignore-line tracked in issue #290 */
 
 	public function __construct(
 		private Text $originalText

@@ -6,7 +6,7 @@ use Attribute;
 #[Attribute]
 class Bind {
 	public function __construct(
-		private string $key
+		public string $key
 	) {
 	}
 }
