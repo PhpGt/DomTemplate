@@ -128,7 +128,7 @@ class DocumentBinder {
 		);
 	}
 
-	public function cleanBindAttributes():void {
+	public function cleanDatasets():void {
 		$xpathResult = $this->document->evaluate(
 			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-template')]"
 		);
