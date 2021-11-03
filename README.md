@@ -211,7 +211,7 @@ Features at a glance
 
 + Binding of dynamic data - bind key value pairs, associative arrays, lists of associative arrays and even nested lists.
 + HTML components - organise and reuse DOM trees by storing separate components in their own HTML files, and including them using custom HTML tags.
-+ Page templates - create HTML documents that "extend" others.
++ Page templates - create partial HTML documents that "extend" others.
 + Easily modularise CSS by selecting their custom tag names.
 
 [dom]: https://www.php.gt/dom
