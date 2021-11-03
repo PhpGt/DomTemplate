@@ -18,7 +18,7 @@ class DocumentBinder {
 	 */
 	public function __construct(
 		private Document $document,
-		private array $config = [],
+		private array $config = [], /** @phpstan-ignore-line config usage is planned, but not yet utilised */
 		?ElementBinder $elementBinder = null,
 		?PlaceholderBinder $placeholderBinder = null,
 		?TableBinder $tableBinder = null,
@@ -128,7 +128,7 @@ class DocumentBinder {
 		);
 	}
 
-	public function cleanBindAttributes():void {
+	public function cleanDatasets():void {
 		$xpathResult = $this->document->evaluate(
 			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-template')]"
 		);

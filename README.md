@@ -94,7 +94,7 @@ $shoppingList = [
 $binder = new \Gt\DomTemplate\DocumentBinder($document);
 $binder->bindList($shoppingList);
 // this removes the data-bind and data-template attributes:
-$binder->cleanBindAttributes(); 
+$binder->cleanDatasets(); 
 echo $document;
 ```
 
@@ -169,7 +169,7 @@ $document = new \Gt\Dom\HTMLDocument($html);
 $binder = new \Gt\DomTemplate\DocumentBinder($document);
 
 $binder->bindList($data);
-$binder->cleanBindAttributes();
+$binder->cleanDatasets();
 echo $document;
 ```
 
