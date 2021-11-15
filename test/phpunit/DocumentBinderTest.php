@@ -141,6 +141,21 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("This should bind", $document->querySelector("#container3 p span")->textContent);
 	}
 
+	public function testBindKeyValue_null():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$sut = new DocumentBinder($document);
+
+		$exception = null;
+		try {
+			$sut->bindKeyValue("title", null);
+		}
+		catch(Exception $exception) {}
+
+		self::assertNull($exception);
+		self::assertSame("Default title", $document->querySelector("#container3 h1")->textContent);
+		self::assertSame("default title", $document->querySelector("#container3 p span")->textContent);
+	}
+
 	public function testBindData_assocArray():void {
 		$username = uniqid("user");
 		$email = uniqid() . "@example.com";
