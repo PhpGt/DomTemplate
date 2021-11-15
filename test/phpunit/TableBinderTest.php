@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\HTMLElement\HTMLInputElement;
 use Gt\Dom\HTMLElement\HTMLTableCellElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
@@ -401,6 +402,51 @@ class TableBinderTest extends TestCase {
 			foreach($row->cells as $cellIndex => $cell) {
 				$expected = $tableData[$rowIndex + 1][$cellIndex] ?? "";
 				self::assertSame((string)$expected, $cell->textContent);
+			}
+		}
+	}
+
+	public function testBindTableData_existingBodyRow():void {
+		$tableData = [
+			["id", "code", "name", "deleted"],
+		];
+// 3, 6 and 9 will be marked as "Deleted".
+		for($i = 1; $i <= 10; $i++) {
+			$name = "Thing $i";
+			array_push($tableData, [$i, md5($name), $name, $i % 3 === 0]);
+		}
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLE_EXISTING_CELLS);
+		$sut = new TableBinder();
+
+		$sut->bindTableData($tableData, $document);
+
+		/** @var HTMLTableSectionElement $tbody */
+		$tbody = $document->querySelector("table tbody");
+
+		$headers = array_shift($tableData);
+
+		/** @var HTMLTableRowElement $tr */
+		foreach($tbody->rows as $rowIndex => $tr) {
+			$rowData = array_combine($headers, $tableData[$rowIndex]);
+
+			self::assertSame((string)$rowData["id"], $tr->cells[1]->textContent);
+			self::assertSame((string)$rowData["name"], $tr->cells[2]->textContent);
+			self::assertSame((string)$rowData["code"], $tr->cells[3]->textContent);
+
+			/** @var HTMLInputElement $input */
+			$input = $tr->cells[0]->querySelector("input");
+			self::assertSame((string)$rowData["id"], $input->value);
+
+			/** @var HTMLInputElement $input */
+			$input = $tr->cells[4]->querySelector("input");
+			self::assertSame((string)$rowData["id"], $input->value);
+
+			if(($rowIndex + 1) % 3 === 0) {
+				self::assertTrue($tr->cells[0]->classList->contains("deleted"));
+			}
+			else {
+				self::assertFalse($tr->cells[0]->classList->contains("deleted"));
 			}
 		}
 	}

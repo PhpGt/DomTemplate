@@ -10,6 +10,14 @@ use Gt\Dom\HTMLElement\HTMLTableSectionElement;
 use Stringable;
 
 class TableBinder {
+	public function __construct(
+		private ?TemplateCollection $templateCollection = null,
+		private ?ElementBinder $elementBinder = null,
+		private ?HTMLAttributeBinder $htmlAttributeBinder = null,
+		private ?HTMLAttributeCollection $htmlAttributeCollection = null,
+		private ?PlaceholderBinder $placeholderBinder = null
+	) {}
+
 	/**
 	 * @param array<int, array<int, string>>|array<int, array<int|string, string|array<int, mixed>>> $tableData
 	 * @param Element $context
@@ -23,6 +31,8 @@ class TableBinder {
 		if($context instanceof Document) {
 			$context = $context->documentElement;
 		}
+
+		$this->initBinders();
 
 		$tableArray = [$context];
 		if(!$context instanceof HTMLTableElement) {
@@ -71,12 +81,23 @@ class TableBinder {
 				$tbody = $table->createTBody();
 			}
 
+			$templateCollection = $this->templateCollection
+				?? new TemplateCollection($context->ownerDocument);
+
 			foreach($tableData as $rowData) {
-				$tr = $tbody->insertRow();
+				try {
+					$trTemplate = $templateCollection->get($tbody);
+					/** @var HTMLTableRowElement $tr */
+					$tr = $trTemplate->insertTemplate();
+				}
+				catch(TemplateElementNotFoundInContextException) {
+					$tr = $tbody->insertRow();
+				}
+
 				/** @var int|string|null $firstKey */
 				$firstKey = key($rowData);
 
-				foreach($allowedHeaders as $allowedHeader) {
+				foreach($allowedHeaders as $headerIndex => $allowedHeader) {
 					$rowIndex = array_search($allowedHeader, $headerRow);
 					$cellTypeToCreate = "td";
 
@@ -98,9 +119,31 @@ class TableBinder {
 						}
 					}
 
-					$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);
+					if($headerIndex < $tr->cells->length - 1) {
+						if(false === $rowIndex) {
+							continue;
+						}
+
+						$cellElement = $tr->cells[$headerIndex];
+					}
+					else {
+						$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);
+					}
+
 					$cellElement->textContent = $columnValue ?? "";
-					$tr->appendChild($cellElement);
+
+					if(!$cellElement->parentElement) {
+						$tr->appendChild($cellElement);
+					}
+				}
+
+				foreach($rowData as $index => $value) {
+					$key = $headerRow[$index];
+					$this->elementBinder->bind(
+						$key,
+						$value,
+						$tr
+					);
 				}
 			}
 		}
@@ -179,5 +222,24 @@ class TableBinder {
 		}
 
 		return $normalised;
+	}
+
+	private function initBinders():void {
+		if(!$this->htmlAttributeBinder) {
+			$this->htmlAttributeBinder = new HTMLAttributeBinder();
+		}
+		if(!$this->htmlAttributeCollection) {
+			$this->htmlAttributeCollection = new HTMLAttributeCollection();
+		}
+		if(!$this->placeholderBinder) {
+			$this->placeholderBinder = new PlaceholderBinder();
+		}
+		if(!$this->elementBinder) {
+			$this->elementBinder = new ElementBinder(
+				$this->htmlAttributeBinder,
+				$this->htmlAttributeCollection,
+				$this->placeholderBinder
+			);
+		}
 	}
 }

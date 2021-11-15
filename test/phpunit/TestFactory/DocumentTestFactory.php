@@ -182,12 +182,46 @@ HTML;
 <table>
 <thead>
 	<tr>
-		<td>ID</td>
-		<td>Name</td>
-		<td>Code</td>
-		<td>Delete</td>
+		<th>ID</th>
+		<th>Name</th>
+		<th>Code</th>
+		<th>Delete</th>
 	</tr>
 </thead>
+</table>
+HTML;
+
+	const HTML_TABLE_EXISTING_CELLS = <<<HTML
+<!doctype html>
+<table>
+<thead>
+	<tr>
+		<th>Delete</th>
+		<th data-table-key="id">ID</th>
+		<th data-table-key="name">Name</th>
+		<th data-table-key="code">Code</th>
+		<th>Flag</th>
+	</tr>
+</thead>
+<tbody>
+	<tr data-template>
+		<td data-bind:class=":deleted">
+			<form method="post">
+				<input type="hidden" name="id" data-bind:value="@name" />
+				<button name="do" value="delete">Delete</button>
+			</form>
+		</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" data-bind:value="@name" />
+				<button name="do" value="flag">Flag</button>
+			</form>
+		</td>
+	</tr>
+</tbody>
 </table>
 HTML;
 
