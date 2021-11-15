@@ -91,7 +91,12 @@ class TableBinder {
 						}
 					}
 					else {
-						$columnValue = $rowData[$rowIndex];
+						if(false === $rowIndex) {
+							$columnValue = "";
+						}
+						else {
+							$columnValue = $rowData[$rowIndex];
+						}
 					}
 
 					$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);

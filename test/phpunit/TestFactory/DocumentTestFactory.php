@@ -177,6 +177,21 @@ HTML;
 </div>
 HTML;
 
+	const HTML_TABLE_ID_NAME_CODE = <<<HTML
+<!doctype html>
+<table>
+<thead>
+	<tr>
+		<td>ID</td>
+		<td>Name</td>
+		<td>Code</td>
+		<td>Delete</td>
+	</tr>
+</thead>
+</table>
+HTML;
+
+
 	const HTML_LIST_TEMPLATE = <<<HTML
 <!doctype html>
 <ul>

@@ -373,4 +373,35 @@ class TableBinderTest extends TestCase {
 
 		self::assertCount(4, $document->querySelectorAll("table tr"));
 	}
+
+	public function testBindTableData_emptyHeader():void {
+		$sut = new TableBinder();
+		$tableData = [
+			["ID", "Name", "Code"],
+		];
+		for($i = 1; $i <= 10; $i++) {
+			$name = "Thing $i";
+			array_push($tableData, [$i, $name, md5($name)]);
+		}
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLE_ID_NAME_CODE);
+		$sut->bindTableData($tableData, $document);
+
+		/** @var HTMLTableElement $table */
+		$table = $document->querySelector("table");
+		/** @var HTMLTableRowElement $theadRow */
+		$theadRow = $table->tHead->rows[0];
+		self::assertCount(4, $theadRow->cells);
+		self::assertSame("Delete", $theadRow->cells[3]->textContent);
+
+		/** @var HTMLTableSectionElement $tbody */
+		$tbody = $table->tBodies[0];
+		/** @var HTMLTableRowElement $row */
+		foreach($tbody->rows as $rowIndex => $row) {
+			foreach($row->cells as $cellIndex => $cell) {
+				$expected = $tableData[$rowIndex + 1][$cellIndex] ?? "";
+				self::assertSame((string)$expected, $cell->textContent);
+			}
+		}
+	}
 }
