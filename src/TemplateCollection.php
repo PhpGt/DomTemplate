@@ -35,8 +35,8 @@ class TemplateCollection {
 
 	private function extractTemplates(Document $document):void {
 		$dataTemplateArray = [];
+		/** @var Element $element */
 		foreach($document->querySelectorAll("[data-template]") as $element) {
-			/** @var Element $element */
 			$nodePath = (string)(new NodePathCalculator($element));
 			$templateElement = new TemplateElement($element);
 			$key = $templateElement->getTemplateName() ?? $nodePath;

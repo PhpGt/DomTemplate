@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
+use Gt\Dom\XPathResult;
 
 class DocumentBinder {
 	private ElementBinder $elementBinder;
@@ -129,11 +130,11 @@ class DocumentBinder {
 	}
 
 	public function cleanDatasets():void {
+		/** @var XPathResult<Attr> $xpathResult */
 		$xpathResult = $this->document->evaluate(
 			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-template')]"
 		);
 		foreach($xpathResult as $item) {
-			/** @var Attr $item */
 			$item->ownerElement->removeAttribute($item->name);
 		}
 	}

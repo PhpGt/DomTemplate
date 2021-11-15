@@ -14,6 +14,10 @@ class HTMLAttributeBinder {
 		mixed $value,
 		Document|Element $element
 	):void {
+		if(is_null($value)) {
+			return;
+		}
+
 		if($element instanceof Document) {
 			$element = $element->documentElement;
 		}
