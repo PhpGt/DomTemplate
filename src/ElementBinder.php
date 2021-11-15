@@ -34,8 +34,8 @@ class ElementBinder {
 		mixed $value,
 		Element $context
 	):void {
+		/** @var Element $element */
 		foreach($this->htmlAttributeCollection->find($context) as $element) {
-			/** @var Element $element */
 			$this->htmlAttributeBinder->expandAttributes($element);
 			$this->htmlAttributeBinder->bind($key, $value, $element);
 		}

@@ -35,10 +35,10 @@ class PlaceholderBinder {
 			/** @var Text|Attr $text */
 			$text = $attributeOrText;
 			if($text instanceof Attr) {
+				/** @var Text $text */
 				$text = $text->firstChild;
 			}
 
-			/** @var Text $text */
 			$placeholder = $text->splitText(
 				strpos($text->data, "{{")
 			);

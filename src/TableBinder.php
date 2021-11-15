@@ -37,9 +37,8 @@ class TableBinder {
 		}
 
 		$headerRow = array_shift($tableData);
+		/** @var HTMLTableElement $table */
 		foreach($tableArray as $table) {
-			/** @var HTMLTableElement $table */
-
 			$allowedHeaders = $headerRow;
 
 			$tHead = $table->tHead;
