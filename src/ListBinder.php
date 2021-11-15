@@ -73,6 +73,10 @@ class ListBinder {
 				);
 			}
 
+			if(is_null($listItem)) {
+				continue;
+			}
+
 			if($this->isKVP($listItem)) {
 				$elementBinder->bind(null, $listKey, $t);
 

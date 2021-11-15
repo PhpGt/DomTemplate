@@ -489,6 +489,25 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindList_nullData():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$sut = new DocumentBinder($document);
+
+		$listData = ["One", null, "Three"];
+		$sut->bindList($listData);
+
+		$liElementList = $document->querySelectorAll("ul li");
+
+		foreach($listData as $i => $listItem) {
+			if(is_null($listItem)) {
+				self::assertSame("Template item!", $liElementList[$i]->textContent);
+			}
+			else {
+				self::assertSame($listItem, $liElementList[$i]->textContent);
+			}
+		}
+	}
+
 	public function testBindList_emptyLeavesNoWhiteSpace():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$sut = new DocumentBinder($document);
