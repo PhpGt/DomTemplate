@@ -401,6 +401,50 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindTable_withNullData():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		$tableData = [
+			["Name", "Position"],
+			["Alan Statham", "Head of Radiology"],
+			["Sue White", "Staff Liason Officer"],
+			["Mac Macartney", null],
+			["Joanna Clore", "HR"],
+			["Caroline Todd", null],
+		];
+
+		$exception = null;
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+		try {
+			$sut->bindTable($tableData, $table);
+		}
+		catch(Exception $exception) {}
+		self::assertNull($exception);
+
+		foreach($tableData as $rowIndex => $rowData) {
+			/** @var HTMLTableRowElement $row */
+			$row = $table->rows[$rowIndex];
+
+			foreach($rowData as $cellIndex => $cellValue) {
+				if(($rowIndex === 3 || $rowIndex === 5)
+				&& $cellIndex === 1) {
+					self::assertSame(
+						"",
+						$row->cells[$cellIndex]->textContent
+					);
+				}
+				else {
+					self::assertSame(
+						$cellValue,
+						$row->cells[$cellIndex]->textContent
+					);
+				}
+			}
+		}
+	}
+
 	public function testBindKeyValue_tableData():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 		$sut = new DocumentBinder($document);

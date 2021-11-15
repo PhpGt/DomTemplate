@@ -95,7 +95,7 @@ class TableBinder {
 					}
 
 					$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);
-					$cellElement->textContent = $columnValue;
+					$cellElement->textContent = $columnValue ?? "";
 					$tr->appendChild($cellElement);
 				}
 			}
