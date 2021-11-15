@@ -174,6 +174,24 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($category, $document->getElementById("dd3")->textContent);
 	}
 
+	public function testBindData_assocArray_withNull():void {
+		$username = uniqid("user");
+		$email = null;
+		$category = uniqid("category-");
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData([
+			"username" => $username,
+			"email" => $email,
+			"category" => $category,
+		]);
+
+		self::assertSame($username, $document->getElementById("dd1")->textContent);
+		self::assertSame("you@example.com", $document->getElementById("dd2")->textContent);
+		self::assertSame($category, $document->getElementById("dd3")->textContent);
+	}
+
 	public function testBindData_indexedArray():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
@@ -195,6 +213,21 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
 		self::assertSame($userObject->email, $document->getElementById("dd2")->textContent);
 		self::assertSame($userObject->category, $document->getElementById("dd3")->textContent);
+	}
+
+	public function testBindData_object_withNull():void {
+		$userObject = new StdClass();
+		$userObject->username = "g105b";
+		$userObject->email = "greg.bowler@g105b.com";
+		$userObject->category = null;
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData($userObject);
+
+		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
+		self::assertSame($userObject->email, $document->getElementById("dd2")->textContent);
+		self::assertSame("N/A", $document->getElementById("dd3")->textContent);
 	}
 
 	public function testBindData_indexArray_shouldThrowException():void {
