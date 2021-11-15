@@ -12,6 +12,10 @@ class PlaceholderBinder {
 		mixed $value,
 		Node|Document $context
 	):void {
+		if(is_null($value)) {
+			return;
+		}
+
 		if($context instanceof Document) {
 			$context = $context->documentElement;
 		}
@@ -31,10 +35,10 @@ class PlaceholderBinder {
 			/** @var Text|Attr $text */
 			$text = $attributeOrText;
 			if($text instanceof Attr) {
+				/** @var Text $text */
 				$text = $text->firstChild;
 			}
 
-			/** @var Text $text */
 			$placeholder = $text->splitText(
 				strpos($text->data, "{{")
 			);

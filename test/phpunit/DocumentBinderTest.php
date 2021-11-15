@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate\Test;
 
 use DateInterval;
+use Exception;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLCollection;
 use Gt\Dom\HTMLElement\HTMLButtonElement;
@@ -104,6 +105,19 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("updated <b>bold</b>", $document->getElementById("o9")->innerHTML);
 	}
 
+	public function testBindValue_null():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$sut = new DocumentBinder($document);
+
+		$exception = null;
+		try {
+			$sut->bindValue(null);
+		}
+		catch(Exception $exception) {}
+
+		self::assertNull($exception);
+	}
+
 	public function testBindKeyValue_noMatches():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);
@@ -127,6 +141,21 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("This should bind", $document->querySelector("#container3 p span")->textContent);
 	}
 
+	public function testBindKeyValue_null():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$sut = new DocumentBinder($document);
+
+		$exception = null;
+		try {
+			$sut->bindKeyValue("title", null);
+		}
+		catch(Exception $exception) {}
+
+		self::assertNull($exception);
+		self::assertSame("Default title", $document->querySelector("#container3 h1")->textContent);
+		self::assertSame("default title", $document->querySelector("#container3 p span")->textContent);
+	}
+
 	public function testBindData_assocArray():void {
 		$username = uniqid("user");
 		$email = uniqid() . "@example.com";
@@ -142,6 +171,24 @@ class DocumentBinderTest extends TestCase {
 
 		self::assertSame($username, $document->getElementById("dd1")->textContent);
 		self::assertSame($email, $document->getElementById("dd2")->textContent);
+		self::assertSame($category, $document->getElementById("dd3")->textContent);
+	}
+
+	public function testBindData_assocArray_withNull():void {
+		$username = uniqid("user");
+		$email = null;
+		$category = uniqid("category-");
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData([
+			"username" => $username,
+			"email" => $email,
+			"category" => $category,
+		]);
+
+		self::assertSame($username, $document->getElementById("dd1")->textContent);
+		self::assertSame("you@example.com", $document->getElementById("dd2")->textContent);
 		self::assertSame($category, $document->getElementById("dd3")->textContent);
 	}
 
@@ -166,6 +213,21 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
 		self::assertSame($userObject->email, $document->getElementById("dd2")->textContent);
 		self::assertSame($userObject->category, $document->getElementById("dd3")->textContent);
+	}
+
+	public function testBindData_object_withNull():void {
+		$userObject = new StdClass();
+		$userObject->username = "g105b";
+		$userObject->email = "greg.bowler@g105b.com";
+		$userObject->category = null;
+
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData($userObject);
+
+		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
+		self::assertSame($userObject->email, $document->getElementById("dd2")->textContent);
+		self::assertSame("N/A", $document->getElementById("dd3")->textContent);
 	}
 
 	public function testBindData_indexArray_shouldThrowException():void {
@@ -339,6 +401,50 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindTable_withNullData():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$sut = new DocumentBinder($document);
+
+		$tableData = [
+			["Name", "Position"],
+			["Alan Statham", "Head of Radiology"],
+			["Sue White", "Staff Liason Officer"],
+			["Mac Macartney", null],
+			["Joanna Clore", "HR"],
+			["Caroline Todd", null],
+		];
+
+		$exception = null;
+		/** @var HTMLTableElement $table */
+		$table = $document->getElementById("tbl1");
+		try {
+			$sut->bindTable($tableData, $table);
+		}
+		catch(Exception $exception) {}
+		self::assertNull($exception);
+
+		foreach($tableData as $rowIndex => $rowData) {
+			/** @var HTMLTableRowElement $row */
+			$row = $table->rows[$rowIndex];
+
+			foreach($rowData as $cellIndex => $cellValue) {
+				if(($rowIndex === 3 || $rowIndex === 5)
+				&& $cellIndex === 1) {
+					self::assertSame(
+						"",
+						$row->cells[$cellIndex]->textContent
+					);
+				}
+				else {
+					self::assertSame(
+						$cellValue,
+						$row->cells[$cellIndex]->textContent
+					);
+				}
+			}
+		}
+	}
+
 	public function testBindKeyValue_tableData():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
 		$sut = new DocumentBinder($document);
@@ -380,6 +486,25 @@ class DocumentBinderTest extends TestCase {
 
 		foreach($listData as $i => $listItem) {
 			self::assertSame($listItem, $liElementList[$i]->textContent);
+		}
+	}
+
+	public function testBindList_nullData():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$sut = new DocumentBinder($document);
+
+		$listData = ["One", null, "Three"];
+		$sut->bindList($listData);
+
+		$liElementList = $document->querySelectorAll("ul li");
+
+		foreach($listData as $i => $listItem) {
+			if(is_null($listItem)) {
+				self::assertSame("Template item!", $liElementList[$i]->textContent);
+			}
+			else {
+				self::assertSame($listItem, $liElementList[$i]->textContent);
+			}
 		}
 	}
 

@@ -37,9 +37,8 @@ class TableBinder {
 		}
 
 		$headerRow = array_shift($tableData);
+		/** @var HTMLTableElement $table */
 		foreach($tableArray as $table) {
-			/** @var HTMLTableElement $table */
-
 			$allowedHeaders = $headerRow;
 
 			$tHead = $table->tHead;
@@ -100,7 +99,7 @@ class TableBinder {
 					}
 
 					$cellElement = $tr->ownerDocument->createElement($cellTypeToCreate);
-					$cellElement->textContent = $columnValue;
+					$cellElement->textContent = $columnValue ?? "";
 					$tr->appendChild($cellElement);
 				}
 			}
