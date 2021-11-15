@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate\Test;
 
 use DateInterval;
+use Exception;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLCollection;
 use Gt\Dom\HTMLElement\HTMLButtonElement;
@@ -102,6 +103,19 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("updated <b>bold</b>", $document->getElementById("o7")->innerHTML);
 		self::assertSame("updated <b>bold</b>", $document->getElementById("o8")->innerHTML);
 		self::assertSame("updated <b>bold</b>", $document->getElementById("o9")->innerHTML);
+	}
+
+	public function testBindValue_null():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$sut = new DocumentBinder($document);
+
+		$exception = null;
+		try {
+			$sut->bindValue(null);
+		}
+		catch(Exception $exception) {}
+
+		self::assertNull($exception);
 	}
 
 	public function testBindKeyValue_noMatches():void {
