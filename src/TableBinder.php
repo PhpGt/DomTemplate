@@ -138,7 +138,18 @@ class TableBinder {
 				}
 
 				foreach($rowData as $index => $value) {
-					$key = $headerRow[$index];
+					$headerRowIndex = $index;
+					if(!is_int($index)) {
+						$headerRowIndex = null;
+						foreach($tableData as $tableDataIndex => $tableDatum) {
+							if($index === key($tableDatum)) {
+								$headerRowIndex = $tableDataIndex;
+								break;
+							}
+						}
+					}
+
+					$key = $headerRow[$headerRowIndex];
 					$this->elementBinder->bind(
 						$key,
 						$value,
