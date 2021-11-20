@@ -148,7 +148,7 @@ class DocumentBinder {
 			$context = $this->document->documentElement;
 		}
 
-		if(is_callable($value)) {
+		if(is_callable($value) && !is_string($value)) {
 			$value = call_user_func($value);
 		}
 

@@ -912,4 +912,12 @@ class DocumentBinderTest extends TestCase {
 			self::assertSame($game, $document->querySelectorAll(".game li")[$i]->textContent);
 		}
 	}
+
+	public function testBindValue_callableString():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$sut = new DocumentBinder($document);
+		$value = "explode";
+		$sut->bindValue($value);
+		self::assertSame($value, $document->querySelector("output")->textContent);
+	}
 }
