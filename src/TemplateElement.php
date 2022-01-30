@@ -32,8 +32,8 @@ class TemplateElement {
 	}
 
 	public function getClone():Element {
-		/** @var Element $element */
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		/** @var Element $element */
 		$element = $this->originalElement->cloneNode(true);
 		return $element;
 	}
