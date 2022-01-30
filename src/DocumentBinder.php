@@ -16,6 +16,7 @@ class DocumentBinder {
 
 	/**
 	 * @param array<string, string> $config
+	 * @noinspection PhpPropertyOnlyWrittenInspection
 	 */
 	public function __construct(
 		private Document $document,

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpPropertyOnlyWrittenInspection tracked in issue #290 */
 namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
@@ -6,7 +6,7 @@ use Gt\Dom\Text;
 
 class PlaceholderText {
 	private string $bindKey;
-	private ?string $default; /** @phpstan-ignore-line tracked in issue #290 */
+	private ?string $default; /** @phpstan-ignore-line */
 
 	public function __construct(
 		private Text $originalText

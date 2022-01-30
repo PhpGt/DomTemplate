@@ -173,6 +173,10 @@ class HTMLAttributeBinder {
 			$this->tableBinder->bindTableData($bindValue, $element);
 			break;
 
+		case "value":
+			$element->value = $bindValue;
+			break;
+
 		default:
 			if($modifier) {
 				$this->handleModifier(
@@ -183,22 +187,7 @@ class HTMLAttributeBinder {
 				);
 			}
 			else {
-				if($element instanceof HTMLSelectElement
-				&& $bindProperty === "value") {
-					/** @var HTMLOptionElement $option */
-					foreach($element->options as $option) {
-						$optionValue = $option->value;
-						if($bindValue == $optionValue) {
-							$option->selected = true;
-						}
-						else {
-							$option->selected = false;
-						}
-					}
-				}
-				else {
-					$element->setAttribute($bindProperty, $bindValue);
-				}
+				$element->setAttribute($bindProperty, $bindValue);
 			}
 
 			break;
