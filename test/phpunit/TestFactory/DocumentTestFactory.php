@@ -654,6 +654,40 @@ HTML;
 </main>
 HTML;
 
+	const HTML_SELECT_OPTIONS_WITH_VALUE = <<<HTML
+<!doctype html>
+<form>
+	<label>
+		<span>Select your drink preference</span>
+		<select name="drink" data-bind:value="drink">
+			<option></option>
+			<option value="coffee">Coffee</option>		
+			<option value="tea">Tea</option>		
+			<option value="chocolate">Chocolate</option>		
+			<option value="soda">Soda</option>		
+			<option value="water">Water</option>		
+		</select>
+	</label>
+</form>
+HTML;
+
+	const HTML_SELECT_OPTIONS_WITHOUT_VALUE = <<<HTML
+<!doctype html>
+<form>
+	<label>
+		<span>Select your drink preference</span>
+		<select name="drink" data-bind:value="drink">
+			<option></option>
+			<option>Coffee</option>		
+			<option>Tea</option>		
+			<option>Chocolate</option>		
+			<option>Soda</option>		
+			<option>Water</option>		
+		</select>
+	</label>
+</form>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);

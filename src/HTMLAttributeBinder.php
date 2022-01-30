@@ -5,6 +5,8 @@ use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
 use Gt\Dom\Element;
 use Gt\Dom\Facade\DOMTokenListFactory;
+use Gt\Dom\HTMLElement\HTMLOptionElement;
+use Gt\Dom\HTMLElement\HTMLSelectElement;
 
 class HTMLAttributeBinder {
 	private TableBinder $tableBinder;
@@ -181,7 +183,22 @@ class HTMLAttributeBinder {
 				);
 			}
 			else {
-				$element->setAttribute($bindProperty, $bindValue);
+				if($element instanceof HTMLSelectElement
+				&& $bindProperty === "value") {
+					/** @var HTMLOptionElement $option */
+					foreach($element->options as $option) {
+						$optionValue = $option->value;
+						if($bindValue == $optionValue) {
+							$option->selected = true;
+						}
+						else {
+							$option->selected = false;
+						}
+					}
+				}
+				else {
+					$element->setAttribute($bindProperty, $bindValue);
+				}
 			}
 
 			break;
