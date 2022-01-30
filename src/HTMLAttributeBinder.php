@@ -7,6 +7,7 @@ use Gt\Dom\Element;
 use Gt\Dom\Facade\DOMTokenListFactory;
 use Gt\Dom\HTMLElement\HTMLOptionElement;
 use Gt\Dom\HTMLElement\HTMLSelectElement;
+use Gt\Dom\HTMLElement\HTMLUIElement;
 
 class HTMLAttributeBinder {
 	private TableBinder $tableBinder;
@@ -174,7 +175,7 @@ class HTMLAttributeBinder {
 			break;
 
 		case "value":
-			$element->value = $bindValue;
+			$element->value = $bindValue; /** @phpstan-ignore-line  */
 			break;
 
 		default:
