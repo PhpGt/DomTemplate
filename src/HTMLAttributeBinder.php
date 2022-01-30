@@ -173,6 +173,10 @@ class HTMLAttributeBinder {
 			$this->tableBinder->bindTableData($bindValue, $element);
 			break;
 
+		case "value":
+			$element->value = $bindValue; /** @phpstan-ignore-line  */
+			break;
+
 		default:
 			if($modifier) {
 				$this->handleModifier(
