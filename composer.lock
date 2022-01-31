@@ -62,16 +62,16 @@
         },
         {
             "name": "phpgt/dom",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "83dcb5aa54743becd2684bf73016b5913d4bb823"
+                "reference": "762e10859d660d30c159cba3e8af19ec1ae5203c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/83dcb5aa54743becd2684bf73016b5913d4bb823",
-                "reference": "83dcb5aa54743becd2684bf73016b5913d4bb823",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/762e10859d660d30c159cba3e8af19ec1ae5203c",
+                "reference": "762e10859d660d30c159cba3e8af19ec1ae5203c",
                 "shasum": ""
             },
             "require": {
@@ -148,7 +148,7 @@
             "description": "The modern DOM API for PHP projects.",
             "support": {
                 "issues": "https://github.com/PhpGt/Dom/issues",
-                "source": "https://github.com/PhpGt/Dom/tree/v3.0.1"
+                "source": "https://github.com/PhpGt/Dom/tree/v3.0.2"
             },
             "funding": [
                 {
@@ -156,7 +156,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-01-30T16:10:07+00:00"
+            "time": "2022-01-30T16:47:45+00:00"
         },
         {
             "name": "phpgt/propfunc",
@@ -2436,5 +2436,5 @@
         "ext-dom": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.2.0"
 }
