@@ -12,10 +12,6 @@ class PlaceholderBinder {
 		mixed $value,
 		Node|Document $context
 	):void {
-		if(is_null($value)) {
-			return;
-		}
-
 		if($context instanceof Document) {
 			$context = $context->documentElement;
 		}

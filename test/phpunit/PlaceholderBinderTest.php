@@ -47,6 +47,33 @@ class PlaceholderBinderTest extends TestCase {
 		self::assertSame("https://www.php.gt/domtemplate", $link->href);
 	}
 
+	public function testBind_nullDefault():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new PlaceholderBinder();
+		$testElement = $document->getElementById("test2");
+		$greeting = $testElement->querySelector("p.greeting");
+		$sut->bind("name", null, $document);
+		self::assertSame("Hello, you!", $greeting->textContent);
+	}
+
+	public function testBind_emptyDefault():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new PlaceholderBinder();
+		$testElement = $document->getElementById("test2");
+		$greeting = $testElement->querySelector("p.greeting");
+		$sut->bind("name", "", $document);
+		self::assertSame("Hello, you!", $greeting->textContent);
+	}
+
+	public function testBind_zeroNotDefault():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new PlaceholderBinder();
+		$testElement = $document->getElementById("test2");
+		$greeting = $testElement->querySelector("p.greeting");
+		$sut->bind("name", "0", $document);
+		self::assertSame("Hello, 0!", $greeting->textContent);
+	}
+
 	public function testBind_multipleAttribute():void {
 		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
 		$sut = new PlaceholderBinder();
