@@ -318,6 +318,10 @@ HTML;
 	<p>This example shows how to bind text into attribute placeholders.</p>
 	<p>For more information, <a href="https://www.php.gt/{{repoName ?? domtemplate}}">view the docs.</a></p>
 </main>
+<main id="test5">
+	<p>Please consider sponsoring this project</p>
+	<p><a href="https://github.com/sponsors/{{org}}/sponsorships?tier_id={{tierId}}">Sponsor via GitHub.</a></p>
+</main>
 HTML;
 	const HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES = <<<HTML
 <!doctype html>

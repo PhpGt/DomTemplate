@@ -46,4 +46,15 @@ class PlaceholderBinderTest extends TestCase {
 		$sut->bind("repoName", "domtemplate", $testElement);
 		self::assertSame("https://www.php.gt/domtemplate", $link->href);
 	}
+
+	public function testBind_multipleAttribute():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new PlaceholderBinder();
+		$testElement = $document->getElementById("test5");
+		/** @var HTMLAnchorElement $link */
+		$link = $testElement->querySelector("a");
+		$sut->bind("org", "PhpGt", $link);
+		$sut->bind("tierId", "47297", $link);
+		self::assertSame("https://github.com/sponsors/PhpGt/sponsorships?tier_id=47297", $link->href);
+	}
 }
