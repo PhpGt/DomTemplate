@@ -7,7 +7,7 @@ use Gt\Dom\Text;
 
 class TemplateElement {
 	private string $templateParentPath;
-	private ?string $templateNextSiblingPath;
+	private ?Element $templateNextSibling;
 
 	public function __construct(
 		private Element $originalElement
@@ -21,10 +21,10 @@ class TemplateElement {
 				break;
 			}
 		}
-		$this->templateNextSiblingPath =
+		$this->templateNextSibling =
 			is_null($siblingContext)
 			? null
-			: new NodePathCalculator($this->originalElement->nextElementSibling);
+			: $siblingContext;
 	}
 
 	public function removeOriginalElement():void {
@@ -68,19 +68,7 @@ class TemplateElement {
 	}
 
 	public function getTemplateNextSibling():?Node {
-		if(is_null($this->templateNextSiblingPath)) {
-			return null;
-		}
-
-		$matches = $this->originalElement->ownerDocument->evaluate(
-			$this->templateNextSiblingPath
-		);
-		$sibling = null;
-		while($matches->valid()) {
-			$sibling = $matches->current();
-			$matches->next();
-		}
-		return $sibling;
+		return $this->templateNextSibling ?? null;
 	}
 
 	public function getTemplateName():?string {

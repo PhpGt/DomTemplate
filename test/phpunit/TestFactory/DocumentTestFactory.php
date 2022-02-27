@@ -692,6 +692,16 @@ HTML;
 </form>
 HTML;
 
+	const HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS = <<<HTML
+<!doctype html>
+<h1>Test</h1>
+
+<h2>This element will always be after the H1</h2>
+<p data-template>This is the template element</p>
+<div>This is the contents of the first DIV. The template should come before it.</div>
+<div>This is the contents of the second DIV. The previous DIV should come before it.</div>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
