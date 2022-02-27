@@ -32,7 +32,7 @@ class PlaceholderBinder {
 			$text = $attributeOrText;
 			if($text instanceof Attr) {
 				/** @var Text $text */
-				$text = $text->firstChild;
+				$text = $text->lastChild;
 			}
 
 			$placeholder = $text->splitText(
