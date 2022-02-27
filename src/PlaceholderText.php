@@ -41,6 +41,13 @@ class PlaceholderText {
 	}
 
 	public function setValue(mixed $value):void {
-		$this->originalText->data = (string)$value;
+		$stringValue = (string)$value;
+
+		if(strlen($stringValue) === 0) {
+			$this->originalText->data = $this->default ?: "";
+		}
+		else {
+			$this->originalText->data = $stringValue;
+		}
 	}
 }
