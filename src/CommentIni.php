@@ -45,7 +45,7 @@ class CommentIni {
 // At this point, the ini has successfully parsed.
 			$context = $commentNode;
 			while($context = $context->previousSibling) {
-				if(trim($context->textContent) !== "") {
+				if(trim($context->textContent ?? "") !== "") {
 					throw new CommentIniInvalidDocumentLocationException("A Comment INI must only appear as the first node of the HTML.");
 				}
 			}

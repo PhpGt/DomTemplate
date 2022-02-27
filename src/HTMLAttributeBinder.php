@@ -251,7 +251,7 @@ class HTMLAttributeBinder {
 		string $attribute
 	):DOMTokenList {
 		return DOMTokenListFactory::create(
-			fn() => explode(" ", $node->getAttribute($attribute)),
+			fn() => explode(" ", $node->getAttribute($attribute) ?? ""),
 			fn(string...$tokens) => $node->setAttribute($attribute, implode(" ", $tokens)),
 		);
 	}

@@ -119,7 +119,7 @@ class ListBinder {
 	):void {
 		$template = $this->templateCollection->get($context, $templateName);
 		$parent = $template->getTemplateParent();
-		$parent->innerHTML = trim($parent->innerHTML);
+		$parent->innerHTML = trim($parent->innerHTML ?? "");
 	}
 
 	private function isKVP(mixed $item):bool {
