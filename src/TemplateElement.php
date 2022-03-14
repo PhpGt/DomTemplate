@@ -12,11 +12,15 @@ class TemplateElement {
 	public function __construct(
 		private Element $originalElement
 	) {
-		$this->templateParentPath = new NodePathCalculator($this->originalElement->parentElement);
+		$parentElement = $this->originalElement->parentElement;
+		if(!$parentElement->id) {
+			$parentElement->id = uniqid("template-parent-");
+		}
+
+		$this->templateParentPath = new NodePathCalculator($parentElement);
 
 		$siblingContext = $this->originalElement;
 		while($siblingContext = $siblingContext->nextElementSibling) {
-			/** @var Element|Text $siblingContext */
 			if(!$siblingContext->hasAttribute("data-template")) {
 				break;
 			}

@@ -8,6 +8,7 @@ use Gt\Dom\HTMLCollection;
 use Gt\Dom\HTMLElement\HTMLButtonElement;
 use Gt\Dom\HTMLElement\HTMLImageElement;
 use Gt\Dom\HTMLElement\HTMLParagraphElement;
+use Gt\Dom\HTMLElement\HTMLSelectElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
 use Gt\DomTemplate\Bind;
@@ -919,5 +920,47 @@ class DocumentBinderTest extends TestCase {
 		$value = "explode";
 		$sut->bindValue($value);
 		self::assertSame($value, $document->querySelector("output")->textContent);
+	}
+
+	public function testBindList_twoListsWithSamePath():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TEMPLATES_WITH_SAME_XPATH);
+		$sut = new DocumentBinder($document);
+		$list1 = [
+			["uuid" => "AAAAAAAA", "fullName" => "Test 1"],
+			["uuid" => "BBBBBBBB", "fullName" => "Test 2"],
+			["uuid" => "CCCCCCCC", "fullName" => "Test 3"],
+			["uuid" => "DDDDDDDD", "fullName" => "Test 4"],
+		];
+		$list2 = [
+			["uuid" => "EEEEEEEE", "fullName" => "Test 5"],
+			["uuid" => "FFFFFFFF", "fullName" => "Test 6"],
+		];
+
+		/** @var HTMLSelectElement $select1 */
+		$select1 = $document->querySelector("[name='pass-on-to']");
+		/** @var HTMLSelectElement $select2 */
+		$select2 = $document->querySelector("[name='tag-user']");
+
+		$sut->bindList($list1, $select1);
+		$sut->bindList($list2, $select2);
+		$sut->cleanDatasets();
+
+		$optionList1 = $select1->options;
+		$optionList2 = $select2->options;
+
+		self::assertCount(count($list1) + 1, $optionList1);
+		self::assertCount(count($list2) + 1, $optionList2);
+
+		foreach($list1 as $i => $item) {
+			$option = $optionList1[$i + 1];
+			self::assertSame($item["uuid"], $option->value);
+			self::assertSame($item["fullName"], $option->textContent);
+		}
+
+		foreach($list2 as $i => $item) {
+			$option = $optionList2[$i + 1];
+			self::assertSame($item["uuid"], $option->value);
+			self::assertSame($item["fullName"], $option->textContent);
+		}
 	}
 }

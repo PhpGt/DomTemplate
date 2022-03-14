@@ -702,6 +702,51 @@ HTML;
 <div>This is the contents of the second DIV. The previous DIV should come before it.</div>
 HTML;
 
+	const HTML_TEMPLATES_WITH_SAME_XPATH = <<<HTML
+<!doctype html>
+<main class="rfi">
+	<input type="radio" name="tab-control" id="tab-report" checked />
+	<input type="radio" name="tab-control" id="tab-log"/>
+	<input type="radio" name="tab-control" id="tab-emails"/>
+	<input type="radio" name="tab-control" id="tab-attachments"/>
+
+	<section id="report">
+		<h1>Non Conformance Report (NCR)</h1>
+		<a href="../" class="close"><span>Close</span></a>
+
+		<form method="post" class="submission" enctype="multipart/form-data">
+			<input type="hidden" name="issuerUuid" data-bind:value="userUuid" />
+
+			<h2>NCR Submission</h2>
+
+			<div class="actions">
+				<div>
+					<label>
+						<span>Pass on to</span>
+						<select name="pass-on-to" data-bind:value="passOnToUserUuid">
+							<option></option>
+							<option data-template data-bind:text="fullName" data-bind:value="uuid"></option>
+						</select>
+					</label>
+					<label>
+						<span>Assign User</span>
+						<select name="tag-user" data-bind:value="tagUserUuid">
+							<option></option>
+							<option data-template data-bind:text="fullName" data-bind:value="uuid"></option>
+						</select>
+					</label>
+				</div>
+
+				<div class="buttons">
+					<button name="do" value="save-request">Save</button>
+					<button name="do" value="submit-request" onclick="return confirm('Are you sure this NCR is ready to be submitted?')">Submit NCR</button>
+				</div>
+			</div>
+		</form>
+	</section>
+</main>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
