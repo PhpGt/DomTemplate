@@ -37,8 +37,8 @@ class TemplateCollection {
 		$dataTemplateArray = [];
 		/** @var Element $element */
 		foreach($document->querySelectorAll("[data-template]") as $element) {
-			$nodePath = (string)(new NodePathCalculator($element));
 			$templateElement = new TemplateElement($element);
+			$nodePath = (string)(new NodePathCalculator($element));
 			$key = $templateElement->getTemplateName() ?? $nodePath;
 			$dataTemplateArray[$key] = $templateElement;
 		}
@@ -54,13 +54,6 @@ class TemplateCollection {
 		foreach($dataTemplateArray as $template) {
 			$template->removeOriginalElement();
 		}
-
-//		foreach($dataTemplateArray as $nodePath => $element) {
-//			/** @var Element $element */
-//			$templateElement = new TemplateElement($element);
-//			$name = $templateElement->getTemplateName() ?? $nodePath;
-//			$this->elementKVP[$name] = $templateElement;
-//		}
 
 		$this->elementKVP = array_reverse($dataTemplateArray, true);
 	}
