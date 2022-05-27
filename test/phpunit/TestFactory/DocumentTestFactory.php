@@ -747,6 +747,33 @@ HTML;
 </main>
 HTML;
 
+	const HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION = <<<HTML
+<!-- extends=extended-page-1 -->
+<div>
+	This is the deepest part of the cyclic recursion.
+</div> 
+HTML;
+
+
+	const HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_1 = <<<HTML
+<!--
+extends=extended-page-2
+-->
+<div>
+	This HTML extends page 2. 
+</div>
+<div data-partial>Extended page is injected here</div>
+HTML;
+
+	const HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_2 = <<<HTML
+<!--
+extends=extended-page-1
+-->
+<div>
+	This HTML extends page 1.
+</div>
+<div data-partial>Extended page is injected here</div>
+HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return HTMLDocumentFactory::create($html);
