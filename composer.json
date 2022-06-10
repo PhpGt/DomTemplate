@@ -2,11 +2,17 @@
 	"name": "phpgt/domtemplate",
 	"description": "Bind dynamic data to reusable HTML components.",
 	"license": "MIT",
-
+	"repositories": [{
+		"type": "path",
+		"url": "/home/g105b/Code/PhpGt/Dom",
+		"options": {
+			"symlink": true
+		}
+	}],
 	"require": {
-		"php": ">=8.0",
+		"php": ">=8.1",
 		"ext-dom": "*",
-		"phpgt/dom": "^3.0"
+		"phpgt/dom": "dev-323-domdocument-extension"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^v9.5",
