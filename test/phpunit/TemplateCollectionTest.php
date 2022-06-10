@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\ElementBinder;
 use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\TemplateElementNotFoundInContextException;
@@ -9,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class TemplateCollectionTest extends TestCase {
 	public function testGet_noName_noMatch():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$sut = new TemplateCollection($document);
 
 		self::expectException(TemplateElementNotFoundInContextException::class);
@@ -17,7 +18,7 @@ class TemplateCollectionTest extends TestCase {
 	}
 
 	public function testGet_noName():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$ul = $document->querySelector("ul");
 		$ol = $document->querySelector("ol");
 		self::assertCount(1, $ul->children);
@@ -27,22 +28,22 @@ class TemplateCollectionTest extends TestCase {
 		self::assertCount(1, $ol->children);
 		$templateElement = $sut->get($document);
 		$inserted = $templateElement->insertTemplate();
-		self::assertSame("LI", $inserted->tagName);
+		self::assertSame("li", $inserted->tagName);
 		self::assertSame($ul, $templateElement->getTemplateParent());
 		self::assertSame($ul, $inserted->parentElement);
 	}
 
 	public function testGet_name_noMatch():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS);
 		$sut = new TemplateCollection($document);
 
 		self::expectException(TemplateElementNotFoundInContextException::class);
-		self::expectExceptionMessage('Template element with name "unknown-list" can not be found within the context HTML element.');
+		self::expectExceptionMessage('Template element with name "unknown-list" can not be found within the context html element.');
 		$sut->get($document, "unknown-list");
 	}
 
 	public function testGet_name():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS);
 		$sut = new TemplateCollection($document);
 
 		$templateElement = $sut->get($document, "prog-lang");
@@ -62,7 +63,7 @@ class TemplateCollectionTest extends TestCase {
 	 * ListBinderTest::testBindListData_nestedList()
 	 */
 	public function testBindListData_nestedList_manual():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES);
 		$templateCollection = new TemplateCollection($document);
 		$elementBinder = new ElementBinder();
 
