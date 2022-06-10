@@ -3,7 +3,6 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
-use Gt\Dom\HTMLElement\HTMLElement;
 
 class PartialExpander extends PartialContentExpander {
 	/**
@@ -35,7 +34,6 @@ class PartialExpander extends PartialContentExpander {
 				$partialDocument->title = $currentTitle;
 			}
 
-			/** @var HTMLElement $importedRoot */
 			$importedRoot = $this->document->importNode(
 				$partialDocument->documentElement,
 				true
