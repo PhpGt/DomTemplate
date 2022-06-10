@@ -25,6 +25,9 @@ class PartialExpander extends PartialContentExpander {
 			}
 
 			$partialDocument = $this->partialContent->getHTMLDocument($extends);
+			if(isset($partialDocumentArray[$extends])) {
+				throw new CyclicRecursionException("Partial '$extends' has already been expanded in this document, expanding again would cause cyclic recursion.");
+			}
 			$partialDocumentArray[$extends] = $partialDocument;
 			$context = $partialDocument;
 		}
