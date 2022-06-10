@@ -6,6 +6,7 @@ use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
 use Gt\Dom\DOMTokenListFactory;
 use Gt\Dom\Element;
+use Gt\Dom\ElementType;
 
 class HTMLAttributeBinder {
 	private TableBinder $tableBinder;
@@ -34,7 +35,7 @@ class HTMLAttributeBinder {
 				continue;
 			}
 
-			if(!strstr($attrName, ":")) {
+			if(!str_contains($attrName, ":")) {
 				$tag = $this->getHTMLTag($element);
 				throw new InvalidBindPropertyException("$tag Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
 			}
@@ -48,7 +49,7 @@ class HTMLAttributeBinder {
 				}
 			}
 			else {
-// If there is a key specified, and the bind attribute's value doesn't match,
+// If a key is specified, and the bind attribute's value doesn't match,
 // skip this attribute.
 				$trimmedAttrValue = ltrim($attrValue, ":!?");
 				$trimmedAttrValue = strtok($trimmedAttrValue, " ");
@@ -198,9 +199,8 @@ class HTMLAttributeBinder {
 				);
 			}
 			else {
-				if($element instanceof HTMLSelectElement
+				if($element->elementType === ElementType::HTMLSelectElement
 				&& $bindProperty === "value") {
-					/** @var HTMLOptionElement $option */
 					foreach($element->options as $option) {
 						$optionValue = $option->value;
 						if($bindValue == $optionValue) {
