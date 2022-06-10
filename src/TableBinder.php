@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Document;
 use Gt\Dom\Element;
+use Gt\Dom\ElementType;
 use Gt\Dom\HTMLElement\HTMLTableCellElement;
 use Gt\Dom\HTMLElement\HTMLTableElement;
 use Gt\Dom\HTMLElement\HTMLTableRowElement;
@@ -35,7 +36,7 @@ class TableBinder {
 		$this->initBinders();
 
 		$tableArray = [$context];
-		if(!$context instanceof HTMLTableElement) {
+		if($context->elementType !== ElementType::HTMLTableElement) {
 			$tableArray = [];
 			foreach($context->querySelectorAll("table") as $table) {
 				array_push($tableArray, $table);
@@ -47,7 +48,6 @@ class TableBinder {
 		}
 
 		$headerRow = array_shift($tableData);
-		/** @var HTMLTableElement $table */
 		foreach($tableArray as $table) {
 			$allowedHeaders = $headerRow;
 
@@ -55,10 +55,8 @@ class TableBinder {
 			if($tHead) {
 				$allowedHeaders = [];
 
-				/** @var HTMLTableRowElement $tHeadRow */
 				$tHeadRow = $tHead->rows[0];
 				foreach($tHeadRow->cells as $cell) {
-					/** @var HTMLTableCellElement $cell */
 					$headerKey = $cell->hasAttribute("data-table-key")
 						? $cell->getAttribute("data-table-key")
 						: trim($cell->textContent);
@@ -75,7 +73,6 @@ class TableBinder {
 				}
 			}
 
-			/** @var ?HTMLTableSectionElement $tbody */
 			$tbody = $table->tBodies[0] ?? null;
 			if(!$tbody) {
 				$tbody = $table->createTBody();
@@ -87,7 +84,6 @@ class TableBinder {
 			foreach($tableData as $rowData) {
 				try {
 					$trTemplate = $templateCollection->get($tbody);
-					/** @var HTMLTableRowElement $tr */
 					$tr = $trTemplate->insertTemplate();
 				}
 				catch(TemplateElementNotFoundInContextException) {

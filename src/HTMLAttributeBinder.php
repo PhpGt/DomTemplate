@@ -1,12 +1,11 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
+use Gt\Dom\DOMTokenListFactory;
 use Gt\Dom\Element;
-use Gt\Dom\Facade\DOMTokenListFactory;
-use Gt\Dom\HTMLElement\HTMLOptionElement;
-use Gt\Dom\HTMLElement\HTMLSelectElement;
 
 class HTMLAttributeBinder {
 	private TableBinder $tableBinder;
@@ -24,7 +23,13 @@ class HTMLAttributeBinder {
 			$element = $element->documentElement;
 		}
 
-		foreach($element->attributes as $attrName => $attrValue) {
+		/**
+		 * @var string $attrName
+		 * @var Attr $attr
+		 */
+		foreach($element->attributes as $attrName => $attr) {
+			$attrValue = $attr->value;
+
 			if(!str_starts_with($attrName, "data-bind")) {
 				continue;
 			}
@@ -68,7 +73,13 @@ class HTMLAttributeBinder {
 	}
 
 	public function expandAttributes(Element $element):void {
-		foreach($element->attributes as $attrName => $attrValue) {
+		/**
+		 * @var string $attrName
+		 * @var Attr $attr
+		 */
+		foreach($element->attributes as $attrName => $attr) {
+			$attrValue = $attr->value;
+
 			if(!str_starts_with($attrName, "data-bind:")) {
 				continue;
 			}
