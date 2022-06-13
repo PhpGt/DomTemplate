@@ -199,21 +199,7 @@ class HTMLAttributeBinder {
 				);
 			}
 			else {
-				if($element->elementType === ElementType::HTMLSelectElement
-				&& $bindProperty === "value") {
-					foreach($element->options as $option) {
-						$optionValue = $option->value;
-						if($bindValue == $optionValue) {
-							$option->selected = true;
-						}
-						else {
-							$option->selected = false;
-						}
-					}
-				}
-				else {
-					$element->setAttribute($bindProperty, $bindValue);
-				}
+				$element->setAttribute($bindProperty, $bindValue);
 			}
 
 			break;
