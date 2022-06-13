@@ -1,6 +1,6 @@
 <?php
+use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
-use Gt\Dom\HTMLElement\HTMLElement;
 use Gt\DomTemplate\DocumentBinder;
 
 require __DIR__ . "/../../vendor/autoload.php";
@@ -22,7 +22,7 @@ function example(DocumentBinder $binder):void {
 		"Butter",
 		"Plain flour",
 	];
-	$binder->bindListCallback($listData, function(HTMLElement $element, $listItem, $listKey) {
+	$binder->bindListCallback($listData, function(Element $element, $listItem, $listKey) {
 		$element->classList->add("item-$listKey");
 		return "$listItem (item $listKey)";
 	});
