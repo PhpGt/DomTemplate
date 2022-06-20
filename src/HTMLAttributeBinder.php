@@ -186,7 +186,7 @@ class HTMLAttributeBinder {
 			break;
 
 		case "value":
-			$element->value = $bindValue; /** @phpstan-ignore-line  */
+			$element->value = $bindValue;
 			break;
 
 		default:

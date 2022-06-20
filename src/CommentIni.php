@@ -27,6 +27,7 @@ class CommentIni {
 		$ini = null;
 		$commentNodeToRemove = null;
 
+		/** @var Element|Comment $commentNode */
 		foreach($walker as $commentNode) {
 			if(!$commentNode instanceof Comment) {
 				continue;
