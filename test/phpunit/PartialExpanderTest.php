@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\CommentIni;
+use Gt\DomTemplate\CyclicRecursionException;
 use Gt\DomTemplate\PartialContent;
 use Gt\DomTemplate\PartialContentFileNotFoundException;
 use Gt\DomTemplate\PartialExpander;
@@ -117,6 +118,21 @@ class PartialExpanderTest extends PartialContentTestCase {
 		$sut = new PartialExpander($document, $partialContent);
 		self::expectException(PartialInjectionMultiplePointException::class);
 		self::expectExceptionMessage("The current view extends the partial \"base-page\", but there is more than one element marked with `data-partial`.");
+		$sut->expand();
+	}
+
+	public function testExpand_detectCyclicRecursion():void {
+		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION);
+		$partialContent = self::mockPartialContent(
+			"_partial", [
+				"extended-page-1" => DocumentTestFactory::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_1,
+				"extended-page-2" => DocumentTestFactory::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_2,
+				"partial-base" => DocumentTestFactory::HTML_PARTIAL_VIEW,
+			]
+		);
+		$sut = new PartialExpander($document, $partialContent);
+
+		self::expectException(CyclicRecursionException::class);
 		$sut->expand();
 	}
 }
