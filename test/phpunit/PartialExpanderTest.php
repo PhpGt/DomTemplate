@@ -2,7 +2,6 @@
 namespace Gt\DomTemplate\Test;
 
 use Gt\Dom\HTMLDocument;
-use Gt\DomTemplate\CommentIni;
 use Gt\DomTemplate\CyclicRecursionException;
 use Gt\DomTemplate\PartialContent;
 use Gt\DomTemplate\PartialContentFileNotFoundException;
