@@ -1,8 +1,6 @@
 <?php
 namespace Gt\DomTemplate\Test\TestFactory;
 
-use Gt\Dom\Facade\HTMLDocumentFactory;
-use Gt\Dom\Facade\XMLDocumentFactory;
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\XMLDocument;
 
