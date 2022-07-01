@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c959fb47faab644092fcd0bdb59d3c9",
+    "content-hash": "5f5f2ae66e96eed9fdf142cf445d1c50",
     "packages": [
         {
             "name": "phpgt/cssxpath",
@@ -62,16 +62,16 @@
         },
         {
             "name": "phpgt/dom",
-            "version": "dev-323-domdocument-extension",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "b826c11aec000e05f6a978e39f7f727b5df505d2"
+                "reference": "e27378f0fefe1952353fcd082e4189243ebfcfee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/b826c11aec000e05f6a978e39f7f727b5df505d2",
-                "reference": "b826c11aec000e05f6a978e39f7f727b5df505d2",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/e27378f0fefe1952353fcd082e4189243ebfcfee",
+                "reference": "e27378f0fefe1952353fcd082e4189243ebfcfee",
                 "shasum": ""
             },
             "require": {
@@ -84,8 +84,8 @@
                 "psr/http-message": "^1.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "^1.4",
-                "phpunit/phpunit": "^9.5"
+                "phpstan/phpstan": "v1.8.0",
+                "phpunit/phpunit": "v9.5.21"
             },
             "type": "library",
             "autoload": {
@@ -148,7 +148,7 @@
             "description": "The modern DOM API for PHP projects.",
             "support": {
                 "issues": "https://github.com/PhpGt/Dom/issues",
-                "source": "https://github.com/PhpGt/Dom/tree/323-domdocument-extension"
+                "source": "https://github.com/PhpGt/Dom/tree/v4.0.0"
             },
             "funding": [
                 {
@@ -156,7 +156,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-06-10T10:00:55+00:00"
+            "time": "2022-07-01T11:24:27+00:00"
         },
         {
             "name": "phpgt/propfunc",
@@ -790,16 +790,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.7.15",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "cd0202ea1b1fc6d1bbe156c6e2e18a03e0ff160a"
+                "reference": "b7648d4ee9321665acaf112e49da9fd93df8fbd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cd0202ea1b1fc6d1bbe156c6e2e18a03e0ff160a",
-                "reference": "cd0202ea1b1fc6d1bbe156c6e2e18a03e0ff160a",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b7648d4ee9321665acaf112e49da9fd93df8fbd5",
+                "reference": "b7648d4ee9321665acaf112e49da9fd93df8fbd5",
                 "shasum": ""
             },
             "require": {
@@ -825,7 +825,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.7.15"
+                "source": "https://github.com/phpstan/phpstan/tree/1.8.0"
             },
             "funding": [
                 {
@@ -845,7 +845,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-20T08:29:01+00:00"
+            "time": "2022-06-29T08:53:31+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2342,9 +2342,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phpgt/dom": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
