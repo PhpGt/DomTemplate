@@ -90,16 +90,16 @@ HTML;
 	data-bind:class="size" />
 
 <img id="img2" class="secondary" src="/default.png" alt="Not bound"
-	data-bind:class=":is-selected" />
+	data-bind:class=":is-selected" data-rebind />
 
 <img id="img3" class="secondary" src="/default.png" alt="Not bound"
-	data-bind:class=":isSelected selected-image" />
+	data-bind:class=":isSelected selected-image" data-rebind />
 
-<p id="p1" data-params="funny friendly" data-bind:data-params=":isMagic magical">Is this paragraph magical?</p>
+<p id="p1" data-params="funny friendly" data-bind:data-params=":isMagic magical" data-rebind>Is this paragraph magical?</p>
 
 <form id="form1">
-	<button id="btn1" data-bind:disabled="?isBtn1Disabled" />
-	<button id="btn2" data-bind:disabled="?!isBtn2Enabled" />
+	<button id="btn1" data-bind:disabled="?isBtn1Disabled" data-rebind></button>
+	<button id="btn2" data-bind:disabled="?!isBtn2Enabled" data-rebind></button>
 </form>
 HTML;
 
@@ -772,6 +772,20 @@ extends=extended-page-1
 </div>
 <div data-partial>Extended page is injected here</div>
 HTML;
+
+	// For https://github.com/PhpGt/DomTemplate/issues/341
+	const HTML_BIND_KEY_REUSED = <<<HTML
+<div>
+	<h1>Your shopping preference</h1>
+	
+	<select name="shopId" required data-bind:value="selectedShopId">
+		<option data-template="shop" data-bind:text="name" data-bind:value="id"></option>
+	</select>
+	
+	<p>Your receipt ID is <span data-bind:text="id">000</span></p>
+</div>
+HTML;
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return new HTMLDocument($html);
