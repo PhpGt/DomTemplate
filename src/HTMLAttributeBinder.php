@@ -70,6 +70,10 @@ class HTMLAttributeBinder {
 				$value,
 				$modifier
 			);
+
+			if(!$attr->ownerElement->hasAttribute("data-rebind")) {
+				$attr->ownerElement->removeAttribute($attrName);
+			}
 		}
 	}
 

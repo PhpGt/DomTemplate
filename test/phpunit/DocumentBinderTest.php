@@ -941,4 +941,32 @@ class DocumentBinderTest extends TestCase {
 			self::assertSame($item["fullName"], $option->textContent);
 		}
 	}
+
+	public function test_onlyBindOnce():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_BIND_KEY_REUSED);
+		$sut = new DocumentBinder($document);
+
+		$shopList = [
+			["id" => "123", "name" => "Alice's Animals"],
+			["id" => "456", "name" => "Bob's Big Breakfast"],
+			["id" => "789", "name" => "Charlie's Crayons"],
+		];
+		$data = [
+			"id" => "111",
+			"name" => "Phillipa"
+		];
+
+// Once the list is bound, the data should be bound to the whole document,
+// but due to clashing keys, we want to ensure the select is only bound once.
+		$sut->bindList($shopList, templateName: "shop");
+		$sut->bindData($data);
+
+		$shopOptions = $document->querySelector("[name='shopId']")->options;
+		foreach($shopList as $i => $shop) {
+			$option = $shopOptions[$i];
+			self::assertSame($shop["id"], $option->value);
+			self::assertSame($shop["name"], $option->textContent);
+		}
+		self::assertSame("111", $document->querySelector("p span")->textContent);
+	}
 }
