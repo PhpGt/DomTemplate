@@ -1,24 +1,17 @@
-<?php
+<?php /** @noinspection ALL */
+/** @noinspection PhpUnused */
 namespace Gt\DomTemplate\Test;
 
 use DateInterval;
 use Exception;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLCollection;
-use Gt\Dom\HTMLElement\HTMLButtonElement;
-use Gt\Dom\HTMLElement\HTMLImageElement;
-use Gt\Dom\HTMLElement\HTMLParagraphElement;
-use Gt\Dom\HTMLElement\HTMLSelectElement;
-use Gt\Dom\HTMLElement\HTMLTableElement;
-use Gt\Dom\HTMLElement\HTMLTableRowElement;
+use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
-use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
-use Gt\DomTemplate\TemplateCollection;
-use Gt\DomTemplate\TemplateElement;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -30,7 +23,7 @@ class DocumentBinderTest extends TestCase {
 	 * error message.
 	 */
 	public function testBindValue_missingBindProperty():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_NO_BIND_PROPERTY);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_NO_BIND_PROPERTY);
 		$sut = new DocumentBinder($document);
 		self::expectException(InvalidBindPropertyException::class);
 		self::expectExceptionMessage("<output> Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
@@ -38,7 +31,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_singleElement():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);
 		$output = $document->querySelector("output");
 		self::assertSame("Nothing is bound", $output->textContent);
@@ -47,7 +40,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_multipleElements():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_ELEMENTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_MULTIPLE_ELEMENTS);
 		$sut = new DocumentBinder($document);
 		$output1 = $document->getElementById("o1");
 		$output2 = $document->getElementById("o2");
@@ -59,7 +52,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_multipleNestedElements():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
 		$sut = new DocumentBinder($document);
 		$container1 = $document->getElementById("container1");
 		$container2 = $document->getElementById("container2");
@@ -82,7 +75,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_multipleNestedElements_skipsElementWithBindProperty():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
 		$sut = new DocumentBinder($document);
 		$container3 = $document->getElementById("container3");
 		$sut->bindValue("Test!", $container3);
@@ -91,7 +84,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_synonymousProperties():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SYNONYMOUS_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SYNONYMOUS_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
 		$sut->bindValue("updated <b>bold</b>");
 
@@ -107,7 +100,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_null():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);
 
 		$exception = null;
@@ -120,14 +113,14 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_noMatches():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);
 		$sut->bindKeyValue("missing", "example");
 		self::assertSame("Nothing is bound", $document->querySelector("output")->innerHTML);
 	}
 
 	public function testBindKeyValue_noMatchesInDifferentHierarchy():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
 		$sut = new DocumentBinder($document);
 // The "title" bind element is actually within the #c3 hierarchy so should not be bound.
 		$sut->bindKeyValue("title", "This should not bind", $document->getElementById("container1"));
@@ -135,7 +128,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
 		$sut = new DocumentBinder($document);
 		$sut->bindKeyValue("title", "This should bind");
 		self::assertSame("This should bind", $document->querySelector("#container3 h1")->textContent);
@@ -143,7 +136,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_null():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_MULTIPLE_NESTED_ELEMENTS);
 		$sut = new DocumentBinder($document);
 
 		$exception = null;
@@ -162,7 +155,7 @@ class DocumentBinderTest extends TestCase {
 		$email = uniqid() . "@example.com";
 		$category = uniqid("category-");
 
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		$sut->bindData([
 			"username" => $username,
@@ -180,7 +173,7 @@ class DocumentBinderTest extends TestCase {
 		$email = null;
 		$category = uniqid("category-");
 
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		$sut->bindData([
 			"username" => $username,
@@ -194,7 +187,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindData_indexedArray():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		self::expectException(IncompatibleBindDataException::class);
 		self::expectExceptionMessage("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
@@ -207,7 +200,7 @@ class DocumentBinderTest extends TestCase {
 		$userObject->email = "greg.bowler@g105b.com";
 		$userObject->category = "maintainer";
 
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		$sut->bindData($userObject);
 
@@ -222,7 +215,7 @@ class DocumentBinderTest extends TestCase {
 		$userObject->email = "greg.bowler@g105b.com";
 		$userObject->category = null;
 
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		$sut->bindData($userObject);
 
@@ -232,7 +225,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindData_indexArray_shouldThrowException():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		self::expectException(IncompatibleBindDataException::class);
 		self::expectExceptionMessage("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
@@ -240,7 +233,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindData_outOfContext():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		$sut->bindData([
 			"username" => "will-not-bind",
@@ -254,9 +247,8 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_arbitraryAttributes():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
-		/** @var HTMLImageElement $img */
 		$img = $document->getElementById("img1");
 
 		$sut->bindKeyValue("photoURL", "/cat.jpg");
@@ -267,10 +259,9 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_classAttribute():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
 
-		/** @var HTMLImageElement $img */
 		$img = $document->getElementById("img1");
 
 		self::assertSame("main", $img->className);
@@ -281,10 +272,9 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_classToggle():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
 
-		/** @var HTMLImageElement $img */
 		$img = $document->getElementById("img2");
 
 		self::assertSame("secondary", $img->className);
@@ -295,10 +285,9 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_classToggle_differentClassNameToBindKey():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
 
-		/** @var HTMLImageElement $img */
 		$img = $document->getElementById("img3");
 
 		self::assertSame("secondary", $img->className);
@@ -309,19 +298,18 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_toggleArbitraryAttribute():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
 
-		/** @var HTMLParagraphElement $paragraph */
 		$paragraph = $document->getElementById("p1");
 
-		self::assertSame("funny friendly", $paragraph->dataset->params);
+		self::assertSame("funny friendly", $paragraph->dataset->get("params"));
 		$sut->bindKeyValue("isMagic", false, $paragraph);
-		self::assertSame("funny friendly", $paragraph->dataset->params);
+		self::assertSame("funny friendly", $paragraph->dataset->get("params"));
 		$sut->bindKeyValue("isMagic", true, $paragraph);
-		self::assertSame("funny friendly magical", $paragraph->dataset->params);
+		self::assertSame("funny friendly magical", $paragraph->dataset->get("params"));
 		$sut->bindKeyValue("isMagic", false, $paragraph);
-		self::assertSame("funny friendly", $paragraph->dataset->params);
+		self::assertSame("funny friendly", $paragraph->dataset->get("params"));
 	}
 
 	/**
@@ -330,10 +318,9 @@ class DocumentBinderTest extends TestCase {
 	 * bind attribute will be toggled depending on a bound boolean value.
 	 */
 	public function testBindKeyValue_toggleDisabled():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
 
-		/** @var HTMLButtonElement $button */
 		$button = $document->getElementById("btn1");
 
 		self::assertFalse($button->disabled);
@@ -352,10 +339,9 @@ class DocumentBinderTest extends TestCase {
 	 * HTML attribute).
 	 */
 	public function testBindKeyValue_toggleDisabled_inverseLogic():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new DocumentBinder($document);
 
-		/** @var HTMLButtonElement $button */
 		$button = $document->getElementById("btn2");
 
 		self::assertFalse($button->disabled);
@@ -366,14 +352,14 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_tableData_noTable():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_NO_TABLE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_NO_TABLE);
 		$sut = new DocumentBinder($document);
 		self::expectException(TableElementNotFoundInContextException::class);
 		$sut->bindKeyValue("tableData", []);
 	}
 
 	public function testBindTable():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
 		$sut = new DocumentBinder($document);
 
 		$tableData = [
@@ -385,12 +371,10 @@ class DocumentBinderTest extends TestCase {
 			["Caroline Todd", "Surgical Registrar"],
 		];
 
-		/** @var HTMLTableElement $table */
 		$table = $document->getElementById("tbl1");
 		$sut->bindTable($tableData, $table);
 
 		foreach($tableData as $rowIndex => $rowData) {
-			/** @var HTMLTableRowElement $row */
 			$row = $table->rows[$rowIndex];
 
 			foreach($rowData as $cellIndex => $cellValue) {
@@ -403,7 +387,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindTable_withNullData():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
 		$sut = new DocumentBinder($document);
 
 		$tableData = [
@@ -416,7 +400,6 @@ class DocumentBinderTest extends TestCase {
 		];
 
 		$exception = null;
-		/** @var HTMLTableElement $table */
 		$table = $document->getElementById("tbl1");
 		try {
 			$sut->bindTable($tableData, $table);
@@ -425,7 +408,6 @@ class DocumentBinderTest extends TestCase {
 		self::assertNull($exception);
 
 		foreach($tableData as $rowIndex => $rowData) {
-			/** @var HTMLTableRowElement $row */
 			$row = $table->rows[$rowIndex];
 
 			foreach($rowData as $cellIndex => $cellValue) {
@@ -447,7 +429,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindKeyValue_tableData():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
 		$sut = new DocumentBinder($document);
 
 		$tableData = [
@@ -459,12 +441,10 @@ class DocumentBinderTest extends TestCase {
 			["Caroline Todd", "Surgical Registrar"],
 		];
 
-		/** @var HTMLTableElement $table */
 		$table = $document->getElementById("tbl1");
 		$sut->bindKeyValue("tableData", $tableData, $table);
 
 		foreach($tableData as $rowIndex => $rowData) {
-			/** @var HTMLTableRowElement $row */
 			$row = $table->rows[$rowIndex];
 
 			foreach($rowData as $cellIndex => $cellValue) {
@@ -477,7 +457,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$sut = new DocumentBinder($document);
 
 		$listData = ["One", "Two", "Three"];
@@ -491,7 +471,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList_nullData():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$sut = new DocumentBinder($document);
 
 		$listData = ["One", null, "Three"];
@@ -510,7 +490,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList_emptyLeavesNoWhiteSpace():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$sut = new DocumentBinder($document);
 		$listData = [];
 		$sut->bindList($listData);
@@ -518,7 +498,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindData_objectWithAttribute():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 
 		$userObject = new class {
@@ -539,7 +519,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList_objectListWithAttributes():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
 		$sut = new DocumentBinder($document);
 
 		$userObjectList = [
@@ -620,7 +600,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindData_castToArray():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 
 		$row = new class {
@@ -641,7 +621,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList_castToArray():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
 		$sut = new DocumentBinder($document);
 
 		$row1 = new class {
@@ -671,7 +651,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_callable():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);
 		$sut->bindValue(fn() => "test");
 		self::assertSame("test", $document->querySelector("output")->textContent);
@@ -755,7 +735,7 @@ class DocumentBinderTest extends TestCase {
 			]
 		];
 
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TRANSPORT_ROUTES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TRANSPORT_ROUTES);
 		$sut = new DocumentBinder($document);
 		$sut->bindKeyValue("from", $from);
 		$sut->bindKeyValue("to", $to);
@@ -818,7 +798,7 @@ class DocumentBinderTest extends TestCase {
 			return $listItem;
 		};
 
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SALES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SALES);
 		$sut = new DocumentBinder($document);
 		$sut->bindListCallback(
 			$salesData,
@@ -839,7 +819,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testCleanDatasets_dataBind():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_USER_PROFILE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
 		$sut = new DocumentBinder($document);
 		$sut->bindData([
 			"username" => "codyboy123",
@@ -859,7 +839,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testCleanDatasets_dataTemplate():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
 		$sut = new DocumentBinder($document);
 		$sut->bindList(["One", "Two", "Three", "Four"]);
 		$sut->cleanDatasets();
@@ -879,7 +859,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindListData_twoListsDifferentContexts():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
 		$sut = new DocumentBinder($document);
 
 		$progLangData = ["PHP", "HTML", "bash"];
@@ -897,7 +877,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindListData_twoListsDifferentContexts_withHtmlParents():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES_CLASS_PARENTS);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES_CLASS_PARENTS);
 		$sut = new DocumentBinder($document);
 
 		$progLangData = ["PHP", "HTML", "bash"];
@@ -915,7 +895,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindValue_callableString():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SINGLE_ELEMENT);
 		$sut = new DocumentBinder($document);
 		$value = "explode";
 		$sut->bindValue($value);
@@ -923,7 +903,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList_twoListsWithSamePath():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_TEMPLATES_WITH_SAME_XPATH);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TEMPLATES_WITH_SAME_XPATH);
 		$sut = new DocumentBinder($document);
 		$list1 = [
 			["uuid" => "AAAAAAAA", "fullName" => "Test 1"],
@@ -936,9 +916,7 @@ class DocumentBinderTest extends TestCase {
 			["uuid" => "FFFFFFFF", "fullName" => "Test 6"],
 		];
 
-		/** @var HTMLSelectElement $select1 */
 		$select1 = $document->querySelector("[name='pass-on-to']");
-		/** @var HTMLSelectElement $select2 */
 		$select2 = $document->querySelector("[name='tag-user']");
 
 		$sut->bindList($list1, $select1);

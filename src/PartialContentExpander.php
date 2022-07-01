@@ -1,11 +1,11 @@
 <?php
 namespace Gt\DomTemplate;
 
-use Gt\Dom\Document;
+use Gt\Dom\HTMLDocument;
 
 abstract class PartialContentExpander {
 	public function __construct(
-		protected Document $document,
+		protected HTMLDocument $document,
 		protected PartialContent $partialContent
 	) {
 	}

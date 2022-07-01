@@ -7,10 +7,10 @@ use Gt\Dom\Text;
 
 class TemplateElement {
 	private string $templateParentPath;
-	private ?Element $templateNextSibling;
+	private null|Node|Element $templateNextSibling;
 
 	public function __construct(
-		private Element $originalElement
+		private Node|Element $originalElement
 	) {
 		$parentElement = $this->originalElement->parentElement;
 		if(!$parentElement->id) {
@@ -35,7 +35,7 @@ class TemplateElement {
 		$this->originalElement->remove();
 	}
 
-	public function getClone():Element {
+	public function getClone():Node|Element {
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		/** @var Element $element */
 		$element = $this->originalElement->cloneNode(true);
@@ -47,7 +47,7 @@ class TemplateElement {
 	 * originally extracted from the document, returning the newly-inserted
 	 * clone.
 	 */
-	public function insertTemplate():Element {
+	public function insertTemplate():Node|Element {
 		$clone = $this->getClone();
 		$templateParent = $this->getTemplateParent();
 		$templateParent->insertBefore(
@@ -58,7 +58,7 @@ class TemplateElement {
 		return $clone;
 	}
 
-	public function getTemplateParent():Element {
+	public function getTemplateParent():Node|Element {
 		$matches = $this->originalElement->ownerDocument->evaluate(
 			$this->templateParentPath
 		);
@@ -71,7 +71,7 @@ class TemplateElement {
 		return $parent;
 	}
 
-	public function getTemplateNextSibling():?Node {
+	public function getTemplateNextSibling():null|Node|Element {
 		return $this->templateNextSibling ?? null;
 	}
 

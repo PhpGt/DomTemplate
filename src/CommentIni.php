@@ -14,12 +14,12 @@ class CommentIni {
 	public function __construct(
 		Document|Element $context
 	) {
-		if($context instanceof Element) {
-			$context = $context->ownerDocument;
+		if($context instanceof Document) {
+			$context = $context->documentElement;
 		}
-		/** @var Document $context */
+		/** @var Element $context */
 
-		$walker = $context->createTreeWalker(
+		$walker = $context->ownerDocument->createTreeWalker(
 			$context,
 			NodeFilter::SHOW_COMMENT
 		);
@@ -27,8 +27,12 @@ class CommentIni {
 		$ini = null;
 		$commentNodeToRemove = null;
 
-		while($commentNode = $walker->nextNode()) {
-			/** @var Comment $commentNode */
+		/** @var Element|Comment $commentNode */
+		foreach($walker as $commentNode) {
+			if(!$commentNode instanceof Comment) {
+				continue;
+			}
+
 			$data = trim($commentNode->data);
 
 			try {

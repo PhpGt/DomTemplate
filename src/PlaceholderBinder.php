@@ -3,6 +3,7 @@ namespace Gt\DomTemplate;
 
 use Gt\Dom\Attr;
 use Gt\Dom\Document;
+use Gt\Dom\Element;
 use Gt\Dom\Node;
 use Gt\Dom\Text;
 
@@ -10,7 +11,7 @@ class PlaceholderBinder {
 	public function bind(
 		?string $key,
 		mixed $value,
-		Node|Document $context
+		Node|Element|Document $context
 	):void {
 		if($context instanceof Document) {
 			$context = $context->documentElement;

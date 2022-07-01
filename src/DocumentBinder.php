@@ -131,10 +131,10 @@ class DocumentBinder {
 	}
 
 	public function cleanDatasets():void {
-		/** @var XPathResult<Attr> $xpathResult */
 		$xpathResult = $this->document->evaluate(
 			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
 		);
+		/** @var Attr $item */
 		foreach($xpathResult as $item) {
 			$item->ownerElement->removeAttribute($item->name);
 		}

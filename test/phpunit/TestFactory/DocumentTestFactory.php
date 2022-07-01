@@ -1,8 +1,6 @@
 <?php
 namespace Gt\DomTemplate\Test\TestFactory;
 
-use Gt\Dom\Facade\HTMLDocumentFactory;
-use Gt\Dom\Facade\XMLDocumentFactory;
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\XMLDocument;
 
@@ -776,10 +774,10 @@ extends=extended-page-1
 HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
-		return HTMLDocumentFactory::create($html);
+		return new HTMLDocument($html);
 	}
 
 	public static function createXML(string $xml):XMLDocument {
-		return XMLDocumentFactory::create($xml);
+		return new XMLDocument($xml);
 	}
 }

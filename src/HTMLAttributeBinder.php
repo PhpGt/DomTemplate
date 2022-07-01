@@ -1,12 +1,12 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
+use Gt\Dom\DOMTokenListFactory;
 use Gt\Dom\Element;
-use Gt\Dom\Facade\DOMTokenListFactory;
-use Gt\Dom\HTMLElement\HTMLOptionElement;
-use Gt\Dom\HTMLElement\HTMLSelectElement;
+use Gt\Dom\ElementType;
 
 class HTMLAttributeBinder {
 	private TableBinder $tableBinder;
@@ -24,12 +24,18 @@ class HTMLAttributeBinder {
 			$element = $element->documentElement;
 		}
 
-		foreach($element->attributes as $attrName => $attrValue) {
+		/**
+		 * @var string $attrName
+		 * @var Attr $attr
+		 */
+		foreach($element->attributes as $attrName => $attr) {
+			$attrValue = $attr->value;
+
 			if(!str_starts_with($attrName, "data-bind")) {
 				continue;
 			}
 
-			if(!strstr($attrName, ":")) {
+			if(!str_contains($attrName, ":")) {
 				$tag = $this->getHTMLTag($element);
 				throw new InvalidBindPropertyException("$tag Element has a data-bind attribute with missing bind property - did you mean `data-bind:text`?");
 			}
@@ -43,7 +49,7 @@ class HTMLAttributeBinder {
 				}
 			}
 			else {
-// If there is a key specified, and the bind attribute's value doesn't match,
+// If a key is specified, and the bind attribute's value doesn't match,
 // skip this attribute.
 				$trimmedAttrValue = ltrim($attrValue, ":!?");
 				$trimmedAttrValue = strtok($trimmedAttrValue, " ");
@@ -68,7 +74,13 @@ class HTMLAttributeBinder {
 	}
 
 	public function expandAttributes(Element $element):void {
-		foreach($element->attributes as $attrName => $attrValue) {
+		/**
+		 * @var string $attrName
+		 * @var Attr $attr
+		 */
+		foreach($element->attributes as $attrName => $attr) {
+			$attrValue = $attr->value;
+
 			if(!str_starts_with($attrName, "data-bind:")) {
 				continue;
 			}
@@ -174,7 +186,7 @@ class HTMLAttributeBinder {
 			break;
 
 		case "value":
-			$element->value = $bindValue; /** @phpstan-ignore-line  */
+			$element->value = $bindValue;
 			break;
 
 		default:
@@ -187,22 +199,7 @@ class HTMLAttributeBinder {
 				);
 			}
 			else {
-				if($element instanceof HTMLSelectElement
-				&& $bindProperty === "value") {
-					/** @var HTMLOptionElement $option */
-					foreach($element->options as $option) {
-						$optionValue = $option->value;
-						if($bindValue == $optionValue) {
-							$option->selected = true;
-						}
-						else {
-							$option->selected = false;
-						}
-					}
-				}
-				else {
-					$element->setAttribute($bindProperty, $bindValue);
-				}
+				$element->setAttribute($bindProperty, $bindValue);
 			}
 
 			break;

@@ -2,15 +2,12 @@
 namespace Gt\DomTemplate;
 
 use Gt\Dom\Element;
-use Gt\Dom\HTMLElement\HTMLElement;
 use Gt\Dom\Node;
-use Gt\Dom\Facade\NodeClass\DOMElementFacade;
-use ReflectionObject;
 use Stringable;
 
 class NodePathCalculator implements Stringable {
 	public function __construct(
-		private Node $element
+		private Node|Element $element
 	) {
 	}
 
