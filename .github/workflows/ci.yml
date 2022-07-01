@@ -67,5 +67,6 @@ jobs:
         uses: php-actions/phpstan@v3
         with:
           php_version: '8.1'
+          memory_limit: '2G'
           path: src/
           level: 6
