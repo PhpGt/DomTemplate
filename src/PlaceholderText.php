@@ -50,6 +50,7 @@ class PlaceholderText {
 		$this->originalText->data = $stringValue;
 
 		$parent = $this->originalText->parentNode;
+/** @phpstan-ignore-next-line  */
 		if($parent instanceof Attr) {
 			$this->originalText->normalize();
 			$qualifiedName = $parent->name;
