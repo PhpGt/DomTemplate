@@ -225,7 +225,6 @@ class ListBinderTest extends TestCase {
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
-			/** @var HTMLLiElement $li */
 			self::assertEquals($kvpList[$i]["userId"], $li->querySelector("h3 span")->textContent);
 			self::assertEquals($kvpList[$i]["username"], $li->querySelector("h2 span")->textContent);
 			self::assertEquals($kvpList[$i]["orderCount"], $li->querySelector("p span")->textContent);
@@ -251,7 +250,6 @@ class ListBinderTest extends TestCase {
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
-			/** @var HTMLLiElement $li */
 			self::assertEquals($kvpList[$i]->{"userId"}, $li->querySelector("h3 span")->textContent);
 			self::assertEquals($kvpList[$i]->{"username"}, $li->querySelector("h2 span")->textContent);
 			self::assertEquals($kvpList[$i]->{"orderCount"}, $li->querySelector("p span")->textContent);
@@ -277,7 +275,6 @@ class ListBinderTest extends TestCase {
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
-			/** @var HTMLLiElement $li */
 			self::assertEquals($kvpList[$i]->{"userId"}, $li->querySelector("h3 span")->textContent);
 			self::assertEquals($kvpList[$i]->{"username"}, $li->querySelector("h2 span")->textContent);
 			self::assertEquals($kvpList[$i]->{"orderCount"}, $li->querySelector("p span")->textContent);

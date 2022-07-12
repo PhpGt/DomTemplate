@@ -54,19 +54,33 @@ class PlaceholderText {
 			$this->originalText->normalize();
 			$qualifiedName = $parent->name;
 			$wholeText = $this->originalText->wholeText;
-			$parent->ownerElement->setAttribute("data-orig-$qualifiedName", $wholeText);
+			/** @var Element $ownerElement */
+			$ownerElement = $parent->ownerElement;
+// https://bugs.php.net/bug.php?id=81506
+			$ownerElement->setAttribute("data-temp-$qualifiedName", $wholeText);
+
 			/**
 			 * @var string $attrName
 			 * @var Attr $attr
 			 */
-			foreach($parent->ownerElement->attributes as $attrName => $attr) {
+			foreach($ownerElement->attributes as $attrName => $attr) {
 				if($attrName !== $qualifiedName) {
 					continue;
 				}
 
+// Workaround for PHP bug 81506 (don't lose reference to text)
+// https://bugs.php.net/bug.php?id=81506
 				$attr->appendChild($this->originalText);
 			}
-			$parent->ownerElement->setAttribute($qualifiedName, $wholeText);
+			if($qualifiedName === "id") {
+				$ownerElement->id = $wholeText;
+			}
+			else {
+				$ownerElement->setAttribute($qualifiedName, $wholeText);
+			}
+
+// https://bugs.php.net/bug.php?id=81506
+			$ownerElement->removeAttribute("data-temp-$qualifiedName");
 		}
 	}
 }
