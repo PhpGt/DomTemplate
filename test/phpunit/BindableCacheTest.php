@@ -113,4 +113,27 @@ class BindableCacheTest extends TestCase {
 			"age" => "55",
 		], $sut->convertToKvp($obj));
 	}
+
+	public function testConvertToKvp_publicReadOnly_mixedWithBindAttr():void {
+		$obj = new class("test-name", 5) {
+			public function __construct(
+				public readonly string $name,
+				public readonly int $age,
+			) {}
+
+			#[BindGetter]
+			public function getAgeStatus():string {
+				return $this->age >= 18
+					? "adult"
+					: "minor";
+			}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([
+			"ageStatus" => "minor",
+			"name" => "test-name",
+			"age" => "5",
+		], $sut->convertToKvp($obj));
+	}
 }
