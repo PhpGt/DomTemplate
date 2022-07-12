@@ -5,7 +5,6 @@ use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionObject;
 use ReflectionProperty;
-use function PHPUnit\Framework\stringStartsWith;
 
 class BindableCache {
 	/**
@@ -49,13 +48,26 @@ class BindableCache {
 			}
 		}
 		foreach($refObj->getProperties() as $refProp) {
-			$refAttributes = $this->getBindAttributes($refProp);
 			$propName = $refProp->getName();
+			if($refProp->isPublic() && $refProp->isReadOnly() && $refProp->isInitialized($object)) {
+				$bindKey = $propName;
+				$value = $object->$propName;
+				if(!is_null($value)) {
+					$value = (string)$value;
+				}
+				$attributeCache[$bindKey]
+					= fn(object $object) => $value;
+			}
+			$refAttributes = $this->getBindAttributes($refProp);
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr);
+				$value = $object->$propName;
+				if(!is_null($value)) {
+					$value = (string)$value;
+				}
 				$attributeCache[$bindKey]
-					= fn(object $object) => $object->$propName;
+					= fn(object $object) => $value;
 			}
 		}
 

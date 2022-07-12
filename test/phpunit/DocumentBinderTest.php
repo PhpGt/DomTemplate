@@ -209,6 +209,24 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($userObject->category, $document->getElementById("dd3")->textContent);
 	}
 
+	public function testBindData_classWithReadonlyProperties():void {
+		$userObject = new class("g105b", "greg.bowler@g105b.com") {
+			public function __construct(
+				public readonly string $username,
+				public readonly string $email,
+				public readonly ?string $category = null,
+			) {}
+		};
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData($userObject);
+
+		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
+		self::assertSame($userObject->email, $document->getElementById("dd2")->textContent);
+		self::assertSame("N/A", $document->getElementById("dd3")->textContent);
+	}
+
 	public function testBindData_object_withNull():void {
 		$userObject = new StdClass();
 		$userObject->username = "g105b";

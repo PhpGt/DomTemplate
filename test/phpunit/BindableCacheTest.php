@@ -52,6 +52,7 @@ class BindableCacheTest extends TestCase {
 
 	public function testConvertToKvp_getterDoesNotStartWithGet():void {
 		$obj = new class {
+			/** @noinspection PhpUnused */
 			#[BindGetter]
 			public function retrieveName():string {
 				return "Test Name";
@@ -73,5 +74,84 @@ class BindableCacheTest extends TestCase {
 
 		$sut = new BindableCache();
 		self::assertSame([], $sut->convertToKvp($obj));
+	}
+
+	/** @noinspection PhpUnused */
+	public function testConvertToKvp_publicReadOnly():void {
+		$obj = new class {
+			public readonly string $id;
+			public readonly string $name;
+			public readonly int $age;
+
+			public function __construct() {
+				$this->id = "test-id";
+				$this->name = "test-name";
+			}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([
+			"id" => "test-id",
+			"name" => "test-name",
+		], $sut->convertToKvp($obj));
+	}
+
+	public function testConvertToKvp_publicReadOnly_constructor():void {
+		$obj = new class("test-name", 55) {
+			public readonly string $id;
+
+			public function __construct(
+				public readonly string $name,
+				public readonly int $age,
+			) {
+				$this->id = "id-$name";
+			}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([
+			"id" => "id-test-name",
+			"name" => "test-name",
+			"age" => "55",
+		], $sut->convertToKvp($obj));
+	}
+
+	public function testConvertToKvp_publicReadOnly_mixedWithBindAttr():void {
+		$obj = new class("test-name", 5) {
+			public function __construct(
+				public readonly string $name,
+				public readonly int $age,
+			) {}
+
+			/** @noinspection PhpUnused */
+			#[BindGetter]
+			public function getAgeStatus():string {
+				return $this->age >= 18
+					? "adult"
+					: "minor";
+			}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([
+			"ageStatus" => "minor",
+			"name" => "test-name",
+			"age" => "5",
+		], $sut->convertToKvp($obj));
+	}
+
+	public function testConvertToKvp_publicReadOnlyNull():void {
+		$obj = new class("test-name") {
+			public function __construct(
+				public readonly string $name,
+				public readonly ?string $email = null,
+			) {}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([
+			"name" => "test-name",
+			"email" => null,
+		], $sut->convertToKvp($obj));
 	}
 }
