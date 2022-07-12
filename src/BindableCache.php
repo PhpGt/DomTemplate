@@ -5,7 +5,6 @@ use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionObject;
 use ReflectionProperty;
-use function PHPUnit\Framework\stringStartsWith;
 
 class BindableCache {
 	/**

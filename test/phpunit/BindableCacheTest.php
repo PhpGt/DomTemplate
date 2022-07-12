@@ -52,6 +52,7 @@ class BindableCacheTest extends TestCase {
 
 	public function testConvertToKvp_getterDoesNotStartWithGet():void {
 		$obj = new class {
+			/** @noinspection PhpUnused */
 			#[BindGetter]
 			public function retrieveName():string {
 				return "Test Name";
@@ -75,6 +76,7 @@ class BindableCacheTest extends TestCase {
 		self::assertSame([], $sut->convertToKvp($obj));
 	}
 
+	/** @noinspection PhpUnused */
 	public function testConvertToKvp_publicReadOnly():void {
 		$obj = new class {
 			public readonly string $id;
@@ -121,6 +123,7 @@ class BindableCacheTest extends TestCase {
 				public readonly int $age,
 			) {}
 
+			/** @noinspection PhpUnused */
 			#[BindGetter]
 			public function getAgeStatus():string {
 				return $this->age >= 18
