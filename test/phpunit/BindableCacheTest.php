@@ -139,4 +139,19 @@ class BindableCacheTest extends TestCase {
 			"age" => "5",
 		], $sut->convertToKvp($obj));
 	}
+
+	public function testConvertToKvp_publicReadOnlyNull():void {
+		$obj = new class("test-name") {
+			public function __construct(
+				public readonly string $name,
+				public readonly ?string $email = null,
+			) {}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([
+			"name" => "test-name",
+			"email" => null,
+		], $sut->convertToKvp($obj));
+	}
 }
