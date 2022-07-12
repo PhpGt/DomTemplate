@@ -5,7 +5,7 @@
 	"require": {
 		"php": ">=8.1",
 		"ext-dom": "*",
-		"phpgt/dom": "dev-master"
+		"phpgt/dom": "^v4.0.0"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "v1.8.0",

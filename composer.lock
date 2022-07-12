@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2363e2449ce3294ab2ec1b1e51657ba4",
+    "content-hash": "5f5f2ae66e96eed9fdf142cf445d1c50",
     "packages": [
         {
             "name": "phpgt/cssxpath",
@@ -62,16 +62,16 @@
         },
         {
             "name": "phpgt/dom",
-            "version": "dev-master",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "6d802e8ed4b3bf42887d1ea23a10ebf29094d492"
+                "reference": "e27378f0fefe1952353fcd082e4189243ebfcfee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/6d802e8ed4b3bf42887d1ea23a10ebf29094d492",
-                "reference": "6d802e8ed4b3bf42887d1ea23a10ebf29094d492",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/e27378f0fefe1952353fcd082e4189243ebfcfee",
+                "reference": "e27378f0fefe1952353fcd082e4189243ebfcfee",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,6 @@
                 "phpstan/phpstan": "v1.8.0",
                 "phpunit/phpunit": "v9.5.21"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -149,7 +148,7 @@
             "description": "The modern DOM API for PHP projects.",
             "support": {
                 "issues": "https://github.com/PhpGt/Dom/issues",
-                "source": "https://github.com/PhpGt/Dom/tree/master"
+                "source": "https://github.com/PhpGt/Dom/tree/v4.0.0"
             },
             "funding": [
                 {
@@ -157,7 +156,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-07-12T15:19:44+00:00"
+            "time": "2022-07-01T11:24:27+00:00"
         },
         {
             "name": "phpgt/propfunc",
@@ -2343,9 +2342,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phpgt/dom": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
