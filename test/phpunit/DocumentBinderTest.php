@@ -960,6 +960,33 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindList_readOnlyProperties():void {
+		$userObject1 = new class(1, "g105b", 3) {
+			public function __construct(
+				public readonly int $userId,
+				public readonly string $username,
+				public readonly int $orderCount,
+			) {}
+		};
+		$userObject2 = new class(2, "codyboy", 21) {
+			public function __construct(
+				public readonly int $userId,
+				public readonly string $username,
+				public readonly int $orderCount,
+			) {}
+		};
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$sut = new DocumentBinder($document);
+		$sut->bindList([$userObject1, $userObject2]);
+
+		$li1 = $document->getElementById("user-1");
+		$li2 = $document->getElementById("user-2");
+		self::assertNotSame($li1, $li2);
+		self::assertSame($userObject1->username, $li1->querySelector("h2 span")->textContent);
+		self::assertSame($userObject2->username, $li2->querySelector("h2 span")->textContent);
+	}
+
 	public function test_onlyBindOnce():void {
 		$document = new HTMLDocument(DocumentTestFactory::HTML_BIND_KEY_REUSED);
 		$sut = new DocumentBinder($document);
