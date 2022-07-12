@@ -28,6 +28,7 @@ class PlaceholderBinder {
 			$context
 		);
 
+		$placeholderTextList = [];
 		foreach($xpathResult as $attributeOrText) {
 			/** @var Text|Attr $text */
 			$text = $attributeOrText;
@@ -49,6 +50,10 @@ class PlaceholderBinder {
 				continue;
 			}
 
+			array_push($placeholderTextList, $placeholderText);
+		}
+
+		foreach($placeholderTextList as $placeholderText) {
 			$placeholderText->setValue($value);
 		}
 	}

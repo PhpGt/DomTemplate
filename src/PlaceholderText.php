@@ -1,6 +1,7 @@
 <?php /** @noinspection PhpPropertyOnlyWrittenInspection tracked in issue #290 */
 namespace Gt\DomTemplate;
 
+use Gt\Dom\Attr;
 use Gt\Dom\Element;
 use Gt\Dom\Text;
 
@@ -9,7 +10,7 @@ class PlaceholderText {
 	private ?string $default;
 
 	public function __construct(
-		private Text $originalText
+		private readonly Text $originalText
 	) {
 		$this->process();
 	}
@@ -44,10 +45,16 @@ class PlaceholderText {
 		$stringValue = (string)$value;
 
 		if(strlen($stringValue) === 0) {
-			$this->originalText->data = $this->default ?: "";
+			$stringValue = $this->default ?: "";
 		}
-		else {
-			$this->originalText->data = $stringValue;
+		$this->originalText->data = $stringValue;
+
+		$parent = $this->originalText->parentNode;
+		if($parent instanceof Attr) {
+			$this->originalText->normalize();
+			$qualifiedName = $parent->name;
+			$wholeText = $this->originalText->wholeText;
+			$parent->ownerElement->setAttribute($qualifiedName, $wholeText);
 		}
 	}
 }

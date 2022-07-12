@@ -979,7 +979,6 @@ class DocumentBinderTest extends TestCase {
 		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
 		$sut = new DocumentBinder($document);
 		$sut->bindList([$userObject1, $userObject2]);
-		$sut->cleanDatasets();
 
 		$li1 = $document->getElementById("user-1");
 		$li2 = $document->getElementById("user-2");
