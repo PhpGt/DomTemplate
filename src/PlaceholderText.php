@@ -54,6 +54,18 @@ class PlaceholderText {
 			$this->originalText->normalize();
 			$qualifiedName = $parent->name;
 			$wholeText = $this->originalText->wholeText;
+			$parent->ownerElement->setAttribute("data-orig-$qualifiedName", $wholeText);
+			/**
+			 * @var string $attrName
+			 * @var Attr $attr
+			 */
+			foreach($parent->ownerElement->attributes as $attrName => $attr) {
+				if($attrName !== $qualifiedName) {
+					continue;
+				}
+
+				$attr->appendChild($this->originalText);
+			}
 			$parent->ownerElement->setAttribute($qualifiedName, $wholeText);
 		}
 	}
