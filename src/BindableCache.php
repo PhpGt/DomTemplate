@@ -53,14 +53,14 @@ class BindableCache {
 			if($refProp->isPublic() && $refProp->isReadOnly() && $refProp->isInitialized($object)) {
 				$bindKey = $propName;
 				$attributeCache[$bindKey]
-					= fn(object $object) => $object->$propName;
+					= fn(object $object) => (string)$object->$propName;
 			}
 			$refAttributes = $this->getBindAttributes($refProp);
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr);
 				$attributeCache[$bindKey]
-					= fn(object $object) => $object->$propName;
+					= fn(object $object) => (string)$object->$propName;
 			}
 		}
 
