@@ -74,4 +74,23 @@ class BindableCacheTest extends TestCase {
 		$sut = new BindableCache();
 		self::assertSame([], $sut->convertToKvp($obj));
 	}
+
+	public function testConvertToKvp_publicReadOnly():void {
+		$obj = new class {
+			public readonly string $id;
+			public readonly string $name;
+			public readonly int $age;
+
+			public function __construct() {
+				$this->id = "test-id";
+				$this->name = "test-name";
+			}
+		};
+
+		$sut = new BindableCache();
+		self::assertSame([
+			"id" => "test-id",
+			"name" => "test-name",
+		], $sut->convertToKvp($obj));
+	}
 }
