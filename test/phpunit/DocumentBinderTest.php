@@ -13,6 +13,7 @@ use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
+use Gt\DomTemplate\Test\TestFactory\ExampleClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -979,6 +980,25 @@ class DocumentBinderTest extends TestCase {
 		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
 		$sut = new DocumentBinder($document);
 		$sut->bindList([$userObject1, $userObject2]);
+
+		$li1 = $document->getElementById("user-1");
+		$li2 = $document->getElementById("user-2");
+		self::assertNotSame($li1, $li2);
+		self::assertSame($userObject1->username, $li1->querySelector("h2 span")->textContent);
+		self::assertSame((string)$userObject1->userId, $li1->querySelector("h3 span")->textContent);
+		self::assertSame($userObject2->username, $li2->querySelector("h2 span")->textContent);
+		self::assertSame((string)$userObject2->userId, $li2->querySelector("h3 span")->textContent);
+	}
+
+	public function testBindList_readOnlyProperties_fullClass():void {
+		$userObject1 = new ExampleClass(1, "g105b", 3);
+		$userObject2 = new ExampleClass(2, "codyboy", 21);
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$sut = new DocumentBinder($document);
+		$sut->bindList([$userObject1, $userObject2]);
+
+		var_dump((string)$document);die();
 
 		$li1 = $document->getElementById("user-1");
 		$li2 = $document->getElementById("user-2");
