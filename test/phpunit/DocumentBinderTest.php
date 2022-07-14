@@ -998,8 +998,6 @@ class DocumentBinderTest extends TestCase {
 		$sut = new DocumentBinder($document);
 		$sut->bindList([$userObject1, $userObject2]);
 
-		var_dump((string)$document);die();
-
 		$li1 = $document->getElementById("user-1");
 		$li2 = $document->getElementById("user-2");
 		self::assertNotSame($li1, $li2);
