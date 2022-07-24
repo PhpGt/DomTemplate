@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b57878c0e886a9e8f58619865fa2caa7",
+    "content-hash": "e544480a9ca0ce7658c288d6d07887ab",
     "packages": [
         {
             "name": "phpgt/cssxpath",
@@ -62,16 +62,16 @@
         },
         {
             "name": "phpgt/dom",
-            "version": "v4.0.1",
+            "version": "v4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Dom.git",
-                "reference": "6d802e8ed4b3bf42887d1ea23a10ebf29094d492"
+                "reference": "32106d0ea4273f9366d35e58bfdf3bfdb2548c7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/6d802e8ed4b3bf42887d1ea23a10ebf29094d492",
-                "reference": "6d802e8ed4b3bf42887d1ea23a10ebf29094d492",
+                "url": "https://api.github.com/repos/PhpGt/Dom/zipball/32106d0ea4273f9366d35e58bfdf3bfdb2548c7a",
+                "reference": "32106d0ea4273f9366d35e58bfdf3bfdb2548c7a",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "psr/http-message": "^1.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "v1.8.0",
+                "phpstan/phpstan": "v1.8.2",
                 "phpunit/phpunit": "v9.5.21"
             },
             "type": "library",
@@ -148,7 +148,7 @@
             "description": "The modern DOM API for PHP projects.",
             "support": {
                 "issues": "https://github.com/PhpGt/Dom/issues",
-                "source": "https://github.com/PhpGt/Dom/tree/v4.0.1"
+                "source": "https://github.com/PhpGt/Dom/tree/v4.0.2"
             },
             "funding": [
                 {
@@ -156,7 +156,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-07-12T15:19:44+00:00"
+            "time": "2022-07-24T18:51:01+00:00"
         },
         {
             "name": "phpgt/propfunc",
