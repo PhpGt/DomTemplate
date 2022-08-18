@@ -7,6 +7,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 // EXAMPLE CODE: https://github.com/PhpGt/DomTemplate/wiki/Binding#bindvalue
 
 $html = <<<HTML
+<!DOCTYPE html>
 <p data-bind:text>This is a quick example</p>
 HTML;
 
@@ -21,3 +22,11 @@ $binder = new DocumentBinder($document);
 example($binder);
 $binder->cleanDatasets();
 echo $document;
+
+/* Output:
+<!DOCTYPE html>
+<html>
+<body>
+	<p>This is an updated example</p>
+</body>
+</html>

@@ -8,6 +8,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 // EXAMPLE CODE: https://github.com/PhpGt/DomTemplate/wiki/Binding#bindlistcallback
 
 $html = <<<HTML
+<!doctype html>
 <h1>Shopping list</h1>
 
 <ul>
@@ -35,3 +36,20 @@ $binder = new DocumentBinder($document);
 example($binder);
 $binder->cleanDatasets();
 echo $document;
+
+/* Output:
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Shopping list</h1>
+
+    <ul id="template-parent-62fe44ffc92e0">
+        <li class="item-0">Eggs (item 0)</li>
+        <li class="item-1">Potatoes (item 1)</li>
+        <li class="item-2">Butter (item 2)</li>
+        <li class="item-3">Plain flour (item 3)</li>
+    </ul>
+</body>
+
+</html>
+*/
