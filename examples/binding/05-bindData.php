@@ -7,6 +7,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 // EXAMPLE CODE: https://github.com/PhpGt/DomTemplate/wiki/Binding#bindkeyvalue
 
 $html = <<<HTML
+<!doctype html>
 <h1>User profile</h1>
 
 <div>
@@ -35,3 +36,19 @@ $binder = new DocumentBinder($document);
 example($binder);
 $binder->cleanDatasets();
 echo $document;
+
+/* Output:
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>User profile</h1>
+
+    <div>
+        <h2>PhpNut</h2>
+        <p>Full name: <span>Larry E. Masters</span></p>
+        <p>Bio: <span>Christian - Dad - 4x Grandad - Co-Founder of @CakePHP - Developer - Open Source Advocate</span></p>
+    </div>
+</body>
+
+</html>
+*/

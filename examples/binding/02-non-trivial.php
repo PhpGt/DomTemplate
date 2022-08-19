@@ -10,6 +10,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 // EXAMPLE CODE: https://github.com/PhpGt/DomTemplate/wiki/Binding#non-trivial-usage
 
 $html = <<<HTML
+<!DOCTYPE html>
 <h1>Top three drivers of <span data-bind:text="year">0000</span></h1>
 
 <ul>
@@ -49,6 +50,51 @@ $driverRepo = new DriverRepository();
 example($binder, $driverRepo);
 $binder->cleanDatasets();
 echo $document;
+
+/* Output:
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Top three drivers of <span>2022</span></h1>
+
+    <ul id="template-parent-62fe4594d5666">
+        <li>
+            <h2>Lewis Hamilton</h2>
+            <h3>Mercedes</h3>
+
+            <p>Points: <span>347</span>
+            </p>
+            <div>
+                <img src="/flag/GBR.png" alt="Flag of United Kingdom">
+                <p>United Kingdom</p>
+            </div>
+        </li>
+        <li>
+            <h2>Valtteri Bottas</h2>
+            <h3>Mercedes</h3>
+
+            <p>Points: <span>223</span>
+            </p>
+            <div>
+                <img src="/flag/FIN.png" alt="Flag of Finland">
+                <p>Finland</p>
+            </div>
+        </li>
+        <li>
+            <h2>Max Verstappen</h2>
+            <h3>Red Bull Racing Honda</h3>
+
+            <p>Points: <span>214</span>
+            </p>
+            <div>
+                <img src="/flag/NED.png" alt="Flag of Netherlands">
+                <p>Netherlands</p>
+            </div>
+        </li>
+    </ul>
+</body>
+</html>
+*/
 
 class DriverRepository {
 	/** @return array<Driver>
