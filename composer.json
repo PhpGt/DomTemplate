@@ -8,7 +8,7 @@
 		"phpgt/dom": "^v4.0"
 	},
 	"require-dev": {
-		"phpstan/phpstan": "v1.8.2",
+		"phpstan/phpstan": "v1.8.4",
 		"phpunit/phpunit": "v9.5.21"
 	},
 
