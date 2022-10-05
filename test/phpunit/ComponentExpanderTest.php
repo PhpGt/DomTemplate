@@ -56,4 +56,30 @@ class ComponentExpanderTest extends PartialContentTestCase {
 		self::assertCount(1, $expandedElements);
 		self::assertEquals("<empty-component></empty-component>", $document->body->innerHTML);
 	}
+
+	public function testExpand_nested():void {
+		$partialContent = self::mockPartialContent(
+			"_component", [
+				"example-nested/first" => DocumentTestFactory::HTML_COMPONENT_NESTED_INNER_FIRST,
+				"example-nested/second" => DocumentTestFactory::HTML_COMPONENT_NESTED_INNER_SECOND,
+			]
+		);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_COMPONENT_NESTED_OUTER);
+		$sut = new ComponentExpander($document, $partialContent);
+		$expandedElements = $sut->expand();
+		self::assertCount(2, $expandedElements);
+		self::assertStringContainsString(
+			"This is the first nested component!",
+			$document->querySelectorAll("example-nested")[0]->innerText,
+		);
+		self::assertStringContainsString(
+			"This is the second nested component!",
+			$document->querySelectorAll("example-nested")[1]->innerText,
+		);
+		self::assertStringContainsString(
+			"And it has a more complex structure.",
+			$document->querySelectorAll("example-nested")[1]->innerText,
+		);
+		self::assertSame("more complex", $document->querySelector("example-nested p strong")->innerText);
+	}
 }
