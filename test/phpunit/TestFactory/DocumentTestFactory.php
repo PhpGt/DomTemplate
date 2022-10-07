@@ -471,6 +471,31 @@ HTML;
 </li>
 HTML;
 
+	const HTML_COMPONENT_NESTED_OUTER = <<<HTML
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Nested HTML components!</title>
+</head>
+<body>
+	<h1>Nested HTML components!</h1>
+	<example-nested src="first" />
+	<p>Above you should see the first example nested component, and below you should see the second.</p>
+	<example-nested src="second" />
+</body>
+</html>
+HTML;
+
+	const HTML_COMPONENT_NESTED_INNER_FIRST = <<<HTML
+<p>This is the first nested component!</p>
+HTML;
+
+	const HTML_COMPONENT_NESTED_INNER_SECOND = <<<HTML
+<p>This is the second nested component!</p>
+<p>And it has a <strong>more complex</strong> structure.</p>
+HTML;
+
 	const HTML_GOOD_BAD = <<<HTML
 <!doctype html>
 <p>The following list of "good" and "bad" templates is intentionally formatted like this.</p>

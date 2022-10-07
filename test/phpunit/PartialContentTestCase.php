@@ -19,7 +19,12 @@ class PartialContentTestCase extends TestCase {
 		$mock = self::createMock(PartialContent::class);
 		$mock->method("getContent")
 			->willReturnCallback(
-				function(string $name) use($contentFiles) {
+				function(string $name, string $extension = "html", ?string $src = null) use($contentFiles) {
+					$nameParts = [$name];
+					if($src) {
+						array_push($nameParts, $src);
+					}
+					$name = implode("/", $nameParts);
 					$content = $contentFiles[$name] ?? null;
 					if(is_null($content)) {
 						throw new PartialContentFileNotFoundException();

@@ -12,7 +12,14 @@ class PartialContent {
 		}
 	}
 
-	public function getContent(string $name, string $extension = "html"):string {
+	public function getContent(
+		string $name,
+		string $extension = "html",
+		?string $src = null,
+	):string {
+		if($src) {
+			$name = "$name/$src";
+		}
 		$filePath = $this->dirPath . "/" . $name . ".$extension";
 		if(!is_file($filePath)) {
 			throw new PartialContentFileNotFoundException("The partial content file does not exist: $filePath");
