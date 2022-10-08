@@ -628,4 +628,76 @@ class ListBinderTest extends TestCase {
 			$context = $context->nextElementSibling;
 		}
 	}
+
+	public function testBindList_doesNotRebind():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$elementToTemplate = $document->querySelector("ul li");
+		$elementToTemplate->remove();
+		$templateElement = self::createMock(TemplateElement::class);
+		$templateElement->method("willRebindTemplate")
+			->willReturn(false);
+		$templateElement->method("insertTemplate")
+			->willReturn($elementToTemplate);
+		$templateElement->method("getInsertCount")
+			->willReturnOnConsecutiveCalls(0, 3);
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->expects(self::exactly(2))
+			->method("get")
+			->with($document->documentElement, null)
+			->willReturn($templateElement);
+
+		$templateElement->removeOriginalElement();
+
+		$testData = ["one", "two", "three"];
+		$secondTestData = ["four", "five", "six"];
+		$sut = new ListBinder($templateCollection);
+		$boundCount = $sut->bindListData(
+			$testData,
+			$document
+		);
+		self::assertSame(count($testData), $boundCount);
+
+		$boundCount = $sut->bindListData(
+			$secondTestData,
+			$document
+		);
+		self::assertSame(0, $boundCount);
+	}
+
+	public function testBindList_doesRebindWithDataRebindAttribute():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE_REBIND);
+		$elementToTemplate = $document->querySelector("ul li");
+		$elementToTemplate->remove();
+		$templateElement = self::createMock(TemplateElement::class);
+		$templateElement->method("willRebindTemplate")
+			->willReturn(true);
+		$templateElement->method("insertTemplate")
+			->willReturn($elementToTemplate);
+		$templateElement->method("getInsertCount")
+			->willReturnOnConsecutiveCalls(0, 3);
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->expects(self::exactly(2))
+			->method("get")
+			->with($document->documentElement, null)
+			->willReturn($templateElement);
+
+		$templateElement->removeOriginalElement();
+
+		$testData = ["one", "two", "three"];
+		$secondTestData = ["four", "five", "six"];
+		$sut = new ListBinder($templateCollection);
+		$boundCount = $sut->bindListData(
+			$testData,
+			$document
+		);
+		self::assertSame(count($testData), $boundCount);
+
+		$boundCount = $sut->bindListData(
+			$secondTestData,
+			$document
+		);
+		self::assertSame(3, $boundCount);
+	}
 }

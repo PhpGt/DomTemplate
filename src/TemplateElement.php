@@ -8,6 +8,8 @@ use Gt\Dom\Text;
 class TemplateElement {
 	private string $templateParentPath;
 	private null|Node|Element $templateNextSibling;
+	private bool $rebind;
+	private int $insertCount;
 
 	public function __construct(
 		private Node|Element $originalElement
@@ -29,6 +31,9 @@ class TemplateElement {
 			is_null($siblingContext)
 			? null
 			: $siblingContext;
+
+		$this->rebind = $this->originalElement->hasAttribute("data-template-rebind");
+		$this->insertCount = 0;
 	}
 
 	public function removeOriginalElement():void {
@@ -54,7 +59,7 @@ class TemplateElement {
 			$clone,
 			$this->getTemplateNextSibling()
 		);
-
+		$this->insertCount++;
 		return $clone;
 	}
 
@@ -85,5 +90,13 @@ class TemplateElement {
 		}
 
 		return $templateName;
+	}
+
+	public function willRebindTemplate():bool {
+		return $this->rebind;
+	}
+
+	public function getInsertCount():int {
+		return $this->insertCount;
 	}
 }

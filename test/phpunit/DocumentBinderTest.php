@@ -1032,4 +1032,18 @@ class DocumentBinderTest extends TestCase {
 		}
 		self::assertSame("111", $document->querySelector("p span")->textContent);
 	}
+
+	public function testBindList_onlyBindTemplateOnce():void {
+		$testData = ["one", "two", "three"];
+		$secondTestData = ["four", "five", "six"];
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$sut = new DocumentBinder($document);
+		$firstBindCount = $sut->bindList($testData);
+		$secondBindCount = $sut->bindList($secondTestData);
+		self::assertSame(3, $firstBindCount);
+		self::assertSame(0, $secondBindCount);
+
+		$ul = $document->querySelector("ul");
+		self::assertCount(3, $ul->children);
+	}
 }
