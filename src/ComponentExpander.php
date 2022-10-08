@@ -26,7 +26,11 @@ class ComponentExpander extends PartialContentExpander {
 			$name = strtolower($element->tagName);
 
 			try {
-				$content = $this->partialContent->getContent($name);
+				$src = $element->getAttribute("src");
+				$content = $this->partialContent->getContent(
+					$name,
+					src: $src,
+				);
 				$element->innerHTML = $content;
 				array_push($expandedComponentArray, $element);
 				$recursiveExpandedComponents = $this->expand($element);
