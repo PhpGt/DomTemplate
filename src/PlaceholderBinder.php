@@ -43,7 +43,7 @@ class PlaceholderBinder {
 			preg_match_all($regex, $nodeValue, $matches);
 
 			foreach($matches[0] as $i => $subjectToReplace) {
-				if($key !== $matches["KEY"][$i]) {
+				if($key != $matches["KEY"][$i]) {
 					continue;
 				}
 
