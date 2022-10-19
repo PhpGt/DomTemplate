@@ -59,25 +59,6 @@ class PlaceholderBinder {
 				);
 			}
 			$text->nodeValue = $nodeValue;
-
-//			$placeholder = $text->splitText(
-//				strpos($text->data, "{{")
-//			);
-//			$placeholder->splitText(
-//				strpos($placeholder->data, "}}") + 2
-//			);
-//
-//			$placeholderText = new PlaceholderText($placeholder);
-//			if((string)$key !== $placeholderText->getBindKey()) {
-//				$text->parentNode->nodeValue = $text->wholeText;
-//				continue;
-//			}
-//
-//			array_push($placeholderTextList, $placeholderText);
 		}
-
-//		foreach($placeholderTextList as $placeholderText) {
-//			$placeholderText->setValue($value);
-//		}
 	}
 }
