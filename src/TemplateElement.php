@@ -8,7 +8,6 @@ use Gt\Dom\Text;
 class TemplateElement {
 	private string $templateParentPath;
 	private null|Node|Element $templateNextSibling;
-	private bool $rebind;
 	private int $insertCount;
 
 	public function __construct(
@@ -32,7 +31,6 @@ class TemplateElement {
 			? null
 			: $siblingContext;
 
-		$this->rebind = $this->originalElement->hasAttribute("data-template-rebind");
 		$this->insertCount = 0;
 	}
 
@@ -41,9 +39,13 @@ class TemplateElement {
 	}
 
 	public function getClone():Node|Element {
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+// TODO: Bug here - the template-parent-xxx ID is being generated the same for multiple instances.
 		/** @var Element $element */
 		$element = $this->originalElement->cloneNode(true);
+//		foreach($this->originalElement->ownerDocument->evaluate("./*[starts-with(@id,'template-parent-')]", $element) as $existingTemplateElement) {
+//			$existingTemplateElement->id = uniqid("template-parent-");
+//		}
+//		$this->templateParentPath = new NodePathCalculator($element->parentElement);
 		return $element;
 	}
 
@@ -90,10 +92,6 @@ class TemplateElement {
 		}
 
 		return $templateName;
-	}
-
-	public function willRebindTemplate():bool {
-		return $this->rebind;
 	}
 
 	public function getInsertCount():int {

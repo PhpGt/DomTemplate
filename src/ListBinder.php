@@ -36,9 +36,6 @@ class ListBinder {
 			$context,
 			$templateName
 		);
-		if($templateItem->getInsertCount() > 0 && !$templateItem->willRebindTemplate()) {
-			return 0;
-		}
 
 		$elementBinder = new ElementBinder();
 		$nestedCount = 0;
