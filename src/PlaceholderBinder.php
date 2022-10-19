@@ -37,24 +37,47 @@ class PlaceholderBinder {
 				$text = $text->lastChild;
 			}
 
-			$placeholder = $text->splitText(
-				strpos($text->data, "{{")
-			);
-			$placeholder->splitText(
-				strpos($placeholder->data, "}}") + 2
-			);
+			$nodeValue = $text->nodeValue;
 
-			$placeholderText = new PlaceholderText($placeholder);
-			if((string)$key !== $placeholderText->getBindKey()) {
-				$text->parentNode->nodeValue = $text->wholeText;
-				continue;
+			$regex = "/{{ *(?P<KEY>$key) *(\?\? ?(?P<DEFAULT>\w+))? ?}}/";
+			preg_match_all($regex, $nodeValue, $matches);
+
+			foreach($matches[0] as $i => $subjectToReplace) {
+				if($key !== $matches["KEY"][$i]) {
+					continue;
+				}
+
+				$valueToUse = $matches["DEFAULT"][$i];
+				if(!is_null($value) && $value !== "") {
+					$valueToUse = $value;
+				}
+
+				$nodeValue = str_replace(
+					$subjectToReplace,
+					$valueToUse,
+					$nodeValue
+				);
 			}
+			$text->nodeValue = $nodeValue;
 
-			array_push($placeholderTextList, $placeholderText);
+//			$placeholder = $text->splitText(
+//				strpos($text->data, "{{")
+//			);
+//			$placeholder->splitText(
+//				strpos($placeholder->data, "}}") + 2
+//			);
+//
+//			$placeholderText = new PlaceholderText($placeholder);
+//			if((string)$key !== $placeholderText->getBindKey()) {
+//				$text->parentNode->nodeValue = $text->wholeText;
+//				continue;
+//			}
+//
+//			array_push($placeholderTextList, $placeholderText);
 		}
 
-		foreach($placeholderTextList as $placeholderText) {
-			$placeholderText->setValue($value);
-		}
+//		foreach($placeholderTextList as $placeholderText) {
+//			$placeholderText->setValue($value);
+//		}
 	}
 }
