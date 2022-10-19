@@ -28,7 +28,6 @@ class PlaceholderBinder {
 			$context
 		);
 
-		$placeholderTextList = [];
 		foreach($xpathResult as $attributeOrText) {
 			/** @var Text|Attr $text */
 			$text = $attributeOrText;
