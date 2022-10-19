@@ -234,6 +234,16 @@ HTML;
 </ol>
 HTML;
 
+	const HTML_LIST_TEMPLATE_REBIND = <<<HTML
+<!doctype html>
+<ul>
+	<li data-template data-template-rebind data-bind:text>Template item!</li>
+</ul>
+<ol>
+	<li>This doesn't have a data template attribute</li>
+</ol>
+HTML;
+
 	const HTML_TWO_LISTS = <<<HTML
 <!doctype html>
 <div id="favourites">
