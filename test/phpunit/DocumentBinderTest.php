@@ -11,6 +11,7 @@ use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
+use Gt\DomTemplate\PlaceholderBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use Gt\DomTemplate\Test\TestFactory\ExampleClass;
@@ -1039,5 +1040,16 @@ class DocumentBinderTest extends TestCase {
 			self::assertSame($shop["name"], $option->textContent);
 		}
 		self::assertSame("111", $document->querySelector("p span")->textContent);
+	}
+
+	public function testBindKeyValue_onlyBindPlaceholderOnce():void {
+		$placeholderBinder = self::createMock(PlaceholderBinder::class);
+		$placeholderBinder->expects(self::once())
+			->method("bind")
+			->with("name", "Cody");
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new DocumentBinder($document, placeholderBinder: $placeholderBinder);
+		$sut->bindKeyValue("name", "Cody", $document->getElementById("test1"));
 	}
 }
