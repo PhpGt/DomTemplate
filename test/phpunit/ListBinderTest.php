@@ -256,6 +256,7 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
+	/** @noinspection PhpUnused */
 	public function testBindListData_kvpList_instanceObject():void {
 		$kvpList = [
 			new class { public int $userId = 543; public string $username = "win95"; public int $orderCount = 55; },
@@ -284,46 +285,56 @@ class ListBinderTest extends TestCase {
 	public function testBindListData_kvpList_instanceObjectWithBindAttributeMethods():void {
 		$kvpList = [
 			new class {
+				/** @noinspection PhpUnused */
 				#[Bind("userId")]
 				public function getId():int {
 					return 534;
 				}
+				/** @noinspection PhpUnused */
 				#[Bind("username")]
 				public function getUsername():string {
 					return "win95";
 				}
+				/** @noinspection PhpUnused */
 				#[Bind("this-matches-nothing")]
 				public function getNothing():string {
 					return "nothing!";
 				}
+				/** @noinspection PhpUnused */
 				#[Bind("orderCount")]
 				public function getTotalOrders():int {
 					return 55;
 				}
 			},
 			new class {
+				/** @noinspection PhpUnused */
 				#[Bind("userId")]
 				public function getId():int {
 					return 559;
 				}
+				/** @noinspection PhpUnused */
 				#[Bind("username")]
 				public function getUsername():string {
 					return "seafoam";
 				}
+				/** @noinspection PhpUnused */
 				#[Bind("orderCount")]
 				public function getTotalOrders():int {
 					return 30;
 				}
 			},
 			new class {
+				/** @noinspection PhpUnused */
 				#[Bind("userId")]
 				public function getId():int {
 					return 274;
 				}
+				/** @noinspection PhpUnused */
 				#[Bind("username")]
 				public function getUsername():string {
 					return "hammatime";
 				}
+				/** @noinspection PhpUnused */
 				#[Bind("orderCount")]
 				public function getTotalOrders():int {
 					return 23;
@@ -343,13 +354,13 @@ class ListBinderTest extends TestCase {
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
-			/** @var HTMLLiElement $li */
 			self::assertEquals($kvpList[$i]->getId(), $li->querySelector("h3 span")->textContent);
 			self::assertEquals($kvpList[$i]->getUsername(), $li->querySelector("h2 span")->textContent);
 			self::assertEquals($kvpList[$i]->getTotalOrders(), $li->querySelector("p span")->textContent);
 		}
 	}
 
+	/** @noinspection PhpUnused */
 	public function testBindListData_kvpList_instanceObjectWithBindAttributeProperties():void {
 		$kvpList = [
 			new class {
@@ -399,7 +410,6 @@ class ListBinderTest extends TestCase {
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
-			/** @var HTMLLiElement $li */
 			self::assertEquals($kvpList[$i]->id, $li->querySelector("h3 span")->textContent);
 			self::assertEquals($kvpList[$i]->user, $li->querySelector("h2 span")->textContent);
 			self::assertEquals($kvpList[$i]->totalOrders, $li->querySelector("p span")->textContent);
@@ -492,7 +502,7 @@ class ListBinderTest extends TestCase {
 
 		while($dateTime->format("Y") === $currentYear) {
 			array_push($listData, new class(clone $dateTime) implements Stringable {
-				public function __construct(private DateTime $dateTime) {}
+				public function __construct(private readonly DateTime $dateTime) {}
 				public function __toString():string {
 					return $this->dateTime->format("F: l");
 				}
@@ -517,7 +527,6 @@ class ListBinderTest extends TestCase {
 
 		$todoLiElements = $document->querySelectorAll("ul>li");
 		foreach($data as $i => $todoItem) {
-			/** @var HTMLLiElement $li */
 			$li = $todoLiElements[$i];
 			self::assertEquals($todoItem["id"], $li->querySelector("[name=id]")->value);
 			self::assertEquals($todoItem["title"], $li->querySelector("[name=title]")->value);
@@ -551,6 +560,7 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
+	/** @noinspection PhpUnusedParameterInspection */
 	public function testBindListData_callback():void {
 		$salesData = [
 			[
@@ -593,29 +603,6 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($sale["price"], $li->querySelector(".price span")->textContent);
 			self::assertEquals($sale["cost"], $li->querySelector(".cost span")->textContent);
 			self::assertEquals($profitValue, $li->querySelector(".profit span")->textContent);
-		}
-	}
-
-	public function testBindList_twoListsSeparatedByElement():void {
-		$blueShades = ["Periwinkle", "Ultramarine", "Liberty", "Navy", "Blurple"];
-		$redShades = ["Brink pink", "Crimson", "Vermilion", "Scarlet"];
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_SUB_LISTS_SEPARATED_BY_ELEMENT);
-		$templateCollection = new TemplateCollection($document);
-		$sut = new ListBinder($templateCollection);
-		$sut->bindListData($redShades, $document, "red");
-		$sut->bindListData($blueShades, $document, "blue");
-
-		$dtElements = $document->querySelectorAll("dt");
-		$context = $dtElements[0]->nextElementSibling;
-		for($i = 0; $i < count($blueShades); $i++) {
-			self::assertEquals($blueShades[$i], $context->textContent);
-			$context = $context->nextElementSibling;
-		}
-
-		$context = $dtElements[1]->nextElementSibling;
-		for($i = 0; $i < count($redShades); $i++) {
-			self::assertEquals($redShades[$i], $context->textContent);
-			$context = $context->nextElementSibling;
 		}
 	}
 }

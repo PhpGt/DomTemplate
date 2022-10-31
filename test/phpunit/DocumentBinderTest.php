@@ -11,6 +11,7 @@ use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
+use Gt\DomTemplate\PlaceholderBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use Gt\DomTemplate\Test\TestFactory\ExampleClass;
@@ -685,68 +686,69 @@ class DocumentBinderTest extends TestCase {
 				"duration" => new DateInterval("PT3H58M"),
 				"method" => "Train",
 				"steps" => [
-					"rtv471" => [
+					"t-rtv471" => [
 						"time" => "07:02",
 						"location" => "Rugeley Trent Valley",
 					],
-					"ltv991" => [
+					"t-ltv991" => [
 						"time" => "07:49",
 						"location" => "Lichfield Trent Valley",
 					],
-					"tem010" => [
+					"t-tem010" => [
 						"time" => "08:03",
 						"location" => "Tamworth",
 					],
-					"csy001" => [
+					"t-csy001" => [
 						"time" => "09:03",
 						"location" => "Chesterfield",
 					],
-					"ep090" => [
+					"t-ep090" => [
 						"time" => "09:42",
 						"location" => "Eastwood Park",
 					],
-					"mnn310" => [
+					"t-mnn310" => [
 						"time" => "10:25",
 						"location" => "Mansfield",
 					],
-					"c0390" => [
+					"t-c0390" => [
 						"time" => "11:00",
 						"location" => "Clipstone",
 					]
 				]
-			], [
+			],
+			[
 				"duration" => new DateInterval("PT4H11M"),
 				"method" => "Bus",
 				"steps" => [
-					"stv472" => [
+					"b-stv472" => [
 						"time" => "06:20",
 						"location" => "Rugeley Trent Valley",
 					],
-					"ltv050" => [
+					"b-ltv050" => [
 						"time" => "07:40",
 						"location" => "Lichfield City Centre",
 					],
-					"ltv921" => [
+					"b-ltv921" => [
 						"time" => "08:00",
 						"location" => "Mosley Street",
 					],
-					"sd094" => [
+					"b-sd094" => [
 						"time" => "08:18",
 						"location" => "Burton-on-Trent"
 					],
-					"ng001" => [
+					"b-ng001" => [
 						"time" => "09:06",
 						"location" => "Nottingham",
 					],
-					"mnn310" => [
+					"b-mnn310" => [
 						"time" => "10:01",
 						"location" => "Mansfield",
 					],
-					"mnn209" => [
+					"b-mnn209" => [
 						"time" => "10:24",
 						"location" => "Kirkby in Ashfield",
 					],
-					"c0353" => [
+					"b-c0353" => [
 						"time" => "10:31",
 						"location" => "Greendale Crescent",
 					]
@@ -759,6 +761,13 @@ class DocumentBinderTest extends TestCase {
 		$sut->bindKeyValue("from", $from);
 		$sut->bindKeyValue("to", $to);
 
+		/**
+		 * This callback function is used just to articulate the purpose
+		 * of bindListCallback - so we can manipulate each KVP element
+		 * inline with the binding - here we just format the date
+		 * differently, but in reality we could be grabbing data from
+		 * other sources, sorting, binding nested lists, etc.
+		 */
 		$callback = function(
 			Element $templateElement,
 			array $kvp,
@@ -766,7 +775,7 @@ class DocumentBinderTest extends TestCase {
 		):array {
 			if($duration = $kvp["duration"]) {
 				/** @var DateInterval $duration */
-				$kvp["duration"] = $duration->format("%H:%m");
+				$kvp["duration"] = $duration->format("%H:%I");
 			}
 
 			return $kvp;
@@ -780,7 +789,7 @@ class DocumentBinderTest extends TestCase {
 
 		foreach($routesData as $i => $route) {
 			self::assertEquals($route["method"], $routeLiList[$i]->querySelector("p")->textContent);
-			self::assertEquals($route["duration"]->format("%H:%m"), $routeLiList[$i]->querySelector("time")->textContent);
+			self::assertEquals($route["duration"]->format("%H:%I"), $routeLiList[$i]->querySelector("time")->textContent);
 			$stepLiList = $routeLiList[$i]->querySelectorAll("ol>li");
 			$j = 0;
 
@@ -1031,5 +1040,16 @@ class DocumentBinderTest extends TestCase {
 			self::assertSame($shop["name"], $option->textContent);
 		}
 		self::assertSame("111", $document->querySelector("p span")->textContent);
+	}
+
+	public function testBindKeyValue_onlyBindPlaceholderOnce():void {
+		$placeholderBinder = self::createMock(PlaceholderBinder::class);
+		$placeholderBinder->expects(self::once())
+			->method("bind")
+			->with("name", "Cody");
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$sut = new DocumentBinder($document, placeholderBinder: $placeholderBinder);
+		$sut->bindKeyValue("name", "Cody", $document->getElementById("test1"));
 	}
 }

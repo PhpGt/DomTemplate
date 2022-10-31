@@ -234,6 +234,16 @@ HTML;
 </ol>
 HTML;
 
+	const HTML_LIST_TEMPLATE_REBIND = <<<HTML
+<!doctype html>
+<ul>
+	<li data-template data-template-rebind data-bind:text>Template item!</li>
+</ul>
+<ol>
+	<li>This doesn't have a data template attribute</li>
+</ol>
+HTML;
+
 	const HTML_TWO_LISTS = <<<HTML
 <!doctype html>
 <div id="favourites">
@@ -321,6 +331,16 @@ HTML;
 	<p><a href="https://github.com/sponsors/{{org}}/sponsorships?tier_id={{tierId}}">Sponsor via GitHub.</a></p>
 </main>
 HTML;
+
+	const HTML_PLACEHOLDER_LIST = <<<HTML
+<!doctype html>
+<h1>A list with placeholders</h1>
+
+<ul>
+	<li data-template id="user-{{userId}}">Username: {{username}}</li>
+</ul>
+HTML;
+
 	const HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES = <<<HTML
 <!doctype html>
 <h1>Music library</h1>
