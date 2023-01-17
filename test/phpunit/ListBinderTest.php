@@ -112,6 +112,48 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
+	public function testBindListData_existingChildren():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN);
+		$templateElement = new TemplateElement($document->querySelector("[data-template]"));
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->expects(self::once())
+			->method("get")
+			->with($document->documentElement, null)
+			->willReturn($templateElement);
+
+		$templateElement->removeOriginalElement();
+
+		$existingOptionList = $document->querySelectorAll("select[name='drink'] option");
+
+		$testData = [
+			["id" => "orange-juice", "name" => "Orange juice"],
+			["id" => "bovril", "name" => "Bovril"],
+			["id" => "almond-milk", "name" => "Almond Milk"],
+		];
+		$sut = new ListBinder($templateCollection);
+		$bindCount = $sut->bindListData($testData, $document);
+
+		$newOptionList = $document->querySelectorAll("select[name='drink'] option");
+		$newOptionCount = count($newOptionList);
+		self::assertSame($bindCount + count($existingOptionList), $newOptionCount);
+
+		$expectedValues = [
+			"",
+			"orange-juice",
+			"bovril",
+			"almond-milk",
+			"coffee",
+			"tea",
+			"chocolate",
+			"soda",
+			"water",
+		];
+		foreach($expectedValues as $i => $value) {
+			self::assertSame($value, $newOptionList[$i]->value);
+		}
+	}
+
 	/**
 	 * This tests what happens when the context element has more than one
 	 * element with a data-template attribute. In this test, we expect the
