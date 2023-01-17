@@ -60,6 +60,7 @@ class TemplateCollection {
 
 	private function findMatch(Element $context):TemplateElement {
 		$contextPath = (string)(new NodePathCalculator($context));
+		/** @noinspection RegExpRedundantEscape */
 		$contextPath = preg_replace(
 			"/(\[\d+\])/",
 			"",

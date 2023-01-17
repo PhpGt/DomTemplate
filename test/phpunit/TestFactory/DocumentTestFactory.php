@@ -244,6 +244,16 @@ HTML;
 </ol>
 HTML;
 
+	const HTML_LIST_WITH_TEXTNODE = <<<HTML
+<!doctype html>
+<!doctype html>
+<ul>
+	<li data-template data-bind:text>Template item!</li>
+	<li>This list item will always show at the end</li>
+</ul>
+HTML;
+
+
 	const HTML_TWO_LISTS = <<<HTML
 <!doctype html>
 <div id="favourites">
