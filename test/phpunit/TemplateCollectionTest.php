@@ -116,4 +116,30 @@ class TemplateCollectionTest extends TestCase {
 			}
 		}
 	}
+
+	public function testConstructor_removesWhitespace():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		new TemplateCollection($document);
+		self::assertSame("", $document->querySelector("ul")->innerHTML);
+	}
+
+	public function testConstructor_nonTemplateChildrenArePreserved():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_WITH_TEXTNODE);
+		new TemplateCollection($document);
+		$ulChildren = $document->querySelector("ul")->children;
+		self::assertCount(1, $ulChildren);
+		self::assertSame("This list item will always show at the end", $ulChildren[0]->textContent);
+	}
+
+	public function testConstructor_nonTemplateChildrenArePreservedInOrder():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_WITH_TEXTNODE);
+		$sut = new TemplateCollection($document);
+		$ulChildren = $document->querySelector("ul")->children;
+		$template = $sut->get($document);
+		$template->insertTemplate();
+		$template->insertTemplate();
+		$template->insertTemplate();
+		self::assertCount(4, $ulChildren);
+		self::assertSame("This list item will always show at the end", $ulChildren[3]->textContent);
+	}
 }
