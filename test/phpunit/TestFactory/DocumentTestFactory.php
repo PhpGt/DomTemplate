@@ -745,6 +745,24 @@ HTML;
 </form>
 HTML;
 
+	const HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN = <<<HTML
+<!doctype html>
+<form>
+	<label>
+		<span>Select your drink preference</span>
+		<select name="drink" data-bind:value="drink">
+			<option></option>
+			<option data-bind:value="id" data-bind:text="name" data-template>Special option</option>
+			<option value="coffee">Coffee</option>		
+			<option value="tea">Tea</option>		
+			<option value="chocolate">Chocolate</option>		
+			<option value="soda">Soda</option>		
+			<option value="water">Water</option>		
+		</select>
+	</label>
+</form>
+HTML;
+
 	const HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS = <<<HTML
 <!doctype html>
 <h1>Test</h1>
