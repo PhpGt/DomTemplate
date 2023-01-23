@@ -239,10 +239,12 @@ class HTMLAttributeBinder {
 			}
 
 			if($bindValue) {
-				$element->setAttribute($attribute, "");
+				$element->setAttribute($attribute, $bindValue);
 			}
 			else {
-				$element->removeAttribute($attribute);
+				if(!is_null($bindValue)) {
+					$element->removeAttribute($attribute);
+				}
 			}
 		}
 	}

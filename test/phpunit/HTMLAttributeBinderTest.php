@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use DateTime;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\HTMLAttributeBinder;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
@@ -60,5 +61,60 @@ class HTMLAttributeBinderTest extends TestCase {
 		foreach($document->querySelectorAll("select option") as $i => $option) {
 			self::assertFalse($option->hasAttribute("selected"), $i);
 		}
+	}
+
+	public function testBind_modifierColonNamedProperty_null():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TODO);
+		$sut = new HTMLAttributeBinder();
+		$li = $document->querySelector("ul li");
+		$sut->bind("completedAt", null, $li);
+		self::assertFalse($li->classList->contains("completed"));
+	}
+
+	public function testBind_modifierColonNamedProperty():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TODO);
+		$sut = new HTMLAttributeBinder();
+		$li = $document->querySelector("ul li");
+		$sut->bind("completedAt", new DateTime(), $li);
+		self::assertTrue($li->classList->contains("completed"));
+	}
+
+	public function testBind_modifierColon():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new HTMLAttributeBinder();
+		$img = $document->getElementById("img1");
+		$sut->bind("size", "size-large", $img);
+		self::assertTrue($img->classList->contains("size-large"));
+	}
+
+	public function testBind_modifierQuestion():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new HTMLAttributeBinder();
+		$btn1 = $document->getElementById("btn1");
+		$btn2 = $document->getElementById("btn2");
+		$sut->bind("isBtn1Disabled", true, $btn1);
+		$sut->bind("isBtn1Disabled", true, $btn2);
+		$sut->bind("isBtn2Disabled", true, $btn1);
+		$sut->bind("isBtn2Disabled", true, $btn2);
+
+		self::assertTrue($btn1->disabled);
+		self::assertFalse($btn2->disabled);
+	}
+
+	public function testBind_modifierQuestion_withNullValue():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new HTMLAttributeBinder();
+		$img = $document->getElementById("img3");
+		$sut->bind("alternativeText", null, $img);
+		self::assertSame("Not bound", $img->alt);
+	}
+
+	public function testBind_modifierQuestion_withValue():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DIFFERENT_BIND_PROPERTIES);
+		$sut = new HTMLAttributeBinder();
+		$img = $document->getElementById("img3");
+		$testMessage = "This is a test message";
+		$sut->bind("alternativeText", $testMessage, $img);
+		self::assertSame($testMessage, $img->alt);
 	}
 }
