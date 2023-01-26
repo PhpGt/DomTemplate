@@ -219,7 +219,9 @@ HTML;
 		<td>
 			<form method="post">
 				<input type="hidden" name="id" data-bind:value="@name" />
+				<input name="message" />
 				<button name="do" value="flag">Flag</button>
+				<button name="do" value="unflag">Flag</button>
 			</form>
 		</td>
 	</tr>

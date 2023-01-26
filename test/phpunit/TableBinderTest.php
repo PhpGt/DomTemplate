@@ -424,8 +424,61 @@ class TableBinderTest extends TestCase {
 
 		$headers = array_shift($tableData);
 
+		self::assertCount(count($tableData), $tbody->rows);
+
 		foreach($tbody->rows as $rowIndex => $tr) {
 			$rowData = array_combine($headers, $tableData[$rowIndex]);
+
+			self::assertSame((string)$rowData["id"], $tr->cells[1]->textContent);
+			self::assertSame((string)$rowData["name"], $tr->cells[2]->textContent);
+			self::assertSame((string)$rowData["code"], $tr->cells[3]->textContent);
+
+			$input = $tr->cells[0]->querySelector("input");
+			self::assertSame((string)$rowData["id"], $input->value);
+
+			$input = $tr->cells[4]->querySelector("input");
+			self::assertSame((string)$rowData["id"], $input->value);
+
+			if(($rowIndex + 1) % 3 === 0) {
+				self::assertTrue($tr->cells[0]->classList->contains("deleted"));
+			}
+			else {
+				self::assertFalse($tr->cells[0]->classList->contains("deleted"));
+			}
+		}
+	}
+
+	public function testBindTableData_existingBodyRow_differentDataShape():void {
+		$tableData = [
+			"id" => [],
+			"code" => [],
+			"name" => [],
+			"deleted" => [],
+		];
+
+// 3, 6 and 9 will be marked as "Deleted".
+		for($i = 1; $i <= 10; $i++) {
+			$name = "Thing $i";
+			array_push($tableData["id"], $i);
+			array_push($tableData["code"], md5($name));
+			array_push($tableData["name"], $name);
+			array_push($tableData["deleted"], $i % 3 === 0);
+		}
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_EXISTING_CELLS);
+		$sut = new TableBinder();
+
+		$sut->bindTableData($tableData, $document);
+
+		$tbody = $document->querySelector("table tbody");
+
+		self::assertCount(count($tableData["id"]), $tbody->rows);
+
+		foreach($tbody->rows as $rowIndex => $tr) {
+			$rowData = [];
+			foreach(array_keys($tableData) as $key) {
+				$rowData[$key] = $tableData[$key][$rowIndex];
+			}
 
 			self::assertSame((string)$rowData["id"], $tr->cells[1]->textContent);
 			self::assertSame((string)$rowData["name"], $tr->cells[2]->textContent);
