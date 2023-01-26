@@ -63,7 +63,11 @@ echo $document;
 
 /* Output:
 <!doctype html>
-<html><head></head><body><table>
+<html>
+<head></head>
+<body>
+
+<table>
 <thead>
 	<tr>
 		<th>Delete</th>
@@ -73,15 +77,93 @@ echo $document;
 		<th>Flag</th>
 	</tr>
 </thead>
-<tbody id="template-parent-63d2b71314f31">
+<tbody id="template-parent-63d2c38f3c39b">
 	<tr>
-		<td></td>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" value="9d3407ac">
+				<button name="do" value="delete">Delete</button>
+			</form>
+		</td>
 		<td>9d3407ac</td>
 		<td>Respiration device N</td>
-		<td></td>
+		<td>A44</td>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" value="9d3407ac">
+				<input name="message">
+				<button name="do" value="flag">Flag</button>
+				<button name="do" value="unflag">Flag</button>
+			</form>
+		</td>
 		<td></td>
 	</tr>
-	...
+	<tr>
+		<td class="deleted">
+			<form method="post">
+				<input type="hidden" name="id" value="0f503f80">
+				<button name="do" value="delete">Delete</button>
+			</form>
+		</td>
+		<td>0f503f80</td>
+		<td>Mini filters</td>
+		<td>B9</td>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" value="0f503f80">
+				<input name="message">
+				<button name="do" value="flag">Flag</button>
+				<button name="do" value="unflag">Flag</button>
+			</form>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" value="032685b1">
+				<button name="do" value="delete">Delete</button>
+			</form>
+		</td>
+		<td>032685b1</td>
+		<td>UNG Sponge</td>
+		<td>TX420</td>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" value="032685b1">
+				<input name="message">
+				<button name="do" value="flag">Flag</button>
+				<button name="do" value="unflag">Flag</button>
+			</form>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" value="eb08fc32">
+				<button name="do" value="delete">Delete</button>
+			</form>
+		</td>
+		<td>eb08fc32</td>
+		<td>Support Vents</td>
+		<td>TL29</td>
+		<td>
+			<form method="post">
+				<input type="hidden" name="id" value="eb08fc32">
+				<input name="message">
+				<button name="do" value="flag">Flag</button>
+				<button name="do" value="unflag">Flag</button>
+			</form>
+		</td>
+		<td></td>
+	</tr>
 </tbody>
-</table></body></html>
+</table>
+
+</body>
+</html>
+
+Process finished with exit code 0
+
 */
