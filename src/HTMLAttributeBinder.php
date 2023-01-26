@@ -186,7 +186,11 @@ class HTMLAttributeBinder {
 			if(!isset($this->tableBinder)) {
 				$this->tableBinder = new TableBinder();
 			}
-			$this->tableBinder->bindTableData($bindValue, $element);
+			$this->tableBinder->bindTableData(
+				$bindValue,
+				$element,
+				$element->getAttribute("data-bind:$bindProperty")
+			);
 			break;
 
 		case "value":

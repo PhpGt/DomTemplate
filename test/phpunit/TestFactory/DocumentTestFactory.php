@@ -107,9 +107,11 @@ HTML;
 
 	const HTML_TABLES = <<<HTML
 <!doctype html>
+<table id="tbl0" data-bind:table="matchingTableBindKey"></table>
+
 <table id="tbl1" data-bind:table="tableData"></table>
 
-<table id="tbl2" data-bind:table="tableData">
+<table id="tbl2" data-bind:table>
 	<thead>
 		<tr>
 			<th data-table-key="firstName">First name</th>
