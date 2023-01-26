@@ -452,7 +452,7 @@ class DocumentBinderTest extends TestCase {
 		];
 
 		$table = $document->getElementById("tbl1");
-		$sut->bindTable($tableData, $table);
+		$sut->bindTable($tableData, $table, "tableData");
 
 		foreach($tableData as $rowIndex => $rowData) {
 			$row = $table->rows[$rowIndex];
@@ -482,7 +482,7 @@ class DocumentBinderTest extends TestCase {
 		$exception = null;
 		$table = $document->getElementById("tbl1");
 		try {
-			$sut->bindTable($tableData, $table);
+			$sut->bindTable($tableData, $table, "tableData");
 		}
 		catch(Exception $exception) {}
 		self::assertNull($exception);
@@ -522,7 +522,7 @@ class DocumentBinderTest extends TestCase {
 		];
 
 		$table = $document->getElementById("tbl1");
-		$sut->bindKeyValue("tableData", $tableData, $table);
+		$sut->bindKeyValue("tableData", $tableData);
 
 		foreach($tableData as $rowIndex => $rowData) {
 			$row = $table->rows[$rowIndex];

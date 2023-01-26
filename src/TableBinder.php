@@ -4,10 +4,6 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\ElementType;
-use Gt\Dom\HTMLElement\HTMLTableCellElement;
-use Gt\Dom\HTMLElement\HTMLTableElement;
-use Gt\Dom\HTMLElement\HTMLTableRowElement;
-use Gt\Dom\HTMLElement\HTMLTableSectionElement;
 use Stringable;
 
 class TableBinder {
@@ -25,7 +21,8 @@ class TableBinder {
 	 */
 	public function bindTableData(
 		array $tableData,
-		Document|Element $context
+		Document|Element $context,
+		?string $bindKey = null
 	):void {
 		$tableData = $this->normaliseTableData($tableData);
 
@@ -40,6 +37,19 @@ class TableBinder {
 			$tableArray = [];
 			foreach($context->querySelectorAll("table") as $table) {
 				array_push($tableArray, $table);
+			}
+		}
+
+		foreach($tableArray as $i => $table) {
+			$dataBindTableAttr = "data-bind:table";
+			$dataBindTableElement = $table;
+			if(!$dataBindTableElement->hasAttribute($dataBindTableAttr)) {
+				$dataBindTableElement = $table->closest("[data-bind:table]") ?? $table;
+			}
+
+			if(!$dataBindTableElement
+			|| $dataBindTableElement->getAttribute("data-bind:table") != $bindKey) {
+				unset($tableArray[$i]);
 			}
 		}
 

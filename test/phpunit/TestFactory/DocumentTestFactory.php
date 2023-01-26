@@ -93,7 +93,9 @@ HTML;
 	data-bind:class=":is-selected" data-rebind />
 
 <img id="img3" class="secondary" src="/default.png" alt="Not bound"
-	data-bind:class=":isSelected selected-image" data-rebind />
+	data-bind:class=":isSelected selected-image" 
+	data-bind:alt="?alternativeText"
+	data-rebind />
 
 <p id="p1" data-params="funny friendly" data-bind:data-params=":isMagic magical" data-rebind>Is this paragraph magical?</p>
 
@@ -105,9 +107,11 @@ HTML;
 
 	const HTML_TABLES = <<<HTML
 <!doctype html>
+<table id="tbl0" data-bind:table="matchingTableBindKey"></table>
+
 <table id="tbl1" data-bind:table="tableData"></table>
 
-<table id="tbl2" data-bind:table="tableData">
+<table id="tbl2" data-bind:table>
 	<thead>
 		<tr>
 			<th data-table-key="firstName">First name</th>
