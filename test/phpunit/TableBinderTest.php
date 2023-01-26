@@ -24,7 +24,7 @@ class TableBinderTest extends TestCase {
 			["c1 val1", "c2 val1", "c3 val1"],
 			["c1 val2", "c2 val2", "c3 val2"],
 			["c1 val3", "c2 val3", "c3 val3"],
-		], $table);
+		], $table, "tableData");
 
 		self::assertSame("Column 1", $table->tHead->rows[0]->children[0]->textContent);
 		self::assertSame("Column 2", $table->tHead->rows[0]->children[1]->textContent);
@@ -36,6 +36,41 @@ class TableBinderTest extends TestCase {
 		self::assertSame("c1 val2", $tBody->rows[1]->children[0]->textContent);
 		self::assertSame("c2 val2", $tBody->rows[1]->children[1]->textContent);
 		self::assertSame("c3 val2", $tBody->rows[1]->children[2]->textContent);
+	}
+
+	/**
+	 * This test is almost identical to the one above. The difference is the
+	 * use of the bind key, to identify which table to bind data to.
+	 */
+	public function testBindTable_emptyTableSpecifiedByName():void {
+		$sut = new TableBinder();
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+
+		$table0 = $document->getElementById("tbl0");
+		$table1 = $document->getElementById("tbl1");
+		$table2 = $document->getElementById("tbl2");
+		$table3 = $document->getElementById("tbl3");
+
+		self::assertEmpty($table0->innerHTML);
+		self::assertEmpty($table1->innerHTML);
+		$sut->bindTableData([
+			["Column 1", "Column 2", "Column 3"],
+			["c1 val1", "c2 val1", "c3 val1"],
+			["c1 val2", "c2 val2", "c3 val2"],
+			["c1 val3", "c2 val3", "c3 val3"],
+		], $document, "matchingTableBindKey");
+
+		self::assertNotEmpty($table0->innerHTML);
+
+		self::assertSame("Column 1", $table0->tHead->rows[0]->children[0]->textContent);
+		self::assertSame("Column 2", $table0->tHead->rows[0]->children[1]->textContent);
+		self::assertSame("Column 3", $table0->tHead->rows[0]->children[2]->textContent);
+
+		$tBody = $table0->tBodies[0];
+		self::assertCount(3, $tBody->children);
+		self::assertEmpty($table1->tBodies);
+		self::assertCount(1, $table2->tBodies[0]->rows);
+		self::assertCount(1, $table3->tBodies[0]->rows);
 	}
 
 	/**
@@ -148,7 +183,8 @@ class TableBinderTest extends TestCase {
 		];
 		$sut->bindTableData(
 			$tableData,
-			$table
+			$table,
+			"tableData"
 		);
 
 		$tbody = $table->tBodies[0];
@@ -260,7 +296,8 @@ class TableBinderTest extends TestCase {
 		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
 		$sut->bindTableData(
 			$tableData,
-			$document->getElementById("multi-table-container")
+			$document->getElementById("multi-table-container"),
+			"tableData"
 		);
 
 		$tableList = $document->querySelectorAll("#multi-table-container table");
