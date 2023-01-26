@@ -498,4 +498,36 @@ class TableBinderTest extends TestCase {
 			}
 		}
 	}
+
+	/** This test is introduced for https://github.com/PhpGt/DomTemplate/issues/247 */
+	public function testBindTableData_datumPerRow():void {
+		$tableData = [
+			[
+				"ID" => 55,
+				"Forename" => "Carlos",
+				"Surname" => "Sainz",
+				"Country" => "Spain",
+			],
+			[
+				"ID" => 5,
+				"Forename" => "Sebastian",
+				"Surname" => "Vettel",
+				"Country" => "Germany",
+			],
+		];
+		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_CRUD);
+		$sut = new TableBinder();
+		$sut->bindTableData($tableData, $document);
+		$tBody = $document->querySelector("table tbody");
+		self::assertCount(count($tableData), $tBody->rows);
+
+		foreach($tableData as $i => $rowData) {
+			$rowEl = $tBody->rows[$i];
+			self::assertEquals($rowData["ID"], $rowEl->cells[0]->textContent);
+			self::assertEquals($rowData["Forename"], $rowEl->cells[1]->textContent);
+			self::assertEquals($rowData["Surname"], $rowEl->cells[2]->textContent);
+			self::assertEquals($rowData["Country"], $rowEl->cells[3]->textContent);
+			self::assertCount(6, $rowEl->cells);
+		}
+	}
 }
