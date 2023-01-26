@@ -515,6 +515,14 @@ class TableBinderTest extends TestCase {
 				"Country" => "Germany",
 			],
 		];
+//		$tableData = [
+//			["Item", "Price", "Stock Level"],
+//			[
+//				"Washing machine" => [698_00, 24],
+//				"Television" => [998_00, 7],
+//				"Laptop" => [799_99, 60],
+//			]
+//		];
 		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_CRUD);
 		$sut = new TableBinder();
 		$sut->bindTableData($tableData, $document);

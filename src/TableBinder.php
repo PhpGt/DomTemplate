@@ -167,48 +167,94 @@ class TableBinder {
 	}
 
 	/**
-	 * @param iterable<int,iterable<int,string>>|iterable<string,iterable<int, string>>|iterable<string,iterable<string, iterable<int, string>>> $bindValue
-	 * The three structures allowed by this method are:
-	 * 1) If $bindValue has int keys, the first value must represent an
-	 * iterable of columnHeaders, and subsequent values must represent an
-	 * iterable of columnValues.
-	 * 2) If $bindValue has string keys, the keys must represent the column
-	 * headers and the value must be an iterable of columnValues.
-	 * 3) If columnValues has int keys, each item represents the value of
-	 * a column <td> element.
-	 * 4) If columnValues has a string keys, each key represents a <th> and
-	 * each sub-iterable represents the remaining column values.
-	 * @return array<int, array<int|string, string|Stringable>> A
-	 * two-dimensional array where the outer array represents the rows, the
-	 * inner array represents the columns.
+	 * @param iterable<int,iterable<int,string>>|iterable<int,iterable<string,string>>|iterable<string,iterable<int,string>>|iterable<int, iterable<int,string>|iterable<string,string>> $bindValue
+	 * The structures allowed by this method are:
+	 *
+	 * 1) iterable<int, iterable<int,string>> If $bindValue has keys of type
+	 * int, and the value of index 0 is an iterable of strings, then the
+	 * value of index 0 must represent the columnHeaders; subsequent values
+	 * must represent the columnValues.
+	 * 2) iterable<int, iterable<int,string>|iterable<string,string>>
+	 * Similar to structure 1, but with a key difference. If the value of
+	 * index 0 is an iterable of strings, BUT the next value is an iterable
+	 * with keys of type string, this represents "double header" data - the
+	 * returned normalised value retains this double header data so the
+	 * binder can insert <th> elements in the <tbody>.
+	 * 3) iterable<int, iterable<string,string>> If $bindValue has keys of
+	 * type int, and the value of index 0 is associative, then the value of
+	 * each index must represent the individual rows, where the
+	 * columnHeaders are the string key of the inner iterable, and the
+	 * columnValues are the string value of the inner iterable.
+	 * 4) iterable<string,iterable<int,string>> If $bindValue has keys of
+	 * type string, the keys must represent the columnHeaders and the values
+	 * must represent the columnValues.
+	 *
+	 * @return array<int, array<int, string>|array<string,array<int,string>>>
+	 * A two-dimensional array where the outer array represents the rows,
+	 * the inner array represents the columns. The first index's value is
+	 * always the columnHeaders. The other index's values are always the
+	 * columnValues. Typically, columnValues will be array<int,string> apart
+	 * from when the data represents double-header tables, in which case the
+	 * columnValues will be within array<string,array<int,string>>.
 	 */
 	private function normaliseTableData(iterable $bindValue):array {
 		$normalised = [];
 
 		reset($bindValue);
-		$key = key($bindValue);
+		$firstKey = key($bindValue);
 
-		if(is_int($key)) {
-			foreach($bindValue as $i => $value) {
-				if(!is_iterable($value)) {
-					throw new IncorrectTableDataFormat("Row $i data is not iterable.");
+// Structure 1: iterable<int, iterable<int,string>>
+// Structure 2: iterable<int, iterable<int,string>|iterable<string,string>>
+// Structure 3: iterable<int, iterable<string,string>>
+		$headerRow = [];
+		if(is_int($firstKey)) {
+			foreach($bindValue as $rowIndex => $rowData) {
+				if(!is_iterable($rowData)) {
+					throw new IncorrectTableDataFormat("Row $rowIndex data is not iterable.");
 				}
 				$row = [];
 
-				foreach($value as $j => $columnValue) {
-// A string key within the inner array indicates "double header" table data.
-					if(is_string($j)) {
-						$doubleHeader = [$j => []];
-						if(!is_iterable($columnValue)) {
-							throw new IncorrectTableDataFormat("Row $i has a string key ($j) but the value is not iterable.");
+				$isDoubleHeader = true;
+				foreach($rowData as $columnIndex => $columnValue) {
+					if(is_string($columnIndex)) {
+						if(!is_iterable($columnValue)
+						&& $headerRow
+						&& count($headerRow) === count($rowData)
+						&& array_keys($rowData) !== $headerRow) {
+							throw new IncorrectTableDataFormat("Row $rowIndex has a string key ($columnIndex) but the value is not iterable.");
 						}
+					}
+
+					$isDoubleHeader = false;
+					break;
+//					|| !is_iterable($columnValue)) {
+//						$isDoubleHeader = false;
+//					}
+				}
+
+				if(!$headerRow && is_iterable($rowData)) {
+					$rowDataFirstIndex = key($rowData);
+					if(is_int($rowDataFirstIndex)) {
+						$headerRow = $rowData;
+					}
+					else {
+						$headerRow = array_keys($rowData);
+					}
+				}
+
+				foreach($rowData as $columnIndex => $columnValue) {
+					if($isDoubleHeader) {
+						$doubleHeader = [$columnIndex => []];
 
 						foreach($columnValue as $cellValue) {
-							array_push($doubleHeader[$j], $cellValue);
+							array_push($doubleHeader[$columnIndex], $cellValue);
 						}
 						array_push($normalised, $doubleHeader);
 					}
 					else {
+						if(empty($normalised)) {
+							array_push($normalised, $headerRow);
+						}
 						array_push($row, $columnValue);
 					}
 				}
@@ -217,6 +263,7 @@ class TableBinder {
 				}
 			}
 		}
+// Structure 4: iterable<string,iterable<int,string>>
 		else {
 			array_push($normalised, array_keys($bindValue));
 			$rows = [];
