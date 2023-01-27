@@ -4,7 +4,6 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\ElementType;
-use Stringable;
 use Traversable;
 
 class TableBinder {
@@ -125,6 +124,8 @@ class TableBinder {
 							$columnValue = $rowData[$rowIndex];
 						}
 					}
+
+                    /** @var string|null $columnValue */
 
 					if($headerIndex < $tr->cells->length - 1) {
 						if(false === $rowIndex) {
@@ -251,7 +252,7 @@ class TableBinder {
 		return $normalised;
 	}
 
-	/** @param array<int,array<int,string>>|array<int,array<string,string>>|array<string,array<int,string>>|array<int, array<int,string>|array<string,string>> $bindValue */
+	/** @param array<int,array<int,string>>|array<int,array<string,string>>|array<string,array<int,string>>|array<int, array<int,string>|array<string,string>> $array */
 	public function detectTableDataStructureType(array $array):TableDataStructureType {
 		if(empty($array)) {
 			return TableDataStructureType::NORMALISED;
@@ -276,7 +277,11 @@ class TableBinder {
 					$allRowsAreLists = false;
 				}
 
-				foreach($rowData as $cellIndex => $cellData) {
+                /**
+                 * @var int|string $cellIndex
+                 * @var string|array<string> $cellData
+                 */
+                foreach($rowData as $cellIndex => $cellData) {
 					if($rowIndex > 0) {
 						if(isset($array[0]) && is_array($array[0]) && array_is_list($array[0]) && !array_is_list($rowData)) {
 							if(!is_iterable($cellData)) {
@@ -320,97 +325,6 @@ class TableBinder {
 		}
 
 		throw new IncorrectTableDataFormat();
-	}
-
-	private function OLD_normaliseTableData(array $bindValue):array {
-		$normalised = [];
-
-		reset($bindValue);
-		$firstKey = key($bindValue);
-
-// Structure 1: iterable<int, iterable<int,string>>
-// Structure 2: iterable<int, iterable<int,string>|iterable<string,string>>
-// Structure 3: iterable<int, iterable<string,string>>
-		$headerRow = [];
-		if(is_int($firstKey)) {
-			foreach($bindValue as $rowIndex => $rowData) {
-				if(!is_iterable($rowData)) {
-					throw new IncorrectTableDataFormat("Row $rowIndex data is not iterable.");
-				}
-				$row = [];
-
-				$isDoubleHeader = true;
-				foreach($rowData as $columnIndex => $columnValue) {
-					if(is_string($columnIndex)) {
-						if(!is_iterable($columnValue)
-						&& $headerRow
-						&& count($headerRow) === count($rowData)
-						&& array_keys($rowData) !== $headerRow) {
-							throw new IncorrectTableDataFormat("Row $rowIndex has a string key ($columnIndex) but the value is not iterable.");
-						}
-					}
-
-					$isDoubleHeader = false;
-					break;
-//					|| !is_iterable($columnValue)) {
-//						$isDoubleHeader = false;
-//					}
-				}
-
-				if(!$headerRow && is_iterable($rowData)) {
-					$rowDataFirstIndex = key($rowData);
-					if(is_int($rowDataFirstIndex)) {
-						$headerRow = $rowData;
-					}
-					else {
-						$headerRow = array_keys($rowData);
-					}
-				}
-
-				foreach($rowData as $columnIndex => $columnValue) {
-					if($isDoubleHeader) {
-						$doubleHeader = [$columnIndex => []];
-
-						foreach($columnValue as $cellValue) {
-							array_push($doubleHeader[$columnIndex], $cellValue);
-						}
-						array_push($normalised, $doubleHeader);
-					}
-					else {
-						if(empty($normalised)) {
-							array_push($normalised, $headerRow);
-						}
-						array_push($row, $columnValue);
-					}
-				}
-				if(!empty($row)) {
-					array_push($normalised, $row);
-				}
-			}
-		}
-// Structure 4: iterable<string,iterable<int,string>>
-		else {
-			array_push($normalised, array_keys($bindValue));
-			$rows = [];
-
-			foreach($bindValue as $colName => $colValueList) {
-				if(!is_iterable($colValueList)) {
-					throw new IncorrectTableDataFormat("Column data \"$colName\" is not iterable.");
-				}
-
-				foreach($colValueList as $i => $colValue) {
-					if(!isset($rows[$i])) {
-						$rows[$i] = [];
-					}
-
-					array_push($rows[$i], $colValue);
-				}
-			}
-
-			array_push($normalised, ...$rows);
-		}
-
-		return $normalised;
 	}
 
 	private function initBinders():void {
