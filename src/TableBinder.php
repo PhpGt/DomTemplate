@@ -235,7 +235,17 @@ class TableBinder {
 			}
 		}
 		elseif($structureType === TableDataStructureType::DOUBLE_HEADER) {
-			$normalised = $bindValue;
+			$headers = $bindValue[0];
+			$rows = [];
+			foreach($bindValue[1] ?? [] as $thValue => $bindValueRow) {
+				array_push($rows, [
+					$thValue => $bindValueRow,
+				]);
+			}
+			$normalised = [
+				$headers,
+				...$rows,
+			];
 		}
 
 		return $normalised;
@@ -268,6 +278,12 @@ class TableBinder {
 
 				foreach($rowData as $cellIndex => $cellData) {
 					if($rowIndex > 0) {
+						if(isset($array[0]) && is_array($array[0]) && array_is_list($array[0]) && !array_is_list($rowData)) {
+							if(!is_iterable($cellData)) {
+								throw new IncorrectTableDataFormat("Row $rowIndex has a string key ($cellIndex) but the value is not iterable.");
+							}
+						}
+
 						if(!is_array($cellData) || !array_is_list($cellData)) {
 							$allRowDataAreLists = false;
 						}
