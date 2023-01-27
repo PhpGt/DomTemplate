@@ -5,6 +5,7 @@ use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\ElementType;
 use Stringable;
+use Traversable;
 
 class TableBinder {
 	public function __construct(
@@ -198,6 +199,114 @@ class TableBinder {
 	 * columnValues will be within array<string,array<int,string>>.
 	 */
 	private function normaliseTableData(iterable $bindValue):array {
+		$normalised = [];
+		if($bindValue instanceof Traversable) {
+			$bindValue = iterator_to_array($bindValue);
+		}
+
+		$structureType = $this->detectTableDataStructureType($bindValue);
+		if($structureType === TableDataStructureType::NORMALISED) {
+			$normalised = $bindValue;
+		}
+		elseif($structureType === TableDataStructureType::ASSOC_ROW) {
+			$headers = [];
+			foreach($bindValue as $row) {
+				if(empty($headers)) {
+					$headers = array_keys($row);
+					array_push($normalised, $headers);
+				}
+				$normalisedRow = [];
+				foreach($headers as $h) {
+					array_push($normalisedRow, $row[$h]);
+				}
+				array_push($normalised, $normalisedRow);
+			}
+		}
+		elseif($structureType === TableDataStructureType::HEADER_VALUE_LIST) {
+			$headers = array_keys($bindValue);
+			array_push($normalised, $headers);
+
+			foreach($bindValue[$headers[0]] as $rowIndex => $ignored) {
+				$row = [];
+				foreach($headers as $h) {
+					array_push($row, $bindValue[$h][$rowIndex]);
+				}
+				array_push($normalised, $row);
+			}
+		}
+		elseif($structureType === TableDataStructureType::DOUBLE_HEADER) {
+			$normalised = $bindValue;
+		}
+
+		return $normalised;
+	}
+
+	/** @param array<int,array<int,string>>|array<int,array<string,string>>|array<string,array<int,string>>|array<int, array<int,string>|array<string,string>> $bindValue */
+	public function detectTableDataStructureType(array $array):TableDataStructureType {
+		if(empty($array)) {
+			return TableDataStructureType::NORMALISED;
+		}
+
+		reset($array);
+
+		if(array_is_list($array)) {
+			$allRowsAreLists = true;
+			$allRowDataAreLists = true;
+			$allRowDataAreAssoc = true;
+
+			foreach($array as $rowIndex => $rowData) {
+				if(!is_array($rowData)) {
+					throw new IncorrectTableDataFormat("Row $rowIndex data is not iterable");
+				}
+
+				if(array_is_list($rowData)) {
+					$allRowDataAreAssoc = false;
+				}
+				else {
+					$allRowsAreLists = false;
+				}
+
+				foreach($rowData as $cellIndex => $cellData) {
+					if($rowIndex > 0) {
+						if(!is_array($cellData) || !array_is_list($cellData)) {
+							$allRowDataAreLists = false;
+						}
+					}
+				}
+			}
+
+			if($allRowsAreLists) {
+				return TableDataStructureType::NORMALISED;
+			}
+			else {
+				if($allRowDataAreLists) {
+					return TableDataStructureType::DOUBLE_HEADER;
+				}
+				elseif($allRowDataAreAssoc) {
+					return TableDataStructureType::ASSOC_ROW;
+				}
+			}
+		}
+		else {
+			$allRowDataAreLists = true;
+			foreach($array as $rowIndex => $rowData) {
+				if(!is_array($rowData)) {
+					throw new IncorrectTableDataFormat("Column data \"$rowIndex\" is not iterable.");
+				}
+				if(!array_is_list($rowData)) {
+					$allRowDataAreLists = false;
+				}
+			}
+
+			if($allRowDataAreLists) {
+				return TableDataStructureType::HEADER_VALUE_LIST;
+			}
+		}
+
+		throw new IncorrectTableDataFormat();
+	}
+
+	private function OLD_normaliseTableData(array $bindValue):array {
 		$normalised = [];
 
 		reset($bindValue);

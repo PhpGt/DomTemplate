@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\IncorrectTableDataFormat;
 use Gt\DomTemplate\TableBinder;
+use Gt\DomTemplate\TableDataStructureType;
 use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -239,7 +240,7 @@ class TableBinderTest extends TestCase {
 			"format",
 		];
 		self::expectException(IncorrectTableDataFormat::class);
-		self::expectExceptionMessage("Row 1 data is not iterable.");
+		self::expectExceptionMessage("Row 1 data is not iterable");
 		$sut->bindTableData(
 			$tableData,
 			$table
@@ -537,5 +538,91 @@ class TableBinderTest extends TestCase {
 			self::assertEquals($rowData["Country"], $rowEl->cells[3]->textContent);
 			self::assertCount(6, $rowEl->cells);
 		}
+	}
+
+	public function testDetectTableStructureType_invalid():void {
+		$sut = new TableBinder();
+		self::expectException(IncorrectTableDataFormat::class);
+		$sut->detectTableDataStructureType(
+			[
+				123 => "test",
+				[
+					"this" => "is incorrect"
+				]
+			]
+		);
+	}
+
+	public function testDetectTableStructureType_normalised():void {
+		$data = [
+			["name", "species"],
+			["Greg", "Human"],
+			["Sarah", "Human"],
+			["Cody", "Feline"],
+		];
+
+		$sut = new TableBinder();
+		self::assertSame(
+			TableDataStructureType::NORMALISED,
+			$sut->detectTableDataStructureType($data),
+		);
+	}
+
+	public function testDetectTableStructureType_doubleHeader():void {
+		$data = [
+			["Item", "Price", "Stock Level"],
+			[
+				"Washing machine" => [698_00, 24],
+				"Television" => [998_00, 7],
+				"Laptop" => [799_99, 60],
+			]
+		];
+		$sut = new TableBinder();
+		self::assertSame(
+			TableDataStructureType::DOUBLE_HEADER,
+			$sut->detectTableDataStructureType($data),
+		);
+	}
+
+	public function testDetectTableStructureType_assocRow():void {
+		$data = [
+			[
+				"name" => "Greg",
+				"species" => "Human",
+			],
+			[
+				"name" => "Sarah",
+				"species" => "Human",
+			],
+			[
+				"name" => "Cody",
+				"species" => "Feline",
+			],
+		];
+		$sut = new TableBinder();
+		self::assertSame(
+			TableDataStructureType::ASSOC_ROW,
+			$sut->detectTableDataStructureType($data),
+		);
+	}
+
+	public function testDetectTableStructureType_headerValueList():void {
+		$data = [
+			"name" => ["Greg", "Sarah", "Cody"],
+			"species" => ["Human", "Human", "Feline"],
+		];
+		$sut = new TableBinder();
+		self::assertSame(
+			TableDataStructureType::HEADER_VALUE_LIST,
+			$sut->detectTableDataStructureType($data),
+		);
+	}
+
+	public function testDetectTableStructureType_emptyIsNormalised():void {
+		$sut = new TableBinder();
+		self::assertSame(
+			TableDataStructureType::NORMALISED,
+			$sut->detectTableDataStructureType([]),
+		);
 	}
 }
