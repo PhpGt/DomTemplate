@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use ArrayIterator;
 use DateInterval;
 use DateTime;
+use DateTimeInterface;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
@@ -557,6 +558,29 @@ class ListBinderTest extends TestCase {
 
 		foreach($document->querySelectorAll("li") as $i => $li) {
 			self::assertSame((string)$listData[$i], $li->textContent);
+		}
+	}
+
+	public function testBindListData_dateTimeAutomatic():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DATES);
+		$templateCollection = new TemplateCollection($document);
+		/** @var array<DateTimeInterface> $listData */
+		$listData = [];
+
+		$dateTime = new DateTime();
+		$currentYear = $dateTime->format("Y");
+		$dateTime->setDate($currentYear, 1, 1);
+
+		while($dateTime->format("Y") === $currentYear) {
+			array_push($listData, clone $dateTime);
+			$dateTime->add(new DateInterval("P1M"));
+		}
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($listData, $document);
+
+		foreach($document->querySelectorAll("li") as $i => $li) {
+			self::assertSame($listData[$i]->format(DateTimeInterface::RFC7231), $li->textContent);
 		}
 	}
 

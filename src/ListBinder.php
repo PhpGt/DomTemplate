@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate;
 
+use DateTimeInterface;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Iterator;
@@ -127,6 +128,9 @@ class ListBinder {
 			return false;
 		}
 
+		if($item instanceof DateTimeInterface) {
+			return false;
+		}
 		if($item instanceof Stringable) {
 			return false;
 		}

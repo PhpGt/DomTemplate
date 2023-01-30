@@ -6,7 +6,6 @@ use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
 use Gt\Dom\DOMTokenListFactory;
 use Gt\Dom\Element;
-use Gt\Dom\ElementType;
 
 class HTMLAttributeBinder {
 	private TableBinder $tableBinder;
@@ -18,6 +17,9 @@ class HTMLAttributeBinder {
 	):void {
 		if(is_null($value)) {
 			return;
+		}
+		if(!is_scalar($value) && !is_iterable($value)) {
+			$value = new BindValue($value);
 		}
 
 		if($element instanceof Document) {
