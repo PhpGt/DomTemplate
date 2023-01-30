@@ -117,4 +117,14 @@ class HTMLAttributeBinderTest extends TestCase {
 		$sut->bind("alternativeText", $testMessage, $img);
 		self::assertSame($testMessage, $img->alt);
 	}
+
+	public function testBind_dateTimeInterface():void {
+		$dateTime = new DateTime("1988-04-05 17:23:00");
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SINGLE_ELEMENT);
+		$outputElement = $document->querySelector("output");
+		$sut = new HTMLAttributeBinder();
+		$sut->bind(null, $dateTime, $outputElement);
+		self::assertSame("Tue, 05 Apr 1988 17:23:00 GMT", $outputElement->textContent);
+	}
 }
