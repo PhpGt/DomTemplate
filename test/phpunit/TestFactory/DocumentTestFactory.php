@@ -219,11 +219,46 @@ HTML;
 		<td>
 			<form method="post">
 				<input type="hidden" name="id" data-bind:value="@name" />
+				<input name="message" />
 				<button name="do" value="flag">Flag</button>
+				<button name="do" value="unflag">Flag</button>
 			</form>
 		</td>
 	</tr>
 </tbody>
+</table>
+HTML;
+
+	const HTML_TABLE_CRUD = <<<HTML
+<table id="crud-table">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Forename</th>
+			<th>Surname</th>
+			<th>Country</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr data-template>
+			<td>0</td>
+			<td>Test</td>
+			<td>Testerson</td>
+			<td>Antarctica</td>
+			<td>
+				<form method="post">
+					<input name="id" type="hidden" />
+					<button name="do" value="edit">Edit</button>
+				</form>
+			</td>
+			<td>
+				<form method="post">
+					<input name="id" type="hidden" />
+					<button name="do" value="delete">Delete</button>
+				</form>
+			</td>
+		</tr>
+	</tbody>
 </table>
 HTML;
 
