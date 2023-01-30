@@ -73,6 +73,11 @@ class CommentIni {
 		return $var;
 	}
 
+	/** @return array<string, string> */
+	public function getVars():array {
+		return $this->iniData["vars"] ?? [];
+	}
+
 	public function containsIniData():bool {
 		return !empty($this->iniData);
 	}
