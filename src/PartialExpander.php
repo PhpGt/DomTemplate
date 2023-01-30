@@ -54,7 +54,7 @@ class PartialExpander extends PartialContentExpander {
 				throw new PartialInjectionMultiplePointException("The current view extends the partial \"$extends\", but there is more than one element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
 			}
 			$injectionPoint = $partialElementList[0] ?? null;
-			$partialElementList[0]->removeAttribute("data-partial");
+			$partialElementList[0]?->removeAttribute("data-partial");
 
 			if(!$injectionPoint) {
 				throw new PartialInjectionPointNotFoundException("The current view extends the partial \"$extends\", but there is no element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
