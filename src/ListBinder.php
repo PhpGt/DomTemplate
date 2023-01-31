@@ -10,6 +10,7 @@ use Stringable;
 class ListBinder {
 	private BindableCache $bindableCache;
 
+	/** @noinspection PhpPropertyCanBeReadonlyInspection */
 	public function __construct(
 		private TemplateCollection $templateCollection,
 		?BindableCache $bindableCache = null
@@ -17,7 +18,7 @@ class ListBinder {
 		$this->bindableCache = $bindableCache ?? new BindableCache();
 	}
 
-	/** @param iterable<mixed> $listData */
+	/** @param iterable<int|string,mixed> $listData */
 	public function bindListData(
 		iterable $listData,
 		Document|Element $context,
@@ -102,7 +103,7 @@ class ListBinder {
 		return $nestedCount + $i + 1;
 	}
 
-	/** @param iterable<mixed>|array<mixed> $listData */
+	/** @param iterable<int|string,mixed> $listData */
 	private function isEmpty(iterable $listData):bool {
 		if(is_array($listData)) {
 			return is_null(array_key_first($listData));

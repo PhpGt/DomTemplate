@@ -7,7 +7,7 @@ use Stringable;
 
 class NodePathCalculator implements Stringable {
 	public function __construct(
-		private Node|Element $element
+		private readonly Node|Element $element
 	) {
 	}
 
@@ -39,7 +39,7 @@ class NodePathCalculator implements Stringable {
 			$path = "/" . $contextPath . $path;
 			$context = $context->parentElement;
 		}
-		while($context && $context instanceof Element);
+		while($context instanceof Element);
 
 		return $path;
 	}
