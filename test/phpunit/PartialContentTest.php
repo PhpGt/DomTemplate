@@ -1,9 +1,11 @@
 <?php
 namespace Gt\DomTemplate\Test;
 
+use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\PartialContent;
 use Gt\DomTemplate\PartialContentDirectoryNotFoundException;
 use Gt\DomTemplate\PartialContentFileNotFoundException;
+use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
 use PHPUnit\Framework\TestCase;
 
 class PartialContentTest extends TestCase {
