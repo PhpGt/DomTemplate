@@ -1,14 +1,7 @@
 <?php
 namespace Gt\DomTemplate;
 
-use Gt\Dom\DOMTokenList;
 use Gt\Dom\Element;
-use Gt\Dom\Facade\DOMTokenListFactory;
-use Gt\Dom\Node;
-use Gt\Dom\XPathResult;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
 
 class ElementBinder {
 	private HTMLAttributeBinder $htmlAttributeBinder;

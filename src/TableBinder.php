@@ -7,6 +7,7 @@ use Gt\Dom\ElementType;
 use Traversable;
 
 class TableBinder {
+	/** @noinspection PhpPropertyCanBeReadonlyInspection */
 	public function __construct(
 		private ?TemplateCollection $templateCollection = null,
 		private ?ElementBinder $elementBinder = null,
@@ -168,6 +169,81 @@ class TableBinder {
 		}
 	}
 
+	/** @param array<int,array<int,string>>|array<int,array<string,string>>|array<string,array<int,string>>|array<int, array<int,string>|array<string,string>> $array */
+	public function detectTableDataStructureType(array $array):TableDataStructureType {
+		if(empty($array)) {
+			return TableDataStructureType::NORMALISED;
+		}
+
+		reset($array);
+
+		if(array_is_list($array)) {
+			$allRowsAreLists = true;
+			$allRowDataAreLists = true;
+			$allRowDataAreAssoc = true;
+
+			foreach($array as $rowIndex => $rowData) {
+				if(!is_array($rowData)) {
+					throw new IncorrectTableDataFormat("Row $rowIndex data is not iterable");
+				}
+
+				if(array_is_list($rowData)) {
+					$allRowDataAreAssoc = false;
+				}
+				else {
+					$allRowsAreLists = false;
+				}
+
+				/**
+				 * @var int|string $cellIndex
+				 * @var string|array<string> $cellData
+				 */
+				foreach($rowData as $cellIndex => $cellData) {
+					if($rowIndex > 0) {
+						if(isset($array[0]) && is_array($array[0]) && array_is_list($array[0]) && !array_is_list($rowData)) {
+							if(!is_iterable($cellData)) {
+								throw new IncorrectTableDataFormat("Row $rowIndex has a string key ($cellIndex) but the value is not iterable.");
+							}
+						}
+
+						if(!is_array($cellData) || !array_is_list($cellData)) {
+							$allRowDataAreLists = false;
+						}
+					}
+				}
+			}
+
+			if($allRowsAreLists) {
+				return TableDataStructureType::NORMALISED;
+			}
+			else {
+				if($allRowDataAreLists) {
+					return TableDataStructureType::DOUBLE_HEADER;
+				}
+				elseif($allRowDataAreAssoc) {
+					return TableDataStructureType::ASSOC_ROW;
+				}
+			}
+		}
+		else {
+			$allRowDataAreLists = true;
+			foreach($array as $rowIndex => $rowData) {
+				if(!is_array($rowData)) {
+					throw new IncorrectTableDataFormat("Column data \"$rowIndex\" is not iterable.");
+				}
+				if(!array_is_list($rowData)) {
+					$allRowDataAreLists = false;
+				}
+			}
+
+			if($allRowDataAreLists) {
+				return TableDataStructureType::HEADER_VALUE_LIST;
+			}
+		}
+
+		throw new IncorrectTableDataFormat();
+	}
+
 	/**
 	 * @param iterable<int,iterable<int,string>>|iterable<int,iterable<string,string>>|iterable<string,iterable<int,string>>|iterable<int, iterable<int,string>|iterable<string,string>> $bindValue
 	 * The structures allowed by this method are:
@@ -250,81 +326,6 @@ class TableBinder {
 		}
 
 		return $normalised;
-	}
-
-	/** @param array<int,array<int,string>>|array<int,array<string,string>>|array<string,array<int,string>>|array<int, array<int,string>|array<string,string>> $array */
-	public function detectTableDataStructureType(array $array):TableDataStructureType {
-		if(empty($array)) {
-			return TableDataStructureType::NORMALISED;
-		}
-
-		reset($array);
-
-		if(array_is_list($array)) {
-			$allRowsAreLists = true;
-			$allRowDataAreLists = true;
-			$allRowDataAreAssoc = true;
-
-			foreach($array as $rowIndex => $rowData) {
-				if(!is_array($rowData)) {
-					throw new IncorrectTableDataFormat("Row $rowIndex data is not iterable");
-				}
-
-				if(array_is_list($rowData)) {
-					$allRowDataAreAssoc = false;
-				}
-				else {
-					$allRowsAreLists = false;
-				}
-
-                /**
-                 * @var int|string $cellIndex
-                 * @var string|array<string> $cellData
-                 */
-                foreach($rowData as $cellIndex => $cellData) {
-					if($rowIndex > 0) {
-						if(isset($array[0]) && is_array($array[0]) && array_is_list($array[0]) && !array_is_list($rowData)) {
-							if(!is_iterable($cellData)) {
-								throw new IncorrectTableDataFormat("Row $rowIndex has a string key ($cellIndex) but the value is not iterable.");
-							}
-						}
-
-						if(!is_array($cellData) || !array_is_list($cellData)) {
-							$allRowDataAreLists = false;
-						}
-					}
-				}
-			}
-
-			if($allRowsAreLists) {
-				return TableDataStructureType::NORMALISED;
-			}
-			else {
-				if($allRowDataAreLists) {
-					return TableDataStructureType::DOUBLE_HEADER;
-				}
-				elseif($allRowDataAreAssoc) {
-					return TableDataStructureType::ASSOC_ROW;
-				}
-			}
-		}
-		else {
-			$allRowDataAreLists = true;
-			foreach($array as $rowIndex => $rowData) {
-				if(!is_array($rowData)) {
-					throw new IncorrectTableDataFormat("Column data \"$rowIndex\" is not iterable.");
-				}
-				if(!array_is_list($rowData)) {
-					$allRowDataAreLists = false;
-				}
-			}
-
-			if($allRowDataAreLists) {
-				return TableDataStructureType::HEADER_VALUE_LIST;
-			}
-		}
-
-		throw new IncorrectTableDataFormat();
 	}
 
 	private function initBinders():void {
