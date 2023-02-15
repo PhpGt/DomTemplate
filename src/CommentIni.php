@@ -59,7 +59,7 @@ class CommentIni {
 			$commentNodeToRemove->parentNode->removeChild($commentNodeToRemove);
 		}
 
-		$this->iniData = $ini;
+		$this->iniData = $ini ?: null;
 	}
 
 	public function get(string $variable):?string {
