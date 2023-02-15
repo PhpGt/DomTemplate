@@ -5,6 +5,7 @@ use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionObject;
 use ReflectionProperty;
+use Stringable;
 
 class BindableCache {
 	/**
@@ -49,10 +50,12 @@ class BindableCache {
 		}
 		foreach($refObj->getProperties() as $refProp) {
 			$propName = $refProp->getName();
-			if($refProp->isPublic() && $refProp->isReadOnly() && $refProp->isInitialized($object)) {
-				$bindKey = $propName;
-				$attributeCache[$bindKey]
-					= fn(object $object, $key) : ?string => $object->$key;
+			if($refProp->isPublic() && $refProp->isInitialized($object)) {
+				if(is_null($object->$propName) || is_scalar($object->$propName) || $object->$propName instanceof Stringable) {
+					$bindKey = $propName;
+					$attributeCache[$bindKey]
+						= fn(object $object, $key):?string => $object->$key;
+				}
 			}
 			$refAttributes = $this->getBindAttributes($refProp);
 

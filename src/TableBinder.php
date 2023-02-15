@@ -4,13 +4,10 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Gt\Dom\ElementType;
-use Gt\Dom\HTMLElement\HTMLTableCellElement;
-use Gt\Dom\HTMLElement\HTMLTableElement;
-use Gt\Dom\HTMLElement\HTMLTableRowElement;
-use Gt\Dom\HTMLElement\HTMLTableSectionElement;
-use Stringable;
+use Traversable;
 
 class TableBinder {
+	/** @noinspection PhpPropertyCanBeReadonlyInspection */
 	public function __construct(
 		private ?TemplateCollection $templateCollection = null,
 		private ?ElementBinder $elementBinder = null,
@@ -25,7 +22,8 @@ class TableBinder {
 	 */
 	public function bindTableData(
 		array $tableData,
-		Document|Element $context
+		Document|Element $context,
+		?string $bindKey = null
 	):void {
 		$tableData = $this->normaliseTableData($tableData);
 
@@ -40,6 +38,19 @@ class TableBinder {
 			$tableArray = [];
 			foreach($context->querySelectorAll("table") as $table) {
 				array_push($tableArray, $table);
+			}
+		}
+
+		foreach($tableArray as $i => $table) {
+			$dataBindTableAttr = "data-bind:table";
+			$dataBindTableElement = $table;
+			if(!$dataBindTableElement->hasAttribute($dataBindTableAttr)) {
+				$dataBindTableElement = $table->closest("[data-bind:table]") ?? $table;
+			}
+
+			if(!$dataBindTableElement
+			|| $dataBindTableElement->getAttribute("data-bind:table") != $bindKey) {
+				unset($tableArray[$i]);
 			}
 		}
 
@@ -115,6 +126,8 @@ class TableBinder {
 						}
 					}
 
+                    /** @var string|null $columnValue */
+
 					if($headerIndex < $tr->cells->length - 1) {
 						if(false === $rowIndex) {
 							continue;
@@ -156,76 +169,160 @@ class TableBinder {
 		}
 	}
 
-	/**
-	 * @param iterable<int,iterable<int,string>>|iterable<string,iterable<int, string>>|iterable<string,iterable<string, iterable<int, string>>> $bindValue
-	 * The three structures allowed by this method are:
-	 * 1) If $bindValue has int keys, the first value must represent an
-	 * iterable of columnHeaders, and subsequent values must represent an
-	 * iterable of columnValues.
-	 * 2) If $bindValue has string keys, the keys must represent the column
-	 * headers and the value must be an iterable of columnValues.
-	 * 3) If columnValues has int keys, each item represents the value of
-	 * a column <td> element.
-	 * 4) If columnValues has a string keys, each key represents a <th> and
-	 * each sub-iterable represents the remaining column values.
-	 * @return array<int, array<int|string, string|Stringable>> A
-	 * two-dimensional array where the outer array represents the rows, the
-	 * inner array represents the columns.
-	 */
-	private function normaliseTableData(iterable $bindValue):array {
-		$normalised = [];
+	/** @param array<int,array<int,string>>|array<int,array<string,string>>|array<string,array<int,string>>|array<int, array<int,string>|array<string,string>> $array */
+	public function detectTableDataStructureType(array $array):TableDataStructureType {
+		if(empty($array)) {
+			return TableDataStructureType::NORMALISED;
+		}
 
-		reset($bindValue);
-		$key = key($bindValue);
+		reset($array);
 
-		if(is_int($key)) {
-			foreach($bindValue as $i => $value) {
-				if(!is_iterable($value)) {
-					throw new IncorrectTableDataFormat("Row $i data is not iterable.");
+		if(array_is_list($array)) {
+			$allRowsAreLists = true;
+			$allRowDataAreLists = true;
+			$allRowDataAreAssoc = true;
+
+			foreach($array as $rowIndex => $rowData) {
+				if(!is_array($rowData)) {
+					throw new IncorrectTableDataFormat("Row $rowIndex data is not iterable");
 				}
-				$row = [];
 
-				foreach($value as $j => $columnValue) {
-// A string key within the inner array indicates "double header" table data.
-					if(is_string($j)) {
-						$doubleHeader = [$j => []];
-						if(!is_iterable($columnValue)) {
-							throw new IncorrectTableDataFormat("Row $i has a string key ($j) but the value is not iterable.");
+				if(array_is_list($rowData)) {
+					$allRowDataAreAssoc = false;
+				}
+				else {
+					$allRowsAreLists = false;
+				}
+
+				/**
+				 * @var int|string $cellIndex
+				 * @var string|array<string> $cellData
+				 */
+				foreach($rowData as $cellIndex => $cellData) {
+					if($rowIndex > 0) {
+						if(isset($array[0]) && is_array($array[0]) && array_is_list($array[0]) && !array_is_list($rowData)) {
+							if(!is_iterable($cellData)) {
+								throw new IncorrectTableDataFormat("Row $rowIndex has a string key ($cellIndex) but the value is not iterable.");
+							}
 						}
 
-						foreach($columnValue as $cellValue) {
-							array_push($doubleHeader[$j], $cellValue);
+						if(!is_array($cellData) || !array_is_list($cellData)) {
+							$allRowDataAreLists = false;
 						}
-						array_push($normalised, $doubleHeader);
-					}
-					else {
-						array_push($row, $columnValue);
 					}
 				}
-				if(!empty($row)) {
-					array_push($normalised, $row);
+			}
+
+			if($allRowsAreLists) {
+				return TableDataStructureType::NORMALISED;
+			}
+			else {
+				if($allRowDataAreLists) {
+					return TableDataStructureType::DOUBLE_HEADER;
+				}
+				elseif($allRowDataAreAssoc) {
+					return TableDataStructureType::ASSOC_ROW;
 				}
 			}
 		}
 		else {
-			array_push($normalised, array_keys($bindValue));
-			$rows = [];
-
-			foreach($bindValue as $colName => $colValueList) {
-				if(!is_iterable($colValueList)) {
-					throw new IncorrectTableDataFormat("Column data \"$colName\" is not iterable.");
+			$allRowDataAreLists = true;
+			foreach($array as $rowIndex => $rowData) {
+				if(!is_array($rowData)) {
+					throw new IncorrectTableDataFormat("Column data \"$rowIndex\" is not iterable.");
 				}
-
-				foreach($colValueList as $i => $colValue) {
-					if(!isset($rows[$i])) {
-						$rows[$i] = [];
-					}
-
-					array_push($rows[$i], $colValue);
+				if(!array_is_list($rowData)) {
+					$allRowDataAreLists = false;
 				}
 			}
 
-			array_push($normalised, ...$rows);
+			if($allRowDataAreLists) {
+				return TableDataStructureType::HEADER_VALUE_LIST;
+			}
+		}
+
+		throw new IncorrectTableDataFormat();
+	}
+
+	/**
+	 * @param iterable<int,iterable<int,string>>|iterable<int,iterable<string,string>>|iterable<string,iterable<int,string>>|iterable<int, iterable<int,string>|iterable<string,string>> $bindValue
+	 * The structures allowed by this method are:
+	 *
+	 * 1) iterable<int, iterable<int,string>> If $bindValue has keys of type
+	 * int, and the value of index 0 is an iterable of strings, then the
+	 * value of index 0 must represent the columnHeaders; subsequent values
+	 * must represent the columnValues.
+	 * 2) iterable<int, iterable<int,string>|iterable<string,string>>
+	 * Similar to structure 1, but with a key difference. If the value of
+	 * index 0 is an iterable of strings, BUT the next value is an iterable
+	 * with keys of type string, this represents "double header" data - the
+	 * returned normalised value retains this double header data so the
+	 * binder can insert <th> elements in the <tbody>.
+	 * 3) iterable<int, iterable<string,string>> If $bindValue has keys of
+	 * type int, and the value of index 0 is associative, then the value of
+	 * each index must represent the individual rows, where the
+	 * columnHeaders are the string key of the inner iterable, and the
+	 * columnValues are the string value of the inner iterable.
+	 * 4) iterable<string,iterable<int,string>> If $bindValue has keys of
+	 * type string, the keys must represent the columnHeaders and the values
+	 * must represent the columnValues.
+	 *
+	 * @return array<int, array<int, string>|array<string,array<int,string>>>
+	 * A two-dimensional array where the outer array represents the rows,
+	 * the inner array represents the columns. The first index's value is
+	 * always the columnHeaders. The other index's values are always the
+	 * columnValues. Typically, columnValues will be array<int,string> apart
+	 * from when the data represents double-header tables, in which case the
+	 * columnValues will be within array<string,array<int,string>>.
+	 */
+	private function normaliseTableData(iterable $bindValue):array {
+		$normalised = [];
+		if($bindValue instanceof Traversable) {
+			$bindValue = iterator_to_array($bindValue);
+		}
+
+		$structureType = $this->detectTableDataStructureType($bindValue);
+		if($structureType === TableDataStructureType::NORMALISED) {
+			$normalised = $bindValue;
+		}
+		elseif($structureType === TableDataStructureType::ASSOC_ROW) {
+			$headers = [];
+			foreach($bindValue as $row) {
+				if(empty($headers)) {
+					$headers = array_keys($row);
+					array_push($normalised, $headers);
+				}
+				$normalisedRow = [];
+				foreach($headers as $h) {
+					array_push($normalisedRow, $row[$h]);
+				}
+				array_push($normalised, $normalisedRow);
+			}
+		}
+		elseif($structureType === TableDataStructureType::HEADER_VALUE_LIST) {
+			$headers = array_keys($bindValue);
+			array_push($normalised, $headers);
+
+			foreach($bindValue[$headers[0]] as $rowIndex => $ignored) {
+				$row = [];
+				foreach($headers as $h) {
+					array_push($row, $bindValue[$h][$rowIndex]);
+				}
+				array_push($normalised, $row);
+			}
+		}
+		elseif($structureType === TableDataStructureType::DOUBLE_HEADER) {
+			$headers = $bindValue[0];
+			$rows = [];
+			foreach($bindValue[1] ?? [] as $thValue => $bindValueRow) {
+				array_push($rows, [
+					$thValue => $bindValueRow,
+				]);
+			}
+			$normalised = [
+				$headers,
+				...$rows,
+			];
 		}
 
 		return $normalised;

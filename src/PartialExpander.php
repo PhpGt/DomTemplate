@@ -9,11 +9,15 @@ class PartialExpander extends PartialContentExpander {
 	 * @return string[] A list of names of partials that have been expanded,
 	 * in the order that they were expanded.
 	 */
-	public function expand(Element $context = null):array {
+	public function expand(
+		?Element $context = null,
+		?DocumentBinder $binder = null,
+	):array {
 		if(!$context) {
 			$context = $this->document->documentElement;
 		}
 
+		$vars = [];
 		/** @var array<string, HTMLDocument> $partialDocumentArray */
 		$partialDocumentArray = [];
 		do {
@@ -21,6 +25,10 @@ class PartialExpander extends PartialContentExpander {
 			$extends = $commentIni->get("extends");
 			if(is_null($extends)) {
 				break;
+			}
+
+			if($commentVars = $commentIni->getVars()) {
+				$vars += $commentVars;
 			}
 
 			$partialDocument = $this->partialContent->getHTMLDocument($extends);
@@ -46,6 +54,7 @@ class PartialExpander extends PartialContentExpander {
 				throw new PartialInjectionMultiplePointException("The current view extends the partial \"$extends\", but there is more than one element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
 			}
 			$injectionPoint = $partialElementList[0] ?? null;
+			$partialElementList[0]?->removeAttribute("data-partial");
 
 			if(!$injectionPoint) {
 				throw new PartialInjectionPointNotFoundException("The current view extends the partial \"$extends\", but there is no element marked with `data-partial`. For help, see https://www.php.gt/domtemplate/partials");
@@ -66,6 +75,12 @@ class PartialExpander extends PartialContentExpander {
 // our current document already injected at the correct node.
 			while($child = $importedRoot->firstChild) {
 				$this->document->documentElement->appendChild($child);
+			}
+		}
+
+		if($binder) {
+			foreach($vars as $key => $value) {
+				$binder->bindKeyValue($key, $value);
 			}
 		}
 

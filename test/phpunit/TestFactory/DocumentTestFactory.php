@@ -93,7 +93,9 @@ HTML;
 	data-bind:class=":is-selected" data-rebind />
 
 <img id="img3" class="secondary" src="/default.png" alt="Not bound"
-	data-bind:class=":isSelected selected-image" data-rebind />
+	data-bind:class=":isSelected selected-image" 
+	data-bind:alt="?alternativeText"
+	data-rebind />
 
 <p id="p1" data-params="funny friendly" data-bind:data-params=":isMagic magical" data-rebind>Is this paragraph magical?</p>
 
@@ -105,9 +107,11 @@ HTML;
 
 	const HTML_TABLES = <<<HTML
 <!doctype html>
+<table id="tbl0" data-bind:table="matchingTableBindKey"></table>
+
 <table id="tbl1" data-bind:table="tableData"></table>
 
-<table id="tbl2" data-bind:table="tableData">
+<table id="tbl2" data-bind:table>
 	<thead>
 		<tr>
 			<th data-table-key="firstName">First name</th>
@@ -215,11 +219,46 @@ HTML;
 		<td>
 			<form method="post">
 				<input type="hidden" name="id" data-bind:value="@name" />
+				<input name="message" />
 				<button name="do" value="flag">Flag</button>
+				<button name="do" value="unflag">Flag</button>
 			</form>
 		</td>
 	</tr>
 </tbody>
+</table>
+HTML;
+
+	const HTML_TABLE_CRUD = <<<HTML
+<table id="crud-table">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Forename</th>
+			<th>Surname</th>
+			<th>Country</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr data-template>
+			<td>0</td>
+			<td>Test</td>
+			<td>Testerson</td>
+			<td>Antarctica</td>
+			<td>
+				<form method="post">
+					<input name="id" type="hidden" />
+					<button name="do" value="edit">Edit</button>
+				</form>
+			</td>
+			<td>
+				<form method="post">
+					<input name="id" type="hidden" />
+					<button name="do" value="delete">Delete</button>
+				</form>
+			</td>
+		</tr>
+	</tbody>
 </table>
 HTML;
 
@@ -243,6 +282,16 @@ HTML;
 	<li>This doesn't have a data template attribute</li>
 </ol>
 HTML;
+
+	const HTML_LIST_WITH_TEXTNODE = <<<HTML
+<!doctype html>
+<!doctype html>
+<ul>
+	<li data-template data-bind:text>Template item!</li>
+	<li>This list item will always show at the end</li>
+</ul>
+HTML;
+
 
 	const HTML_TWO_LISTS = <<<HTML
 <!doctype html>
@@ -730,6 +779,24 @@ HTML;
 			<option>Chocolate</option>		
 			<option>Soda</option>		
 			<option>Water</option>		
+		</select>
+	</label>
+</form>
+HTML;
+
+	const HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN = <<<HTML
+<!doctype html>
+<form>
+	<label>
+		<span>Select your drink preference</span>
+		<select name="drink" data-bind:value="drink">
+			<option></option>
+			<option data-bind:value="id" data-bind:text="name" data-template>Special option</option>
+			<option value="coffee">Coffee</option>		
+			<option value="tea">Tea</option>		
+			<option value="chocolate">Chocolate</option>		
+			<option value="soda">Soda</option>		
+			<option value="water">Water</option>		
 		</select>
 	</label>
 </form>

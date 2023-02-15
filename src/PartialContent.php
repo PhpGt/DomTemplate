@@ -5,7 +5,7 @@ use Gt\Dom\HTMLDocument;
 
 class PartialContent {
 	public function __construct(
-		private string $dirPath
+		private readonly string $dirPath
 	) {
 		if(!is_dir($this->dirPath)) {
 			throw new PartialContentDirectoryNotFoundException("The partial content path does not exist: $this->dirPath");

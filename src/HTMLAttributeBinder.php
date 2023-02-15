@@ -6,7 +6,6 @@ use Gt\Dom\Document;
 use Gt\Dom\DOMTokenList;
 use Gt\Dom\DOMTokenListFactory;
 use Gt\Dom\Element;
-use Gt\Dom\ElementType;
 
 class HTMLAttributeBinder {
 	private TableBinder $tableBinder;
@@ -18,6 +17,9 @@ class HTMLAttributeBinder {
 	):void {
 		if(is_null($value)) {
 			return;
+		}
+		if(!is_scalar($value) && !is_iterable($value)) {
+			$value = new BindValue($value);
 		}
 
 		if($element instanceof Document) {
@@ -186,7 +188,11 @@ class HTMLAttributeBinder {
 			if(!isset($this->tableBinder)) {
 				$this->tableBinder = new TableBinder();
 			}
-			$this->tableBinder->bindTableData($bindValue, $element);
+			$this->tableBinder->bindTableData(
+				$bindValue,
+				$element,
+				$element->getAttribute("data-bind:$bindProperty")
+			);
 			break;
 
 		case "value":
@@ -239,10 +245,12 @@ class HTMLAttributeBinder {
 			}
 
 			if($bindValue) {
-				$element->setAttribute($attribute, "");
+				$element->setAttribute($attribute, $bindValue);
 			}
 			else {
-				$element->removeAttribute($attribute);
+				if(!is_null($bindValue)) {
+					$element->removeAttribute($attribute);
+				}
 			}
 		}
 	}

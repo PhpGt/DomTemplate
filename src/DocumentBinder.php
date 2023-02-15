@@ -31,7 +31,7 @@ class DocumentBinder {
 		$this->templateCollection = $templateCollection ?? new TemplateCollection($document);
 		$this->elementBinder = $elementBinder ?? new ElementBinder();
 		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
-		$this->tableBinder = $tableBinder ?? new TableBinder();
+		$this->tableBinder = $tableBinder ?? new TableBinder($this->templateCollection);
 		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
 		$this->bindableCache = $bindableCache ?? new BindableCache();
 	}
@@ -88,11 +88,13 @@ class DocumentBinder {
 
 	public function bindTable(
 		mixed $tableData,
-		?Element $context = null
+		?Element $context = null,
+		?string $bindKey = null
 	):void {
 		$this->tableBinder->bindTableData(
 			$tableData,
-			$context ?? $this->document
+			$context ?? $this->document,
+			$bindKey
 		);
 	}
 

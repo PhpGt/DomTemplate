@@ -8,6 +8,7 @@ use Gt\Dom\Element;
 use Gt\Dom\HTMLCollection;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
+use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\IncompatibleBindDataException;
 use Gt\DomTemplate\InvalidBindPropertyException;
@@ -211,6 +212,65 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($userObject->category, $document->getElementById("dd3")->textContent);
 	}
 
+	public function testBindData_objectWithNonScalarProperties():void {
+		$email = new class() extends StdClass {
+			#[BindGetter]
+			public function getEmail():string {
+				return "greg.bowler@g105b.com";
+			}
+		};
+
+		$userObject = new class("g105b", $email, "maintainer") {
+			public function __construct(
+				public readonly string $username,
+				public readonly StdClass $email,
+				public readonly string $category,
+			) {}
+		};
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData($userObject);
+
+		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
+		self::assertSame($userObject->category, $document->getElementById("dd3")->textContent);
+// The email address should show the default value, as the provided object is not Stringable or a scalar.
+		self::assertSame("you@example.com", $document->getElementById("dd2")->textContent);
+// But we should be able to bind manually:
+		$sut->bindKeyValue("email", $userObject->email->getEmail());
+		self::assertSame("greg.bowler@g105b.com", $document->getElementById("dd2")->textContent);
+	}
+
+	public function testBindData_objectWithNonScalarProperties_stringable():void {
+		$email = new class() extends StdClass implements \Stringable {
+			#[BindGetter]
+			public function getEmail():string {
+				return "greg.bowler@g105b.com";
+			}
+
+			public function __toString():string {
+				return $this->getEmail();
+			}
+		};
+
+		$userObject = new class("g105b", $email, "maintainer") {
+			public function __construct(
+				public readonly string $username,
+				public readonly StdClass $email,
+				public readonly string $category,
+			) {}
+		};
+
+		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_PROFILE);
+		$sut = new DocumentBinder($document);
+		$sut->bindData($userObject);
+
+		self::assertSame($userObject->username, $document->getElementById("dd1")->textContent);
+		self::assertSame($userObject->category, $document->getElementById("dd3")->textContent);
+// The email address should show the provided value, as the email object implements Stringable.
+		self::assertSame("greg.bowler@g105b.com", $document->getElementById("dd2")->textContent);
+	}
+
 	public function testBindData_classWithReadonlyProperties():void {
 		$userObject = new class("g105b", "greg.bowler@g105b.com") {
 			public function __construct(
@@ -392,7 +452,7 @@ class DocumentBinderTest extends TestCase {
 		];
 
 		$table = $document->getElementById("tbl1");
-		$sut->bindTable($tableData, $table);
+		$sut->bindTable($tableData, $table, "tableData");
 
 		foreach($tableData as $rowIndex => $rowData) {
 			$row = $table->rows[$rowIndex];
@@ -422,7 +482,7 @@ class DocumentBinderTest extends TestCase {
 		$exception = null;
 		$table = $document->getElementById("tbl1");
 		try {
-			$sut->bindTable($tableData, $table);
+			$sut->bindTable($tableData, $table, "tableData");
 		}
 		catch(Exception $exception) {}
 		self::assertNull($exception);
@@ -462,7 +522,7 @@ class DocumentBinderTest extends TestCase {
 		];
 
 		$table = $document->getElementById("tbl1");
-		$sut->bindKeyValue("tableData", $tableData, $table);
+		$sut->bindKeyValue("tableData", $tableData);
 
 		foreach($tableData as $rowIndex => $rowData) {
 			$row = $table->rows[$rowIndex];

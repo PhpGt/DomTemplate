@@ -3,6 +3,7 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\CyclicRecursionException;
+use Gt\DomTemplate\DocumentBinder;
 use Gt\DomTemplate\PartialContent;
 use Gt\DomTemplate\PartialContentFileNotFoundException;
 use Gt\DomTemplate\PartialExpander;
@@ -56,6 +57,25 @@ class PartialExpanderTest extends PartialContentTestCase {
 		);
 
 		self::assertSame("Hello from within a sub-template!", $mainElement->querySelector("h1")->textContent);
+	}
+
+	public function testExpand_commentVarsBound():void {
+		$partialContent = self::mockPartialContent(
+			"_partial", [
+				"base-page" => DocumentTestFactory::HTML_PARTIAL_VIEW
+			]
+		);
+		$document = new HTMLDocument(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$binder = self::createMock(DocumentBinder::class);
+		$binder->expects(self::once())
+			->method("bindKeyValue")
+			->with("title", "My website, extended...");
+
+		$sut = new PartialExpander(
+			$document,
+			$partialContent
+		);
+		$sut->expand(binder: $binder);
 	}
 
 	public function testExpand_noExtendsSectionOfCommentIni():void {

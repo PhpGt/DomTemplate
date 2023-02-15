@@ -4,6 +4,7 @@ namespace Gt\DomTemplate\Test;
 use ArrayIterator;
 use DateInterval;
 use DateTime;
+use DateTimeInterface;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
@@ -109,6 +110,48 @@ class ListBinderTest extends TestCase {
 
 		foreach($testData as $i => $value) {
 			self::assertSame($value, $ul->children[$i]->textContent);
+		}
+	}
+
+	public function testBindListData_existingChildren():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN);
+		$templateElement = new TemplateElement($document->querySelector("[data-template]"));
+
+		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection->expects(self::once())
+			->method("get")
+			->with($document->documentElement, null)
+			->willReturn($templateElement);
+
+		$templateElement->removeOriginalElement();
+
+		$existingOptionList = $document->querySelectorAll("select[name='drink'] option");
+
+		$testData = [
+			["id" => "orange-juice", "name" => "Orange juice"],
+			["id" => "bovril", "name" => "Bovril"],
+			["id" => "almond-milk", "name" => "Almond Milk"],
+		];
+		$sut = new ListBinder($templateCollection);
+		$bindCount = $sut->bindListData($testData, $document);
+
+		$newOptionList = $document->querySelectorAll("select[name='drink'] option");
+		$newOptionCount = count($newOptionList);
+		self::assertSame($bindCount + count($existingOptionList), $newOptionCount);
+
+		$expectedValues = [
+			"",
+			"orange-juice",
+			"bovril",
+			"almond-milk",
+			"coffee",
+			"tea",
+			"chocolate",
+			"soda",
+			"water",
+		];
+		foreach($expectedValues as $i => $value) {
+			self::assertSame($value, $newOptionList[$i]->value);
 		}
 	}
 
@@ -515,6 +558,29 @@ class ListBinderTest extends TestCase {
 
 		foreach($document->querySelectorAll("li") as $i => $li) {
 			self::assertSame((string)$listData[$i], $li->textContent);
+		}
+	}
+
+	public function testBindListData_dateTimeAutomatic():void {
+		$document = new HTMLDocument(DocumentTestFactory::HTML_DATES);
+		$templateCollection = new TemplateCollection($document);
+		/** @var array<DateTimeInterface> $listData */
+		$listData = [];
+
+		$dateTime = new DateTime();
+		$currentYear = $dateTime->format("Y");
+		$dateTime->setDate($currentYear, 1, 1);
+
+		while($dateTime->format("Y") === $currentYear) {
+			array_push($listData, clone $dateTime);
+			$dateTime->add(new DateInterval("P1M"));
+		}
+
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($listData, $document);
+
+		foreach($document->querySelectorAll("li") as $i => $li) {
+			self::assertSame($listData[$i]->format(DateTimeInterface::RFC7231), $li->textContent);
 		}
 	}
 

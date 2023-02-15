@@ -25,7 +25,7 @@ class TemplateCollection {
 
 		if($templateName) {
 			if(!isset($this->elementKVP[$templateName])) {
-				throw new TemplateElementNotFoundInContextException("Template element with name \"$templateName\" can not be found within the context {$context->tagName} element.");
+				throw new TemplateElementNotFoundInContextException("Template element with name \"$templateName\" can not be found within the context $context->tagName element.");
 			}
 			return $this->elementKVP[$templateName];
 		}
@@ -60,6 +60,7 @@ class TemplateCollection {
 
 	private function findMatch(Element $context):TemplateElement {
 		$contextPath = (string)(new NodePathCalculator($context));
+		/** @noinspection RegExpRedundantEscape */
 		$contextPath = preg_replace(
 			"/(\[\d+\])/",
 			"",
@@ -85,7 +86,7 @@ class TemplateCollection {
 		}
 
 		throw new TemplateElementNotFoundInContextException(
-			"There is no unnamed template element in the context element ({$context->tagName})."
+			"There is no unnamed template element in the context element ($context->tagName)."
 		);
 	}
 }

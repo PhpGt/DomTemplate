@@ -4,6 +4,7 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Element;
 use Gt\Dom\Node;
 use Gt\Dom\Text;
+use Throwable;
 
 class TemplateElement {
 	private string $templateParentPath;
@@ -36,6 +37,20 @@ class TemplateElement {
 
 	public function removeOriginalElement():void {
 		$this->originalElement->remove();
+		try {
+			$parent = $this->getTemplateParent();
+			if(count($parent->children) === 0) {
+				if($firstNode = $parent->childNodes[0] ?? null) {
+					if(trim($firstNode->wholeText) === "") {
+						$parent->innerHTML = "";
+					}
+				}
+			}
+		}
+// In nested lists, there may not be an actual element attached to the document
+// yet, but the parent still has a path - this outcome is expected and
+// completely fine in this case.
+		catch(Throwable) {}
 	}
 
 	public function getClone():Node|Element {
