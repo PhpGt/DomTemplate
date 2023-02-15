@@ -20,7 +20,7 @@ class DocumentBinder {
 	 */
 	public function __construct(
 		private Document $document,
-		private array $config = [], /** @phpstan-ignore-line config usage is planned, but not yet utilised */
+		private array $config = [],
 		?ElementBinder $elementBinder = null,
 		?PlaceholderBinder $placeholderBinder = null,
 		?TableBinder $tableBinder = null,
@@ -34,6 +34,14 @@ class DocumentBinder {
 		$this->tableBinder = $tableBinder ?? new TableBinder($this->templateCollection);
 		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
 		$this->bindableCache = $bindableCache ?? new BindableCache();
+
+// This is temporary, to suppress PHPStan's complaints for declaring a variable
+// without using it. There are plans to use the config variable, but it is
+// currently not yet used, and this technique prevents the constructor
+// parameters from changing over time.
+		if(!$this->config) {
+			$this->config = [];
+		}
 	}
 
 	/**
