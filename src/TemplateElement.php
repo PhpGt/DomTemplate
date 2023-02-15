@@ -69,7 +69,7 @@ class TemplateElement {
 	 * originally extracted from the document, returning the newly-inserted
 	 * clone.
 	 */
-	public function insertTemplate():Node|Element {
+	public function insertTemplate():Element {
 		$clone = $this->getClone();
 		$templateParent = $this->getTemplateParent();
 		$templateParent->insertBefore(
