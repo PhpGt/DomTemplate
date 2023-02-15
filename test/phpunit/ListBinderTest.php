@@ -170,13 +170,10 @@ class ListBinderTest extends TestCase {
 		);
 
 		$templateCollection = self::createMock(TemplateCollection::class);
-		$templateCollection->expects(self::exactly(2))
-			->method("get")
-			->withConsecutive(
-				[$document->documentElement, "prog-lang"],
-				[$document->documentElement, "game"]
-			)
-			->willReturnOnConsecutiveCalls($templateElementProgLang, $templateElementGame);
+		$templateCollection->method("get")
+			->willReturnCallback(function(Element $documentElement, string $name)use($templateElementProgLang, $templateElementGame):TemplateElement {
+				return $name === "game" ? $templateElementGame : $templateElementProgLang;
+			});
 
 		$sut = new ListBinder($templateCollection);
 		$progLangData = ["PHP", "HTML", "bash"];
@@ -210,13 +207,12 @@ class ListBinderTest extends TestCase {
 		);
 
 		$templateCollection = self::createMock(TemplateCollection::class);
-		$templateCollection->expects(self::exactly(2))
-			->method("get")
-			->withConsecutive(
-				[$document->getElementById("prog-lang-list")],
-				[$document->getElementById("game-list")]
-			)
-			->willReturnOnConsecutiveCalls($templateElementProgLang, $templateElementGame);
+		$templateCollection->method("get")
+			->willReturnCallback(function(Element $element)use($templateElementProgLang, $templateElementGame):TemplateElement {
+				return ($element->id === "prog-lang-list")
+					? $templateElementProgLang
+					: $templateElementGame;
+			});
 
 		$sut = new ListBinder($templateCollection);
 		$progLangData = ["PHP", "HTML", "bash"];
