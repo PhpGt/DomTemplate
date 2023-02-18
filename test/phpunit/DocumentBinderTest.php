@@ -1140,6 +1140,6 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($address->line2, $document->querySelectorAll("dd")[3]->textContent);
 		self::assertSame($address->cityState, $document->querySelectorAll("dd")[4]->textContent);
 		self::assertSame($address->postcodeZip, $document->querySelectorAll("dd")[5]->textContent);
-		self::assertSame($address->country, $document->querySelectorAll("dd")[6]->textContent);
+		self::assertSame($address->getCountryName(), $document->querySelectorAll("dd")[6]->textContent);
 	}
 }

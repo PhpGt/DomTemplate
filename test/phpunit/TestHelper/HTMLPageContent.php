@@ -921,7 +921,7 @@ HTML;
 	<dd data-bind:text="address.postcodeZip">Address Postcode/ZIP</dd>
 	
 	<dt>Country</dt>
-	<dd data-bind:text="address.country">Address country</dd>
+	<dd data-bind:text="address.countryName">Address country</dd>
 </dl>
 HTML;
 
