@@ -4,19 +4,19 @@ namespace Gt\DomTemplate\Test;
 use DateTime;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\HTMLAttributeBinder;
-use Gt\DomTemplate\Test\TestHelper\HTMLPageCOntent;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use PHPUnit\Framework\TestCase;
 
 class HTMLAttributeBinderTest extends TestCase {
 	public function testBind_wholeDocument():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_LANGUAGE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LANGUAGE);
 		$sut = new HTMLAttributeBinder();
 		$sut->bind("language", "en_GB", $document);
 		self::assertSame("en_GB", $document->documentElement->getAttribute("lang"));
 	}
 
 	public function testBind_selectValue():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_SELECT_OPTIONS_WITH_VALUE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SELECT_OPTIONS_WITH_VALUE);
 		$select = $document->querySelector("select[name='drink']");
 		$sut = new HTMLAttributeBinder();
 		$valueToSelect = "tea";
@@ -34,7 +34,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_selectValue_noOptions():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_SELECT_OPTIONS_WITHOUT_VALUE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SELECT_OPTIONS_WITHOUT_VALUE);
 		$select = $document->querySelector("select[name='drink']");
 		$sut = new HTMLAttributeBinder();
 		$valueToSelect = "Tea";
@@ -51,7 +51,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_selectValue_optionDoesNotExist():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_SELECT_OPTIONS_WITHOUT_VALUE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SELECT_OPTIONS_WITHOUT_VALUE);
 		$select = $document->querySelector("select[name='drink']");
 		$sut = new HTMLAttributeBinder();
 		$valueToSelect = "Grape Juice";
@@ -64,7 +64,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_modifierColonNamedProperty_null():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TODO);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TODO);
 		$sut = new HTMLAttributeBinder();
 		$li = $document->querySelector("ul li");
 		$sut->bind("completedAt", null, $li);
@@ -72,7 +72,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_modifierColonNamedProperty():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TODO);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TODO);
 		$sut = new HTMLAttributeBinder();
 		$li = $document->querySelector("ul li");
 		$sut->bind("completedAt", new DateTime(), $li);
@@ -80,7 +80,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_modifierColon():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new HTMLAttributeBinder();
 		$img = $document->getElementById("img1");
 		$sut->bind("size", "size-large", $img);
@@ -88,7 +88,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_modifierQuestion():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new HTMLAttributeBinder();
 		$btn1 = $document->getElementById("btn1");
 		$btn2 = $document->getElementById("btn2");
@@ -102,7 +102,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_modifierQuestion_withNullValue():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new HTMLAttributeBinder();
 		$img = $document->getElementById("img3");
 		$sut->bind("alternativeText", null, $img);
@@ -110,7 +110,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	}
 
 	public function testBind_modifierQuestion_withValue():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_DIFFERENT_BIND_PROPERTIES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DIFFERENT_BIND_PROPERTIES);
 		$sut = new HTMLAttributeBinder();
 		$img = $document->getElementById("img3");
 		$testMessage = "This is a test message";
@@ -121,7 +121,7 @@ class HTMLAttributeBinderTest extends TestCase {
 	public function testBind_dateTimeInterface():void {
 		$dateTime = new DateTime("1988-04-05 17:23:00");
 
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_SINGLE_ELEMENT);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SINGLE_ELEMENT);
 		$outputElement = $document->querySelector("output");
 		$sut = new HTMLAttributeBinder();
 		$sut->bind(null, $dateTime, $outputElement);

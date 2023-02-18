@@ -4,7 +4,7 @@ namespace Gt\DomTemplate\Test\TestHelper;
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\XMLDocument;
 
-class HTMLPageCOntent {
+class HTMLPageContent {
 	const HTML_EMPTY = <<<HTML
 <!doctype html>
 HTML;
@@ -906,38 +906,43 @@ HTML;
 		<li data-template>
 			<customer-details>
 				<dl>
+					<dt>ID</dt>
+					<dd data-bind:text="id">000</dd>
+					
 					<dt>Name</dt>
-					<dd>Customer Name!</dd>
+					<dd data-bind:text="name">Customer Name!</dd>
 					
 					<dt>Address</dt>
 					<dd>
-						<span>Address Line 1</span>
-						<span>Address Line 2</span>
-						<span>Address City</span>
-						<span>Address Postcode</span>
-						<span>Address Country</span>
+						<span data-bind:text="address.street">Address Line 1</span>
+						<span data-bind:text="address.line2">Address Line 2</span>
+						<span data-bind:text="address.cityState">Address City</span>
+						<span data-bind:text="address.postcodeZip">Address Postcode</span>
+						<span data-bind:text="address.country">Address Country</span>
 					</dd>
 					
 					<dt>Latest orders</dt>
 					
-					<order-list>
+<!-- the use of a custom element allows data-bind:list to be left blank, so the
+list name will be the same as the element name (camel-cased to orderList) -->
+					<order-list data-bind:list>
 						<ul>
 							<li data-template>
 								<dt>
 									<dt>Subtotal</dt>
-									<dd>£0.00</dd>
+									<dd data-bind:text="subtotal">£0.00</dd>
 									
 									<dt>Shipping</dt>
-									<dd>£0.00</dd>
+									<dd data-bind:text="shippingCost">£0.00</dd>
 									
 									<dt>Total</dt>
-									<dd>£0.00</dd>
+									<dd data-bind:text="totalCost">£0.00</dd>
 								</dt>
 								<h3>Items in order</h3>
-								<ul>
-									<li>
-										<h4>Item name</h4>
-										<p>£0.00</p>
+								<ul data-bind:list="itemList">
+									<li data-template>
+										<h4><a href="/item/{{id}}" data-bind:text="title">Item name</a></h4>
+										<p data-bind:text="cost">£0.00</p>
 									</li>								
 								</ul>
 							</li>						

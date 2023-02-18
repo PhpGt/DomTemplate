@@ -3,12 +3,12 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\ComponentExpander;
-use Gt\DomTemplate\Test\TestHelper\HTMLPageCOntent;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 
 class ComponentExpanderTest extends PartialContentTestCase {
 	public function testExpand_doesNothingWhenNoMatchingFiles():void {
 		$partialContent = self::mockPartialContent("_component");
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_COMPONENT);
+		$document = new HTMLDocument(HTMLPageContent::HTML_COMPONENT);
 		$sut = new ComponentExpander($document, $partialContent);
 		self::assertEmpty($sut->expand());
 	}
@@ -21,7 +21,7 @@ class ComponentExpanderTest extends PartialContentTestCase {
 				"custom-element" => $html
 			]
 		);
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_COMPONENT);
+		$document = new HTMLDocument(HTMLPageContent::HTML_COMPONENT);
 		$sut = new ComponentExpander($document, $partialContent);
 		$expandedElements = $sut->expand();
 		self::assertCount(1, $expandedElements);
@@ -32,11 +32,11 @@ class ComponentExpanderTest extends PartialContentTestCase {
 	public function testExpand_recursive():void {
 		$partialContent = self::mockPartialContent(
 			"_component", [
-				"todo-list" => HTMLPageCOntent::HTML_TODO_COMPONENT_TODO_LIST,
-				"todo-list-item" => HTMLPageCOntent::HTML_TODO_COMPONENT_TODO_LIST_ITEM,
+				"todo-list" => HTMLPageContent::HTML_TODO_COMPONENT_TODO_LIST,
+				"todo-list-item" => HTMLPageContent::HTML_TODO_COMPONENT_TODO_LIST_ITEM,
 			]
 		);
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TODO_CUSTOM_ELEMENT);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TODO_CUSTOM_ELEMENT);
 		$sut = new ComponentExpander($document, $partialContent);
 		$expandedElements = $sut->expand();
 		self::assertCount(2, $expandedElements);
@@ -60,11 +60,11 @@ class ComponentExpanderTest extends PartialContentTestCase {
 	public function testExpand_nested():void {
 		$partialContent = self::mockPartialContent(
 			"_component", [
-				"example-nested/first" => HTMLPageCOntent::HTML_COMPONENT_NESTED_INNER_FIRST,
-				"example-nested/second" => HTMLPageCOntent::HTML_COMPONENT_NESTED_INNER_SECOND,
+				"example-nested/first" => HTMLPageContent::HTML_COMPONENT_NESTED_INNER_FIRST,
+				"example-nested/second" => HTMLPageContent::HTML_COMPONENT_NESTED_INNER_SECOND,
 			]
 		);
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_COMPONENT_NESTED_OUTER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_COMPONENT_NESTED_OUTER);
 		$sut = new ComponentExpander($document, $partialContent);
 		$expandedElements = $sut->expand();
 		self::assertCount(2, $expandedElements);

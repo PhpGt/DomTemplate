@@ -4,12 +4,12 @@ namespace Gt\DomTemplate\Test;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\InvalidTemplateElementNameException;
 use Gt\DomTemplate\TemplateElement;
-use Gt\DomTemplate\Test\TestHelper\HTMLPageCOntent;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use PHPUnit\Framework\TestCase;
 
 class TemplateElementTest extends TestCase {
 	public function testGetTemplateName_forwardSlashStarter():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_EMPTY);
+		$document = new HTMLDocument(HTMLPageContent::HTML_EMPTY);
 		$originalElement = $document->createElement("div");
 		$originalElement->setAttribute("data-template", "/oh/dear/oh/dear");
 		$document->body->appendChild($originalElement);
@@ -20,7 +20,7 @@ class TemplateElementTest extends TestCase {
 	}
 
 	public function testNextElementSibling():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS);
 		$originalElement = $document->querySelector("[data-template]");
 		$originalElementNextElementSibling = $originalElement->nextElementSibling;
 
@@ -30,7 +30,7 @@ class TemplateElementTest extends TestCase {
 	}
 
 	public function testInsertTemplate():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS);
 		$originalElement = $document->querySelector("[data-template]");
 		$originalElementNextElementSibling = $originalElement->nextElementSibling;
 

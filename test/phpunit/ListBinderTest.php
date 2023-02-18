@@ -12,13 +12,19 @@ use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\TemplateElement;
-use Gt\DomTemplate\Test\TestHelper\HTMLPageCOntent;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
+use Gt\DomTemplate\Test\TestHelper\Model\Address;
+use Gt\DomTemplate\Test\TestHelper\Model\Currency;
+use Gt\DomTemplate\Test\TestHelper\Model\Customer;
+use Gt\DomTemplate\Test\TestHelper\Model\Money;
+use Gt\DomTemplate\Test\TestHelper\Model\Order;
+use Gt\DomTemplate\Test\TestHelper\Model\ShopItem;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 
 class ListBinderTest extends TestCase {
 	public function testBindList_emptyList():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
 
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
@@ -30,7 +36,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_empty_shouldHaveNoWhitespace():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData([], $document);
@@ -38,7 +44,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_emptyList_iterator():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
 
 		$templateParent = $document->querySelector("ul");
 		$templateElement = self::createMock(TemplateElement::class);
@@ -57,7 +63,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_noMatchingTemplate():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->expects(self::once())
 			->method("get")
@@ -76,7 +82,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_simpleList():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
 		$templateElement = new TemplateElement($document->querySelector("li[data-template]"));
 
 		$templateCollection = self::createMock(TemplateCollection::class);
@@ -114,7 +120,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_existingChildren():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN);
 		$templateElement = new TemplateElement($document->querySelector("[data-template]"));
 
 		$templateCollection = self::createMock(TemplateCollection::class);
@@ -161,7 +167,7 @@ class ListBinderTest extends TestCase {
 	 * two template elements to have different template names.
 	 */
 	public function testBindListData_twoLists():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TWO_LISTS);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TWO_LISTS);
 		$templateElementProgLang = new TemplateElement(
 			$document->querySelector("#favourites li[data-template='prog-lang']")
 		);
@@ -198,7 +204,7 @@ class ListBinderTest extends TestCase {
 	 * elements do not identify their own template name.
 	 */
 	public function testBindListData_twoListsDifferentContexts():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
 		$templateElementProgLang = new TemplateElement(
 			$document->querySelector("#prog-lang-list li[data-template]")
 		);
@@ -232,7 +238,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_empty_parentShouldBeEmpty():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
 		$templateElement = new TemplateElement($document->querySelector("li[data-template]"));
 		$templateCollection = self::createMock(TemplateCollection::class);
 		$templateCollection->method("get")
@@ -251,7 +257,7 @@ class ListBinderTest extends TestCase {
 			["userId" => 559, "username" => "seafoam", "orderCount" => 30],
 			["userId" => 274, "username" => "hammatime", "orderCount" => 23],
 		];
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
@@ -276,7 +282,7 @@ class ListBinderTest extends TestCase {
 			(object)["userId" => 559, "username" => "seafoam", "orderCount" => 30],
 			(object)["userId" => 274, "username" => "hammatime", "orderCount" => 23],
 		];
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
@@ -302,7 +308,7 @@ class ListBinderTest extends TestCase {
 			new class { public int $userId = 559; public string $username = "seafoam"; public int $orderCount = 30; },
 			new class { public int $userId = 274; public string $username = "hammatime"; public int $orderCount = 23; },
 		];
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
@@ -380,7 +386,7 @@ class ListBinderTest extends TestCase {
 				}
 			},
 		];
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
@@ -436,7 +442,7 @@ class ListBinderTest extends TestCase {
 				public int $totalOrders = 23;
 			},
 		];
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
@@ -456,7 +462,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_nestedList():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_MUSIC_NO_TEMPLATE_NAMES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_NO_TEMPLATE_NAMES);
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData(TestData::MUSIC, $document);
@@ -490,7 +496,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_nestedList_withKvps():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_STUDENT_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData(TestData::STUDENTS, $document);
@@ -511,7 +517,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_iterativeSomething():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_SEQUENCES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SEQUENCES);
 		$templateCollection = new TemplateCollection($document);
 		$listData = [
 			"Primes" => new ArrayIterator([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71]),
@@ -531,7 +537,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_dateTime():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_DATES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATES);
 		$templateCollection = new TemplateCollection($document);
 		$listData = [];
 
@@ -558,7 +564,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_dateTimeAutomatic():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_DATES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATES);
 		$templateCollection = new TemplateCollection($document);
 		/** @var array<DateTimeInterface> $listData */
 		$listData = [];
@@ -581,7 +587,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_todoList():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_TODO);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TODO);
 		$templateCollection = new TemplateCollection($document);
 		$data = TestData::TODO_DATA;
 		$sut = new ListBinder($templateCollection);
@@ -599,7 +605,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_multipleTemplateSiblings():void {
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_GOOD_BAD);
+		$document = new HTMLDocument(HTMLPageContent::HTML_GOOD_BAD);
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData(["Good news 1", "Good news 2"], $document, "good");
@@ -646,7 +652,7 @@ class ListBinderTest extends TestCase {
 			return $listItem;
 		};
 
-		$document = new HTMLDocument(HTMLPageCOntent::HTML_SALES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SALES);
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData(
@@ -666,5 +672,76 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($sale["cost"], $li->querySelector(".cost span")->textContent);
 			self::assertEquals($profitValue, $li->querySelector(".profit span")->textContent);
 		}
+	}
+
+	public function TEMP_testBindListData_complexStructure():void {
+		$customer1 = new Customer(
+			1001,
+			"James Hendler",
+			new Address(
+				"23 Concord Dr",
+				"Middletown",
+				"Rhode Island",
+				"02842",
+				"US",
+			),
+		);
+		$customer2 = new Customer(
+			2002,
+			"Annie Easley",
+			new Address(
+				"63rd Hwy",
+				"Calera",
+				"Alabama",
+				"35040",
+				"US"
+			),
+		);
+
+		$customer1->addOrder(new Order(
+			500_001_001,
+			new Money(55.50, Currency::USD),
+			$customer1->address,
+			[
+				new ShopItem(239, "Maryland Flag", "Vexillologist's nightmare", new Money(79.99, Currency::USD)),
+				new ShopItem(814, "NeXTcube", "High-end workstation computer", new Money(7_995.00, Currency::USD)),
+			]
+		));
+		$customer1->addOrder(new Order(
+			500_001_002,
+			new Money(7.50, Currency::USD),
+			$customer1->address,
+			[
+				new ShopItem(330, "Getting started with DAML", "Everything you need to know about DARPA's Agent Markup Language", new Money(20.00, Currency::USD)),
+			]
+		));
+
+		$customer2->addOrder(new Order(
+			500_002_001,
+			new Money(8.00, Currency::USD),
+			$customer2->address,
+			[
+				new ShopItem(241, "New Orleans Flag", "A simple and traditional gem", new Money(79.99, Currency::USD)),
+			]
+		));
+		$customer2->addOrder(new Order(
+			500_002_002,
+			new Money(5.00, Currency::USD),
+			$customer2->address,
+			[
+				new ShopItem(190, "NASA t-shirt, ladies M", "Original design used by engineers in the 1960s", new Money(25.00, Currency::USD)),
+				new ShopItem(921, "Bottle of fresh O-Zone", "Taken from your local stratosphere", new Money(12.50, Currency::USD)),
+				new ShopItem(800, "Science and Engineering Newsletter", "Backprint of issue 48", new Money(15.00, Currency::USD)),
+			]
+		));
+		$document = new HTMLDocument(HTMLPageContent::HTML_MAP_SHOP_CUSTOMER_OVERVIEW);
+		$templateCollection = new TemplateCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData([
+			$customer1,
+			$customer2,
+		], $document);
+
+		echo $document;die();
 	}
 }
