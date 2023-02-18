@@ -16,6 +16,8 @@ use Gt\DomTemplate\PlaceholderBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use Gt\DomTemplate\Test\TestHelper\ExampleClass;
+use Gt\DomTemplate\Test\TestHelper\Model\Address;
+use Gt\DomTemplate\Test\TestHelper\Model\Customer;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -1111,5 +1113,33 @@ class DocumentBinderTest extends TestCase {
 		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$sut = new DocumentBinder($document, placeholderBinder: $placeholderBinder);
 		$sut->bindKeyValue("name", "Cody", $document->getElementById("test1"));
+	}
+
+	public function testBindKeyValue_nestedObject():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_ADDRESS_NESTED_OBJECT);
+		$sut = new DocumentBinder($document);
+
+		$address = new Address(
+			"2184 Jasper Avenue",
+			"Sherwood Park",
+			"Edmonton",
+			"T5J 3N2",
+			"CA",
+		);
+		$customer = new Customer(
+			123,
+			"Joy Buolamwini",
+			$address,
+		);
+
+		$sut->bindData($customer);
+
+		self::assertSame("123", $document->querySelectorAll("dd")[0]->textContent);
+		self::assertSame("Joy Buolamwini", $document->querySelectorAll("dd")[1]->textContent);
+		self::assertSame($address->street, $document->querySelectorAll("dd")[2]->textContent);
+		self::assertSame($address->line2, $document->querySelectorAll("dd")[3]->textContent);
+		self::assertSame($address->cityState, $document->querySelectorAll("dd")[4]->textContent);
+		self::assertSame($address->postcodeZip, $document->querySelectorAll("dd")[5]->textContent);
+		self::assertSame($address->country, $document->querySelectorAll("dd")[6]->textContent);
 	}
 }

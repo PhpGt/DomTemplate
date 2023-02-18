@@ -6,6 +6,7 @@ use Gt\DomTemplate\ElementBinder;
 use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\TemplateElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
+use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 
 class TemplateCollectionTest extends TestCase {

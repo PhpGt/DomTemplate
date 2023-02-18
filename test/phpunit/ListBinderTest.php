@@ -13,12 +13,7 @@ use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\TemplateElement;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
-use Gt\DomTemplate\Test\TestHelper\Model\Address;
-use Gt\DomTemplate\Test\TestHelper\Model\Currency;
-use Gt\DomTemplate\Test\TestHelper\Model\Customer;
-use Gt\DomTemplate\Test\TestHelper\Model\Money;
-use Gt\DomTemplate\Test\TestHelper\Model\Order;
-use Gt\DomTemplate\Test\TestHelper\Model\ShopItem;
+use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 
@@ -675,72 +670,11 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function TEMP_testBindListData_complexStructure():void {
-		$customer1 = new Customer(
-			1001,
-			"James Hendler",
-			new Address(
-				"23 Concord Dr",
-				"Middletown",
-				"Rhode Island",
-				"02842",
-				"US",
-			),
-		);
-		$customer2 = new Customer(
-			2002,
-			"Annie Easley",
-			new Address(
-				"63rd Hwy",
-				"Calera",
-				"Alabama",
-				"35040",
-				"US"
-			),
-		);
-
-		$customer1->addOrder(new Order(
-			500_001_001,
-			new Money(55.50, Currency::USD),
-			$customer1->address,
-			[
-				new ShopItem(239, "Maryland Flag", "Vexillologist's nightmare", new Money(79.99, Currency::USD)),
-				new ShopItem(814, "NeXTcube", "High-end workstation computer", new Money(7_995.00, Currency::USD)),
-			]
-		));
-		$customer1->addOrder(new Order(
-			500_001_002,
-			new Money(7.50, Currency::USD),
-			$customer1->address,
-			[
-				new ShopItem(330, "Getting started with DAML", "Everything you need to know about DARPA's Agent Markup Language", new Money(20.00, Currency::USD)),
-			]
-		));
-
-		$customer2->addOrder(new Order(
-			500_002_001,
-			new Money(8.00, Currency::USD),
-			$customer2->address,
-			[
-				new ShopItem(241, "New Orleans Flag", "A simple and traditional gem", new Money(79.99, Currency::USD)),
-			]
-		));
-		$customer2->addOrder(new Order(
-			500_002_002,
-			new Money(5.00, Currency::USD),
-			$customer2->address,
-			[
-				new ShopItem(190, "NASA t-shirt, ladies M", "Original design used by engineers in the 1960s", new Money(25.00, Currency::USD)),
-				new ShopItem(921, "Bottle of fresh O-Zone", "Taken from your local stratosphere", new Money(12.50, Currency::USD)),
-				new ShopItem(800, "Science and Engineering Newsletter", "Backprint of issue 48", new Money(15.00, Currency::USD)),
-			]
-		));
+		$orderData = TestData::getCustomerOrderOverview1();
 		$document = new HTMLDocument(HTMLPageContent::HTML_MAP_SHOP_CUSTOMER_OVERVIEW);
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
-		$sut->bindListData([
-			$customer1,
-			$customer2,
-		], $document);
+		$sut->bindListData($orderData, $document);
 
 		echo $document;die();
 	}

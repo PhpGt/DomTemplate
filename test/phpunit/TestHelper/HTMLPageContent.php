@@ -897,6 +897,34 @@ HTML;
 	<p>Your receipt ID is <span data-bind:text="id">000</span></p>
 </div>
 HTML;
+
+	const HTML_ADDRESS_NESTED_OBJECT = <<<HTML
+<!doctype html>
+<h1>Customer information</h1>
+<dl>
+	<dt>ID</dt>
+	<dd data-bind:text="id"></dd>
+	
+	<dt>Name</dt>
+	<dd data-bind:text="name"></dd>
+	
+	<dt>Address Street</dt>
+	<dd data-bind:text="address.street">Address line 1</dd>
+	
+	<dt>Address Line 2</dt>
+	<dd data-bind:text="address.line2">Address line 2</dd>
+	
+	<dt>City / State</dt>
+	<dd data-bind:text="address.cityState">Address city/state</dd>
+	
+	<dt>Postcode / ZIP</dt>
+	<dd data-bind:text="address.postcodeZip">Address Postcode/ZIP</dd>
+	
+	<dt>Country</dt>
+	<dd data-bind:text="address.country">Address country</dd>
+</dl>
+HTML;
+
 	const HTML_MAP_SHOP_CUSTOMER_OVERVIEW = <<<HTML
 <!doctype html>
 <h1>Customer overview</h1>
@@ -929,6 +957,9 @@ list name will be the same as the element name (camel-cased to orderList) -->
 						<ul>
 							<li data-template>
 								<dt>
+									<dt>City / State</dt>
+									<dd data-bind:text="shippingAddress.cityState"></dd>
+									
 									<dt>Subtotal</dt>
 									<dd data-bind:text="subtotal">£0.00</dd>
 									
