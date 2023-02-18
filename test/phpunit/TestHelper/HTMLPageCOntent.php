@@ -1,10 +1,10 @@
 <?php
-namespace Gt\DomTemplate\Test\TestFactory;
+namespace Gt\DomTemplate\Test\TestHelper;
 
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\XMLDocument;
 
-class DocumentTestFactory {
+class HTMLPageCOntent {
 	const HTML_EMPTY = <<<HTML
 <!doctype html>
 HTML;
@@ -896,6 +896,58 @@ HTML;
 	
 	<p>Your receipt ID is <span data-bind:text="id">000</span></p>
 </div>
+HTML;
+	const HTML_MAP_SHOP_CUSTOMER_OVERVIEW = <<<HTML
+<!doctype html>
+<h1>Customer overview</h1>
+
+<customer-list>
+	<ul>
+		<li data-template>
+			<customer-details>
+				<dl>
+					<dt>Name</dt>
+					<dd>Customer Name!</dd>
+					
+					<dt>Address</dt>
+					<dd>
+						<span>Address Line 1</span>
+						<span>Address Line 2</span>
+						<span>Address City</span>
+						<span>Address Postcode</span>
+						<span>Address Country</span>
+					</dd>
+					
+					<dt>Latest orders</dt>
+					
+					<order-list>
+						<ul>
+							<li data-template>
+								<dt>
+									<dt>Subtotal</dt>
+									<dd>£0.00</dd>
+									
+									<dt>Shipping</dt>
+									<dd>£0.00</dd>
+									
+									<dt>Total</dt>
+									<dd>£0.00</dd>
+								</dt>
+								<h3>Items in order</h3>
+								<ul>
+									<li>
+										<h4>Item name</h4>
+										<p>£0.00</p>
+									</li>								
+								</ul>
+							</li>						
+						</ul>					
+					</order-list>
+				</dl>
+			</customer-details>		
+		</li>
+	</ul>
+</customer-list>
 HTML;
 
 

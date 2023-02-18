@@ -1,5 +1,5 @@
 <?php
-namespace Gt\DomTemplate\Test\TestFactory;
+namespace Gt\DomTemplate\Test\TestHelper;
 
 class ExampleClass {
 	public function __construct(

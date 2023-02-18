@@ -5,12 +5,12 @@ use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\ElementBinder;
 use Gt\DomTemplate\TemplateCollection;
 use Gt\DomTemplate\TemplateElementNotFoundInContextException;
-use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageCOntent;
 use PHPUnit\Framework\TestCase;
 
 class TemplateCollectionTest extends TestCase {
 	public function testGet_noName_noMatch():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
 		$sut = new TemplateCollection($document);
 
 		self::expectException(TemplateElementNotFoundInContextException::class);
@@ -18,7 +18,7 @@ class TemplateCollectionTest extends TestCase {
 	}
 
 	public function testGet_noName():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
 		$ul = $document->querySelector("ul");
 		$ol = $document->querySelector("ol");
 		self::assertCount(1, $ul->children);
@@ -34,7 +34,7 @@ class TemplateCollectionTest extends TestCase {
 	}
 
 	public function testGet_name_noMatch():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_TWO_LISTS);
 		$sut = new TemplateCollection($document);
 
 		self::expectException(TemplateElementNotFoundInContextException::class);
@@ -43,7 +43,7 @@ class TemplateCollectionTest extends TestCase {
 	}
 
 	public function testGet_name():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_TWO_LISTS);
 		$sut = new TemplateCollection($document);
 
 		$templateElement = $sut->get($document, "prog-lang");
@@ -63,7 +63,7 @@ class TemplateCollectionTest extends TestCase {
 	 * ListBinderTest::testBindListData_nestedList()
 	 */
 	public function testBindListData_nestedList_manual():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES);
 		$templateCollection = new TemplateCollection($document);
 		$elementBinder = new ElementBinder();
 
@@ -118,13 +118,13 @@ class TemplateCollectionTest extends TestCase {
 	}
 
 	public function testConstructor_removesWhitespace():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_TEMPLATE);
 		new TemplateCollection($document);
 		self::assertSame("", $document->querySelector("ul")->innerHTML);
 	}
 
 	public function testConstructor_nonTemplateChildrenArePreserved():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_WITH_TEXTNODE);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_WITH_TEXTNODE);
 		new TemplateCollection($document);
 		$ulChildren = $document->querySelector("ul")->children;
 		self::assertCount(1, $ulChildren);
@@ -132,7 +132,7 @@ class TemplateCollectionTest extends TestCase {
 	}
 
 	public function testConstructor_nonTemplateChildrenArePreservedInOrder():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_WITH_TEXTNODE);
+		$document = new HTMLDocument(HTMLPageCOntent::HTML_LIST_WITH_TEXTNODE);
 		$sut = new TemplateCollection($document);
 		$ulChildren = $document->querySelector("ul")->children;
 		$template = $sut->get($document);
