@@ -670,14 +670,15 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_complexStructure():void {
-		$orderData = TestData::getCustomerOrderOverview1();
+		$customerOrderData = TestData::getCustomerOrderOverview1();
 		$document = new HTMLDocument(HTMLPageContent::HTML_MAP_SHOP_CUSTOMER_OVERVIEW);
 		$templateCollection = new TemplateCollection($document);
 		$sut = new ListBinder($templateCollection);
-		$sut->bindListData($orderData, $document);
+		$sut->bindListData($customerOrderData, $document);
 
-		foreach($orderData as $customerIndex => $customer) {
+		foreach($customerOrderData as $customerIndex => $customer) {
 			$customerLi = $document->querySelectorAll("customer-list>ul>li")[$customerIndex];
+
 			self::assertSame((string)$customer->id, $customerLi->querySelectorAll("customer-details>dl>dd")[0]->textContent);
 			self::assertSame($customer->name, $customerLi->querySelectorAll("customer-details>dl>dd")[1]->textContent);
 			self::assertSame($customer->address->street, $customerLi->querySelectorAll("customer-details>dl>dd")[2]->querySelectorAll("span")[0]->textContent);
@@ -687,16 +688,16 @@ class ListBinderTest extends TestCase {
 			self::assertSame($customer->address->country->getName(), $customerLi->querySelectorAll("customer-details>dl>dd")[2]->querySelectorAll("span")[4]->textContent);
 
 			foreach($customer->orderList as $orderIndex => $order) {
-				self::assertSame($order->shippingAddress->cityState, $customerLi->querySelectorAll("order-list>ul>li")[$orderIndex]->querySelectorAll("dl dd")[0]->textContent);
-				self::assertSame((string)$order->getSubtotal(), $customerLi->querySelectorAll("order-list>ul>li")[$orderIndex]->querySelectorAll("dl dd")[1]->textContent);
-				self::assertSame((string)$order->shippingCost, $customerLi->querySelectorAll("order-list>ul>li")[$orderIndex]->querySelectorAll("dl dd")[2]->textContent);
-				self::assertSame((string)$order->getTotalCost(), $customerLi->querySelectorAll("order-list>ul>li")[$orderIndex]->querySelectorAll("dl dd")[3]->textContent);
+				$orderLi = $customerLi->querySelectorAll("order-list>ul>li")[$orderIndex];
+				self::assertSame($order->shippingAddress->cityState, $orderLi->querySelectorAll("dl dd")[0]->textContent);
+				self::assertSame((string)$order->getSubtotal(), $orderLi->querySelectorAll("dl dd")[1]->textContent);
+				self::assertSame((string)$order->shippingCost, $orderLi->querySelectorAll("dl dd")[2]->textContent);
+				self::assertSame((string)$order->getTotalCost(), $orderLi->querySelectorAll("dl dd")[3]->textContent);
 
-				$orderListEl = $customerLi->querySelector("order-list");
 				foreach($order->itemList as $itemIndex => $item) {
-					self::assertSame($item->title, $orderListEl->querySelectorAll("ul>li>ul>li")[$itemIndex]->querySelector("h4")->textContent);
-					self::assertSame("/item/$item->id", $orderListEl->querySelectorAll("ul>li>ul>li")[$itemIndex]->querySelector("h4 a")->href);
-					self::assertSame((string)$item->cost, $orderListEl->querySelectorAll("ul>li>ul>li")[$itemIndex]->querySelector("p")->textContent);
+					self::assertSame($item->title, $orderLi->querySelectorAll("ul>li")[$itemIndex]->querySelector("h4")->textContent);
+					self::assertSame("/item/$item->id", $orderLi->querySelectorAll("ul>li")[$itemIndex]->querySelector("h4 a")->href);
+					self::assertSame((string)$item->cost, $orderLi->querySelectorAll("ul>li")[$itemIndex]->querySelector("p")->textContent);
 				}
 			}
 		}
