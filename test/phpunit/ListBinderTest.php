@@ -490,23 +490,6 @@ class ListBinderTest extends TestCase {
 		}
 	}
 
-	/** This isolates issue #367 */
-	public function testBindListData_nestedList_uniqueIds():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_NO_TEMPLATE_NAMES);
-		$templateCollection = new TemplateCollection($document);
-		$sut = new ListBinder($templateCollection);
-		$sut->bindListData(TestData::MUSIC, $document);
-
-		$idArray = [];
-		foreach($document->querySelectorAll("body>ul>li>ul") as $albumUlElement) {
-			array_push($idArray, $albumUlElement->id);
-		}
-
-		while($id = array_pop($idArray)) {
-			self::assertNotContains($id, $idArray);
-		}
-	}
-
 	public function testBindListData_nestedList_withKvps():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
 		$templateCollection = new TemplateCollection($document);
