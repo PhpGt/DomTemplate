@@ -220,6 +220,7 @@ class BindableCache {
 		return $refAttr->getArguments()[0];
 	}
 
+	/** @return null|string|array<int|string, mixed> */
 	private function nullableStringOrIterable(mixed $value):null|iterable|string {
 		if(is_scalar($value)) {
 			return $value;
