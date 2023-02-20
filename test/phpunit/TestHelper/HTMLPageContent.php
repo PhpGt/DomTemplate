@@ -956,7 +956,7 @@ list name will be the same as the element name (camel-cased to orderList) -->
 					<order-list data-bind:list>
 						<ul>
 							<li data-template>
-								<dt>
+								<dl>
 									<dt>City / State</dt>
 									<dd data-bind:text="shippingAddress.cityState"></dd>
 									
@@ -968,7 +968,7 @@ list name will be the same as the element name (camel-cased to orderList) -->
 									
 									<dt>Total</dt>
 									<dd data-bind:text="totalCost">£0.00</dd>
-								</dt>
+								</dl>
 								<h3>Items in order</h3>
 								<ul data-bind:list="itemList">
 									<li data-template>

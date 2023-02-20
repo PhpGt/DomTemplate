@@ -4,10 +4,11 @@ namespace Gt\DomTemplate\Test\TestHelper\Model;
 use Stringable;
 
 class Money implements Stringable {
+	const DEFAULT_CURRENCY = Currency::USD;
 
 	public function __construct(
-		public readonly float $value,
-		public readonly Currency $currency,
+		public readonly float $value = 0.0,
+		public readonly Currency $currency = self::DEFAULT_CURRENCY,
 		public readonly int $decimalAccuracy = 2,
 	) {}
 
