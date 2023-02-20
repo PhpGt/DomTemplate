@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DomTemplate;
 
+use Closure;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
@@ -58,6 +59,7 @@ class BindableCache {
 		foreach($refObj->getMethods() as $refMethod) {
 			$refAttributes = $this->getBindAttributes($refMethod);
 			$methodName = $refMethod->getName();
+	/** @phpstan-ignore-next-line this is reporting incorrectly that ReflectionType does not have a getName() function */
 			$refReturnName = $refMethod->getReturnType()?->getName();
 
 			foreach($refAttributes as $refAttr) {
@@ -84,6 +86,7 @@ class BindableCache {
 			elseif($refProp->isPublic()) {
 				$bindKey = $propName;
 
+/** @phpstan-ignore-next-line this is reporting incorrectly that ReflectionType does not have a getName() function */
 				$refTypeName = $refProp->getType()?->getName();
 				$attributeCache[$bindKey]
 					= fn(object $object, $key):?string => isset($object->$key) ? $this->nullableString($object->$key) : null;
@@ -109,6 +112,7 @@ class BindableCache {
 
 	/**
 	 * @param array<string, Closure> $cache
+	 * @param array<string, class-string> $objectKeys
 	 * @return array<string, Closure>
 	 */
 	private function expandObjects(array $cache, array $objectKeys):array {
