@@ -5,8 +5,10 @@ use Closure;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionObject;
 use ReflectionProperty;
+use ReflectionType;
 use stdClass;
 use Stringable;
 
@@ -59,8 +61,10 @@ class BindableCache {
 		foreach($refObj->getMethods() as $refMethod) {
 			$refAttributes = $this->getBindAttributes($refMethod);
 			$methodName = $refMethod->getName();
-	/** @phpstan-ignore-next-line this is reporting incorrectly that ReflectionType does not have a getName() function */
-			$refReturnName = $refMethod->getReturnType()?->getName();
+
+			/** @var ReflectionNamedType $refReturn */
+			$refReturn = $refMethod->getReturnType();
+			$refReturnName = $refReturn->getName();
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr, $refMethod);
@@ -86,8 +90,9 @@ class BindableCache {
 			elseif($refProp->isPublic()) {
 				$bindKey = $propName;
 
-/** @phpstan-ignore-next-line this is reporting incorrectly that ReflectionType does not have a getName() function */
-				$refTypeName = $refProp->getType()?->getName();
+				/** @var ReflectionNamedType $refType */
+				$refType = $refProp->getType();
+				$refTypeName = $refType->getName();
 				$attributeCache[$bindKey]
 					= fn(object $object, $key):null|iterable|string => isset($object->$key) ? $this->nullableStringOrIterable($object->$key) : null;
 				if(class_exists($refTypeName)) {
