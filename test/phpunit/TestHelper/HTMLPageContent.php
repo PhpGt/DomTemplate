@@ -961,19 +961,19 @@ list name will be the same as the element name (camel-cased to orderList) -->
 									<dd data-bind:text="shippingAddress.cityState"></dd>
 									
 									<dt>Subtotal</dt>
-									<dd data-bind:text="subtotal">£0.00</dd>
+									<dd data-bind:text="subtotal">£0.--</dd>
 									
 									<dt>Shipping</dt>
-									<dd data-bind:text="shippingCost">£0.00</dd>
+									<dd data-bind:text="shippingCost">£0.--</dd>
 									
 									<dt>Total</dt>
-									<dd data-bind:text="totalCost">£0.00</dd>
+									<dd data-bind:text="totalCost">£0.--</dd>
 								</dl>
 								<h3>Items in order</h3>
 								<ul data-bind:list="itemList">
 									<li data-template>
 										<h4><a href="/item/{{id}}" data-bind:text="title">Item name</a></h4>
-										<p data-bind:text="cost">£0.00</p>
+										<p data-bind:text="cost">£0.--</p>
 									</li>								
 								</ul>
 							</li>						

@@ -64,8 +64,8 @@ class BindableCache {
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr, $refMethod);
-				$attributeCache[$bindKey] = fn(object $object)
-					=> $this->nullableString($object->$methodName());
+				$attributeCache[$bindKey] = fn(object $object):null|iterable|string
+					=> $this->nullableStringOrIterable($object->$methodName());
 				if(class_exists($refReturnName)) {
 					$cacheObjectKeys[$bindKey] = $refReturnName;
 				}
@@ -80,7 +80,7 @@ class BindableCache {
 					$bindKey = $this->getBindKey($refAttr);
 // TODO: Test for object type in object property.
 					$attributeCache[$bindKey]
-						= fn(object $object, $key):?string => $this->nullableString($object->$propName);
+						= fn(object $object, $key):null|iterable|string => $this->nullableStringOrIterable($object->$propName);
 				}
 			}
 			elseif($refProp->isPublic()) {
@@ -89,7 +89,7 @@ class BindableCache {
 /** @phpstan-ignore-next-line this is reporting incorrectly that ReflectionType does not have a getName() function */
 				$refTypeName = $refProp->getType()?->getName();
 				$attributeCache[$bindKey]
-					= fn(object $object, $key):?string => isset($object->$key) ? $this->nullableString($object->$key) : null;
+					= fn(object $object, $key):null|iterable|string => isset($object->$key) ? $this->nullableStringOrIterable($object->$key) : null;
 				if(class_exists($refTypeName)) {
 					$cacheObjectKeys[$bindKey] = $refTypeName;
 				}
@@ -129,7 +129,8 @@ class BindableCache {
 						$cache["$key.$bindableKey"] = $bindableClosure;
 					}
 				}
-				unset($cache[$key]);
+
+//				unset($cache[$key]);
 			}
 		}
 
@@ -142,9 +143,15 @@ class BindableCache {
 
 		if($object instanceof stdClass) {
 			foreach(get_object_vars($object) as $key => $value) {
-				$kvp[$key] = is_null($value)
-					? null
-					: (string)$value;
+				if(is_null($value)) {
+					$kvp[$key] = null;
+				}
+				elseif(is_iterable($value)) {
+					$kvp[$key] = $value;
+				}
+				else {
+					$kvp[$key] = (string)$value;
+				}
 			}
 			return $kvp;
 		}
@@ -162,13 +169,22 @@ class BindableCache {
 				$propName = strtok($deepKey, ".");
 				$deepKey = substr($deepKey, strpos($deepKey, ".") + 1);
 				$deepestKey = $deepKey;
-				$objectToExtract = $objectToExtract->$propName;
+// TODO: This "get*()" function should not be hard coded here - it should load the appropriate
+// Bind/BindGetter by matching the correct Attribute.
+				$bindFunc = "get" . ucfirst($propName);
+				$objectToExtract = $objectToExtract->$propName ?? $objectToExtract->$bindFunc();
 			}
 
 			$value = $closure($objectToExtract, $deepestKey);
-			$kvp[$key] = is_null($value)
-				? null
-				: (string)$value;
+			if(is_null($value)) {
+				$kvp[$key] = null;
+			}
+			elseif(is_iterable($value)) {
+				$kvp[$key] = $value;
+			}
+			else {
+				$kvp[$key] = (string)$value;
+			}
 		}
 
 		return $kvp;
@@ -204,8 +220,11 @@ class BindableCache {
 		return $refAttr->getArguments()[0];
 	}
 
-	private function nullableString(mixed $value):?string {
+	private function nullableStringOrIterable(mixed $value):null|iterable|string {
 		if(is_scalar($value)) {
+			return $value;
+		}
+		elseif(is_iterable($value)) {
 			return $value;
 		}
 		elseif(is_object($value)) {

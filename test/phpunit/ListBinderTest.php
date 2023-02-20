@@ -700,7 +700,5 @@ class ListBinderTest extends TestCase {
 				}
 			}
 		}
-
-		echo $document;die();
 	}
 }
