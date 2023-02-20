@@ -8,7 +8,6 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionObject;
 use ReflectionProperty;
-use ReflectionType;
 use stdClass;
 use Stringable;
 
