@@ -17,6 +17,7 @@ use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use Gt\DomTemplate\Test\TestHelper\ExampleClass;
 use Gt\DomTemplate\Test\TestHelper\Model\Address;
+use Gt\DomTemplate\Test\TestHelper\Model\Country;
 use Gt\DomTemplate\Test\TestHelper\Model\Customer;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -1115,7 +1116,7 @@ class DocumentBinderTest extends TestCase {
 		$sut->bindKeyValue("name", "Cody", $document->getElementById("test1"));
 	}
 
-	public function TEMP_testBindKeyValue_nestedObject():void {
+	public function testBindKeyValue_nestedObject():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_ADDRESS_NESTED_OBJECT);
 		$sut = new DocumentBinder($document);
 
@@ -1124,7 +1125,7 @@ class DocumentBinderTest extends TestCase {
 			"Sherwood Park",
 			"Edmonton",
 			"T5J 3N2",
-			"CA",
+			new Country("CA"),
 		);
 		$customer = new Customer(
 			123,
@@ -1140,6 +1141,9 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame($address->line2, $document->querySelectorAll("dd")[3]->textContent);
 		self::assertSame($address->cityState, $document->querySelectorAll("dd")[4]->textContent);
 		self::assertSame($address->postcodeZip, $document->querySelectorAll("dd")[5]->textContent);
-		self::assertSame($address->getCountryName(), $document->querySelectorAll("dd")[6]->textContent);
+		self::assertSame(
+			$address->country->getName() . " (" . $address->country->code . ")",
+			$document->querySelectorAll("dd")[6]->textContent
+		);
 	}
 }
