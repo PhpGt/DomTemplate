@@ -12,6 +12,7 @@ enum Currency {
 	case CNH;
 	case HKD;
 	case NZD;
+	case KRW;
 
 	public static function getSymbol(self $currency):string {
 		return match($currency) {
@@ -20,6 +21,7 @@ enum Currency {
 			self::JPY, self::CNH => "¥",
 			self::GBP => "£",
 			self::CHF => "fr",
+			self::KRW => "₩",
 		};
 	}
 }

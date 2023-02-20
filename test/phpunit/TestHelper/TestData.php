@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate\Test\TestHelper;
 
 use Gt\DomTemplate\Test\TestHelper\Model\Address;
+use Gt\DomTemplate\Test\TestHelper\Model\Country;
 use Gt\DomTemplate\Test\TestHelper\Model\Currency;
 use Gt\DomTemplate\Test\TestHelper\Model\Customer;
 use Gt\DomTemplate\Test\TestHelper\Model\Money;
@@ -112,7 +113,7 @@ class TestData {
 				"Middletown",
 				"Rhode Island",
 				"02842",
-				"US",
+				new Country("US"),
 			),
 		);
 		$customer2 = new Customer(
@@ -123,7 +124,7 @@ class TestData {
 				"Calera",
 				"Alabama",
 				"35040",
-				"US"
+				new Country("US")
 			),
 		);
 

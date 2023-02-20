@@ -6,8 +6,8 @@ use Stringable;
 class Money implements Stringable {
 
 	public function __construct(
-		public readonly float $value = 0.00,
-		public readonly Currency $currency = Currency::GBP,
+		public readonly float $value,
+		public readonly Currency $currency,
 		public readonly int $decimalAccuracy = 2,
 	) {}
 
