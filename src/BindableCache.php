@@ -12,7 +12,6 @@ use stdClass;
 use Stringable;
 
 class BindableCache {
-	const SCALAR_TYPES = ["bool", "int", "float", "string"];
 	/**
 	 * @var array<string, array<string, callable>> Outer array key is the
 	 * fully-qualified class name, inner array key is the bind key, callable
@@ -61,9 +60,9 @@ class BindableCache {
 			$refAttributes = $this->getBindAttributes($refMethod);
 			$methodName = $refMethod->getName();
 
-			/** @var ReflectionNamedType $refReturn */
+			/** @var ?ReflectionNamedType $refReturn */
 			$refReturn = $refMethod->getReturnType();
-			$refReturnName = $refReturn->getName();
+			$refReturnName = $refReturn?->getName();
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr, $refMethod);
@@ -89,9 +88,9 @@ class BindableCache {
 			elseif($refProp->isPublic()) {
 				$bindKey = $propName;
 
-				/** @var ReflectionNamedType $refType */
+				/** @var ?ReflectionNamedType $refType */
 				$refType = $refProp->getType();
-				$refTypeName = $refType->getName();
+				$refTypeName = $refType?->getName();
 				$attributeCache[$bindKey]
 					= fn(object $object, $key):null|iterable|string => isset($object->$key) ? $this->nullableStringOrIterable($object->$key) : null;
 				if(class_exists($refTypeName)) {
