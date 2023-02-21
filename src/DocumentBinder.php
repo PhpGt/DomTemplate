@@ -4,7 +4,6 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
-use Gt\Dom\XPathResult;
 
 class DocumentBinder {
 	private ElementBinder $elementBinder;
@@ -18,7 +17,7 @@ class DocumentBinder {
 	 * @param array<string, string> $config
 	 */
 	public function __construct(
-		private Document $document,
+		private readonly Document $document,
 		private array $config = [],
 		?ElementBinder $elementBinder = null,
 		?PlaceholderBinder $placeholderBinder = null,
@@ -106,7 +105,7 @@ class DocumentBinder {
 	}
 
 	/**
-	 * @param iterable<mixed> $listData
+	 * @param iterable<int, mixed> $listData
 	 */
 	public function bindList(
 		iterable $listData,
@@ -120,7 +119,7 @@ class DocumentBinder {
 		return $this->listBinder->bindListData($listData, $context, $templateName);
 	}
 
-	/** @param iterable<mixed> $listData */
+	/** @param iterable<int, mixed> $listData */
 	public function bindListCallback(
 		iterable $listData,
 		callable $callback,

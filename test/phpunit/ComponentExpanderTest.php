@@ -50,6 +50,7 @@ class ComponentExpanderTest extends PartialContentTestCase {
 				"empty-component" => "",
 			]
 		);
+		/** @noinspection HtmlRequiredLangAttribute */
 		$document = new HTMLDocument("<!doctype html><html><body><empty-component /></body></html>");
 		$sut = new ComponentExpander($document, $partialContent);
 		$expandedElements = $sut->expand();
