@@ -802,7 +802,7 @@ HTML;
 </form>
 HTML;
 
-	const HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS = <<<HTML
+	const HTML_LIST_ELEMENT_WITH_MULTIPLE_DIVS = <<<HTML
 <!doctype html>
 <h1>Test</h1>
 

@@ -101,15 +101,15 @@ class ListElement {
 	}
 
 	public function getListItemName():?string {
-		$templateName = $this->originalElement->getAttribute("data-list") ?? $this->originalElement->getAttribute("data-template");
-		if(strlen($templateName) === 0) {
+		$listName = $this->originalElement->getAttribute("data-list") ?? $this->originalElement->getAttribute("data-template");
+		if(strlen($listName) === 0) {
 			return null;
 		}
-		elseif($templateName[0] === "/") {
-			throw new InvalidTemplateElementNameException("A template's name must not start with a forward slash (\"$templateName\")");
+		elseif($listName[0] === "/") {
+			throw new InvalidListElementNameException("A list's name must not start with a forward slash (\"$listName\")");
 		}
 
-		return $templateName;
+		return $listName;
 	}
 
 	public function getInsertCount():int {

@@ -9,7 +9,7 @@ use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 
-class TemplateCollectionTest extends TestCase {
+class ListElementCollectionTest extends TestCase {
 	public function testGet_noName_noMatch():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
 		$sut = new ListElementCollection($document);
