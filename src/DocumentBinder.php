@@ -10,7 +10,7 @@ class DocumentBinder {
 	private PlaceholderBinder $placeholderBinder;
 	private TableBinder $tableBinder;
 	private ListBinder $listBinder;
-	private TemplateCollection $templateCollection;
+	private ListElementCollection $templateCollection;
 	private BindableCache $bindableCache;
 
 	/**
@@ -23,10 +23,10 @@ class DocumentBinder {
 		?PlaceholderBinder $placeholderBinder = null,
 		?TableBinder $tableBinder = null,
 		?ListBinder $listBinder = null,
-		?TemplateCollection $templateCollection = null,
+		?ListElementCollection $templateCollection = null,
 		?BindableCache $bindableCache = null
 	) {
-		$this->templateCollection = $templateCollection ?? new TemplateCollection($document);
+		$this->templateCollection = $templateCollection ?? new ListElementCollection($document);
 		$this->elementBinder = $elementBinder ?? new ElementBinder();
 		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
 		$this->tableBinder = $tableBinder ?? new TableBinder($this->templateCollection);
@@ -140,7 +140,7 @@ class DocumentBinder {
 
 	public function cleanDatasets():void {
 		$xpathResult = $this->document->evaluate(
-			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
+			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-list')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
 		);
 		/** @var Attr $item */
 		foreach($xpathResult as $item) {

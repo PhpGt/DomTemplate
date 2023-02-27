@@ -20,9 +20,9 @@ class NodePathCalculator implements Stringable {
 			$contextPath = strtolower($context->tagName);
 
 			$attrPath = "";
-			if($dataTemplateParent = $context->getAttribute(TemplateElement::ATTRIBUTE_TEMPLATE_PARENT)) {
+			if($dataTemplateParent = $context->getAttribute(ListElement::ATTRIBUTE_LIST_PARENT)) {
 				$attrPath .= "@"
-					. TemplateElement::ATTRIBUTE_TEMPLATE_PARENT
+					. ListElement::ATTRIBUTE_LIST_PARENT
 					. "='$dataTemplateParent'";
 			}
 

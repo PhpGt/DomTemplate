@@ -4,8 +4,8 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 
-class TemplateCollection {
-	/** @var array<string, TemplateElement> */
+class ListElementCollection {
+	/** @var array<string, ListElement> */
 	private array $elementKVP;
 
 	public function __construct(
@@ -18,14 +18,14 @@ class TemplateCollection {
 	public function get(
 		Element|Document $context,
 		?string $templateName = null
-	):TemplateElement {
+	):ListElement {
 		if($context instanceof Document) {
 			$context = $context->documentElement;
 		}
 
 		if($templateName) {
 			if(!isset($this->elementKVP[$templateName])) {
-				throw new TemplateElementNotFoundInContextException("Template element with name \"$templateName\" can not be found within the context $context->tagName element.");
+				throw new ListElementNotFoundInContextException("Template element with name \"$templateName\" can not be found within the context $context->tagName element.");
 			}
 			return $this->elementKVP[$templateName];
 		}
@@ -36,10 +36,10 @@ class TemplateCollection {
 	private function extractTemplates(Document $document):void {
 		$dataTemplateArray = [];
 		/** @var Element $element */
-		foreach($document->querySelectorAll("[data-template]") as $element) {
-			$templateElement = new TemplateElement($element);
+		foreach($document->querySelectorAll("[data-list],[data-template]") as $element) {
+			$templateElement = new ListElement($element);
 			$nodePath = (string)(new NodePathCalculator($element));
-			$key = $templateElement->getTemplateName() ?? $nodePath;
+			$key = $templateElement->getListItemName() ?? $nodePath;
 			$dataTemplateArray[$key] = $templateElement;
 		}
 
@@ -58,7 +58,7 @@ class TemplateCollection {
 		$this->elementKVP = array_reverse($dataTemplateArray, true);
 	}
 
-	private function findMatch(Element $context):TemplateElement {
+	private function findMatch(Element $context):ListElement {
 		$contextPath = (string)(new NodePathCalculator($context));
 		/** @noinspection RegExpRedundantEscape */
 		$contextPath = preg_replace(
@@ -85,7 +85,7 @@ class TemplateCollection {
 			}
 		}
 
-		throw new TemplateElementNotFoundInContextException(
+		throw new ListElementNotFoundInContextException(
 			"There is no unnamed template element in the context element ($context->tagName)."
 		);
 	}

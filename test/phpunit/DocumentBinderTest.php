@@ -944,7 +944,7 @@ class DocumentBinderTest extends TestCase {
 			$document->documentElement->innerHTML
 		);
 		self::assertStringNotContainsString(
-			"data-template",
+			"data-list",
 			$document->documentElement->innerHTML
 		);
 	}
