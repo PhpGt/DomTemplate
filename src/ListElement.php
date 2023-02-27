@@ -18,14 +18,15 @@ class ListElement {
 	) {
 		$parentElement = $this->originalElement->parentElement;
 		if(!$parentElement->getAttribute(self::ATTRIBUTE_LIST_PARENT)) {
-			$parentElement->setAttribute(self::ATTRIBUTE_LIST_PARENT, uniqid("template-parent-"));
+			$parentElement->setAttribute(self::ATTRIBUTE_LIST_PARENT, uniqid("list-parent-"));
 		}
 
 		$this->listItemParentPath = new NodePathCalculator($parentElement);
 
 		$siblingContext = $this->originalElement;
 		while($siblingContext = $siblingContext->nextElementSibling) {
-			if(!$siblingContext->hasAttribute("data-template")) {
+			if(!$siblingContext->hasAttribute("data-list")
+			&& !$siblingContext->hasAttribute("data-template")) {
 				break;
 			}
 		}

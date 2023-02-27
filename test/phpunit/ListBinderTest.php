@@ -604,8 +604,6 @@ class ListBinderTest extends TestCase {
 		$listElementCollection = new ListElementCollection($document);
 		$sut = new ListBinder($listElementCollection);
 
-		echo $document;die();
-
 		$sut->bindListData(["Good news 1", "Good news 2"], $document, "good");
 		$sut->bindListData(["Bad news 1", "Bad news 2"], $document, "bad");
 		$sut->bindListData(["Good news 3", "Good news 4"], $document, "good");
