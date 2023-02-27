@@ -1,10 +1,10 @@
 <?php
-namespace Gt\DomTemplate\Test\TestFactory;
+namespace Gt\DomTemplate\Test\TestHelper;
 
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\XMLDocument;
 
-class DocumentTestFactory {
+class HTMLPageContent {
 	const HTML_EMPTY = <<<HTML
 <!doctype html>
 HTML;
@@ -896,6 +896,94 @@ HTML;
 	
 	<p>Your receipt ID is <span data-bind:text="id">000</span></p>
 </div>
+HTML;
+
+	const HTML_ADDRESS_NESTED_OBJECT = <<<HTML
+<!doctype html>
+<h1>Customer information</h1>
+<dl>
+	<dt>ID</dt>
+	<dd data-bind:text="id"></dd>
+	
+	<dt>Name</dt>
+	<dd data-bind:text="name"></dd>
+	
+	<dt>Address Street</dt>
+	<dd data-bind:text="address.street">Address line 1</dd>
+	
+	<dt>Address Line 2</dt>
+	<dd data-bind:text="address.line2">Address line 2</dd>
+	
+	<dt>City / State</dt>
+	<dd data-bind:text="address.cityState">Address city/state</dd>
+	
+	<dt>Postcode / ZIP</dt>
+	<dd data-bind:text="address.postcodeZip">Address Postcode/ZIP</dd>
+	
+	<dt>Country</dt>
+	<dd><span data-bind:text="address.country.name">Address country</span> (<span data-bind:text="address.country.code">AA</span>)</dd>
+</dl>
+HTML;
+
+	const HTML_MAP_SHOP_CUSTOMER_OVERVIEW = <<<HTML
+<!doctype html>
+<h1>Customer overview</h1>
+
+<customer-list>
+	<ul>
+		<li data-template>
+			<customer-details>
+				<dl>
+					<dt>ID</dt>
+					<dd data-bind:text="id">000</dd>
+					
+					<dt>Name</dt>
+					<dd data-bind:text="name">Customer Name!</dd>
+					
+					<dt>Address</dt>
+					<dd>
+						<span data-bind:text="address.street">Address Line 1</span>
+						<span data-bind:text="address.line2">Address Line 2</span>
+						<span data-bind:text="address.cityState">Address City</span>
+						<span data-bind:text="address.postcodeZip">Address Postcode</span>
+						<span data-bind:text="address.country.name">Address Country</span>
+					</dd>
+					
+					<dt>Latest orders</dt>
+					
+<!-- the use of a custom element allows data-bind:list to be left blank, so the
+list name will be the same as the element name (camel-cased to orderList) -->
+					<order-list data-bind:list>
+						<ul>
+							<li data-template>
+								<dl>
+									<dt>City / State</dt>
+									<dd data-bind:text="shippingAddress.cityState"></dd>
+									
+									<dt>Subtotal</dt>
+									<dd data-bind:text="subtotal">£0.--</dd>
+									
+									<dt>Shipping</dt>
+									<dd data-bind:text="shippingCost">£0.--</dd>
+									
+									<dt>Total</dt>
+									<dd data-bind:text="totalCost">£0.--</dd>
+								</dl>
+								<h3>Items in order</h3>
+								<ul data-bind:list="itemList">
+									<li data-template>
+										<h4><a href="/item/{{id}}" data-bind:text="title">Item name</a></h4>
+										<p data-bind:text="cost">£0.--</p>
+									</li>								
+								</ul>
+							</li>						
+						</ul>					
+					</order-list>
+				</dl>
+			</customer-details>		
+		</li>
+	</ul>
+</customer-list>
 HTML;
 
 

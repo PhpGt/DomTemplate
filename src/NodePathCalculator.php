@@ -19,20 +19,29 @@ class NodePathCalculator implements Stringable {
 		do {
 			$contextPath = strtolower($context->tagName);
 
-			if($context->id || $context->className) {
-				$attrPath = "";
-				if($id = $context->id) {
-					$attrPath .= "@id='$id'";
+			$attrPath = "";
+			if($dataTemplateParent = $context->getAttribute(TemplateElement::ATTRIBUTE_TEMPLATE_PARENT)) {
+				$attrPath .= "@"
+					. TemplateElement::ATTRIBUTE_TEMPLATE_PARENT
+					. "='$dataTemplateParent'";
+			}
+
+			if($id = $context->id) {
+				if($attrPath) {
+					$attrPath .= " and ";
+				}
+				$attrPath .= "@id='$id'";
+			}
+
+			foreach($context->classList as $class) {
+				if($attrPath) {
+					$attrPath .= " and ";
 				}
 
-				foreach($context->classList as $class) {
-					if(strlen($attrPath) !== 0) {
-						$attrPath .= " and ";
-					}
+				$attrPath .= "contains(concat(' ',normalize-space(@class),' '),' $class ')";
+			}
 
-					$attrPath .= "contains(concat(' ',normalize-space(@class),' '),' $class ')";
-				}
-
+			if($attrPath) {
 				$contextPath .= "[$attrPath]";
 			}
 

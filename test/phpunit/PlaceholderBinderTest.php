@@ -3,12 +3,12 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\PlaceholderBinder;
-use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use PHPUnit\Framework\TestCase;
 
 class PlaceholderBinderTest extends TestCase {
 	public function testBind():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$greetingElement = $document->querySelector("#test2 .greeting");
 		$sut = new PlaceholderBinder();
 // We can now bind text to the placeholder, and the text will
@@ -19,7 +19,7 @@ class PlaceholderBinderTest extends TestCase {
 	}
 
 	public function testBind_contextDoesNotLeak():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$greetingElement = $document->querySelector("#test2 .greeting");
 		$sut = new PlaceholderBinder();
 		$sut->bind("name", "Cody", $greetingElement);
@@ -29,7 +29,7 @@ class PlaceholderBinderTest extends TestCase {
 	}
 
 	public function testBind_noContextBindsAll():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$sut = new PlaceholderBinder();
 		$sut->bind("name", "Cody", $document);
 		self::assertStringContainsString("Cody", $document->querySelector("#test1 .greeting")->textContent);
@@ -38,7 +38,7 @@ class PlaceholderBinderTest extends TestCase {
 	}
 
 	public function testBind_attribute():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$sut = new PlaceholderBinder();
 		$testElement = $document->getElementById("test3");
 		$link = $testElement->querySelector("a");
@@ -47,7 +47,7 @@ class PlaceholderBinderTest extends TestCase {
 	}
 
 	public function testBind_nullDefault():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$sut = new PlaceholderBinder();
 		$testElement = $document->getElementById("test2");
 		$greeting = $testElement->querySelector("p.greeting");
@@ -56,7 +56,7 @@ class PlaceholderBinderTest extends TestCase {
 	}
 
 	public function testBind_emptyDefault():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$sut = new PlaceholderBinder();
 		$testElement = $document->getElementById("test2");
 		$greeting = $testElement->querySelector("p.greeting");
@@ -65,7 +65,7 @@ class PlaceholderBinderTest extends TestCase {
 	}
 
 	public function testBind_zeroNotDefault():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$sut = new PlaceholderBinder();
 		$testElement = $document->getElementById("test2");
 		$greeting = $testElement->querySelector("p.greeting");
@@ -74,7 +74,7 @@ class PlaceholderBinderTest extends TestCase {
 	}
 
 	public function testBind_multipleAttribute():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_PLACEHOLDER);
+		$document = new HTMLDocument(HTMLPageContent::HTML_PLACEHOLDER);
 		$sut = new PlaceholderBinder();
 		$testElement = $document->getElementById("test5");
 		$link = $testElement->querySelector("a");

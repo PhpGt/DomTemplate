@@ -5,6 +5,7 @@ use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\BindableCache;
 use Gt\DomTemplate\BindGetterMethodDoesNotStartWithGetException;
+use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -93,6 +94,7 @@ class BindableCacheTest extends TestCase {
 		self::assertSame([
 			"id" => "test-id",
 			"name" => "test-name",
+			"age" => null,
 		], $sut->convertToKvp($obj));
 	}
 
@@ -153,5 +155,26 @@ class BindableCacheTest extends TestCase {
 			"name" => "test-name",
 			"email" => null,
 		], $sut->convertToKvp($obj));
+	}
+
+	public function testConvertToKvp_nestedObject():void {
+		$sut = new BindableCache();
+
+		$customerList = TestData::getCustomerOrderOverview1();
+		$kvpList = [];
+		foreach($customerList as $customer) {
+			array_push($kvpList, $sut->convertToKvp($customer));
+		}
+
+		foreach($customerList as $i => $customer) {
+			self::assertSame((string)$customer->id, $kvpList[$i]["id"]);
+			self::assertSame($customer->name, $kvpList[$i]["name"]);
+			self::assertSame($customer->address->street, $kvpList[$i]["address.street"]);
+			self::assertSame($customer->address->line2, $kvpList[$i]["address.line2"]);
+			self::assertSame($customer->address->cityState, $kvpList[$i]["address.cityState"]);
+			self::assertSame($customer->address->postcodeZip, $kvpList[$i]["address.postcodeZip"]);
+			self::assertSame($customer->address->country->code, $kvpList[$i]["address.country.code"]);
+			self::assertSame($customer->address->country->getName(), $kvpList[$i]["address.country.name"]);
+		}
 	}
 }

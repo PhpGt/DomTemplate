@@ -7,6 +7,8 @@ use Gt\Dom\Text;
 use Throwable;
 
 class TemplateElement {
+	const ATTRIBUTE_TEMPLATE_PARENT = "data-template-parent";
+
 	private string $templateParentPath;
 	private null|Node|Element $templateNextSibling;
 	private int $insertCount;
@@ -15,8 +17,8 @@ class TemplateElement {
 		private Node|Element $originalElement
 	) {
 		$parentElement = $this->originalElement->parentElement;
-		if(!$parentElement->id) {
-			$parentElement->id = uniqid("template-parent-");
+		if(!$parentElement->getAttribute(self::ATTRIBUTE_TEMPLATE_PARENT)) {
+			$parentElement->setAttribute(self::ATTRIBUTE_TEMPLATE_PARENT, uniqid("template-parent-"));
 		}
 
 		$this->templateParentPath = new NodePathCalculator($parentElement);
@@ -54,7 +56,7 @@ class TemplateElement {
 	}
 
 	public function getClone():Node|Element {
-// TODO: Bug here - the template-parent-xxx ID is being generated the same for multiple instances.
+// TODO: #368 Bug here - the template-parent-xxx ID is being generated the same for multiple instances.
 		/** @var Element $element */
 		$element = $this->originalElement->cloneNode(true);
 //		foreach($this->originalElement->ownerDocument->evaluate("./*[starts-with(@id,'template-parent-')]", $element) as $existingTemplateElement) {
