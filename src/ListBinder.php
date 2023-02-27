@@ -12,7 +12,7 @@ class ListBinder {
 
 	/** @noinspection PhpPropertyCanBeReadonlyInspection */
 	public function __construct(
-		private ListElementCollection $listItemCollection,
+		private ListElementCollection $listElementCollection,
 		?BindableCache $bindableCache = null
 	) {
 		$this->bindableCache = $bindableCache ?? new BindableCache();
@@ -34,7 +34,7 @@ class ListBinder {
 			return 0;
 		}
 
-		$listItem = $this->listItemCollection->get(
+		$listItem = $this->listElementCollection->get(
 			$context,
 			$listItemName
 		);
@@ -117,10 +117,10 @@ class ListBinder {
 
 	private function clearListItemParentHTML(
 		Element $context,
-		?string $templateName
+		?string $listName
 	):void {
-		$template = $this->listItemCollection->get($context, $templateName);
-		$parent = $template->getListItemParent();
+		$listElement = $this->listElementCollection->get($context, $listName);
+		$parent = $listElement->getListItemParent();
 		$parent->innerHTML = trim($parent->innerHTML ?? "");
 	}
 

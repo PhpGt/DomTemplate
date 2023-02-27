@@ -540,7 +540,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$sut = new DocumentBinder($document);
 
 		$listData = ["One", "Two", "Three"];
@@ -554,7 +554,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList_nullData():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$sut = new DocumentBinder($document);
 
 		$listData = ["One", null, "Three"];
@@ -573,7 +573,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testBindList_emptyLeavesNoWhiteSpace():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$sut = new DocumentBinder($document);
 		$listData = [];
 		$sut->bindList($listData);
@@ -930,7 +930,7 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	public function testCleanDatasets_dataTemplate():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$sut = new DocumentBinder($document);
 		$sut->bindList(["One", "Two", "Three", "Four"]);
 		$sut->cleanDatasets();

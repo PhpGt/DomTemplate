@@ -19,7 +19,7 @@ use Stringable;
 
 class ListBinderTest extends TestCase {
 	public function testBindList_emptyList():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 
 		$templateCollection = new ListElementCollection($document);
 		$sut = new ListBinder($templateCollection);
@@ -31,7 +31,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_empty_shouldHaveNoWhitespace():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$templateCollection = new ListElementCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData([], $document);
@@ -39,7 +39,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_emptyList_iterator():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 
 		$templateParent = $document->querySelector("ul");
 		$templateElement = self::createMock(ListElement::class);
@@ -58,7 +58,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_noMatchingTemplate():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->expects(self::once())
 			->method("get")
@@ -77,7 +77,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_simpleList():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$templateElement = new ListElement($document->querySelector("li[data-list]"));
 
 		$templateCollection = self::createMock(ListElementCollection::class);
@@ -233,7 +233,7 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_empty_parentShouldBeEmpty():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$templateElement = new ListElement($document->querySelector("li[data-list]"));
 		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")

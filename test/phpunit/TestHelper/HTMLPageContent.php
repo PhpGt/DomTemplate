@@ -263,7 +263,7 @@ HTML;
 HTML;
 
 
-	const HTML_LIST_TEMPLATE = <<<HTML
+	const HTML_LIST = <<<HTML
 <!doctype html>
 <ul>
 	<li data-list data-bind:text>Template item!</li>
@@ -283,7 +283,7 @@ HTML;
 </ol>
 HTML;
 
-	const HTML_LIST_WITH_TEXTNODE = <<<HTML
+	const HTML_LIST_WITH_TEXT_NODE = <<<HTML
 <!doctype html>
 <!doctype html>
 <ul>
@@ -390,7 +390,7 @@ HTML;
 </ul>
 HTML;
 
-	const HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES = <<<HTML
+	const HTML_MUSIC_EXPLICIT_LIST_NAMES = <<<HTML
 <!doctype html>
 <h1>Music library</h1>
 

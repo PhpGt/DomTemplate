@@ -25,7 +25,7 @@ class ListElementCollection {
 
 		if($templateName) {
 			if(!isset($this->elementKVP[$templateName])) {
-				throw new ListElementNotFoundInContextException("Template element with name \"$templateName\" can not be found within the context $context->tagName element.");
+				throw new ListElementNotFoundInContextException("List element with name \"$templateName\" can not be found within the context $context->tagName element.");
 			}
 			return $this->elementKVP[$templateName];
 		}
