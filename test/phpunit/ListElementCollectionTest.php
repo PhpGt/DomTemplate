@@ -3,54 +3,54 @@ namespace Gt\DomTemplate\Test;
 
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\ElementBinder;
-use Gt\DomTemplate\TemplateCollection;
-use Gt\DomTemplate\TemplateElementNotFoundInContextException;
+use Gt\DomTemplate\ListElementCollection;
+use Gt\DomTemplate\ListElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 
-class TemplateCollectionTest extends TestCase {
+class ListElementCollectionTest extends TestCase {
 	public function testGet_noName_noMatch():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
-		$sut = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$sut = new ListElementCollection($document);
 
-		self::expectException(TemplateElementNotFoundInContextException::class);
+		self::expectException(ListElementNotFoundInContextException::class);
 		$sut->get($document->querySelector("ol"));
 	}
 
 	public function testGet_noName():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$ul = $document->querySelector("ul");
 		$ol = $document->querySelector("ol");
 		self::assertCount(1, $ul->children);
 		self::assertCount(1, $ol->children);
-		$sut = new TemplateCollection($document);
+		$sut = new ListElementCollection($document);
 		self::assertCount(0, $ul->children);
 		self::assertCount(1, $ol->children);
-		$templateElement = $sut->get($document);
-		$inserted = $templateElement->insertTemplate();
+		$listElement = $sut->get($document);
+		$inserted = $listElement->insertListItem();
 		self::assertSame("li", $inserted->tagName);
-		self::assertSame($ul, $templateElement->getTemplateParent());
+		self::assertSame($ul, $listElement->getListItemParent());
 		self::assertSame($ul, $inserted->parentElement);
 	}
 
 	public function testGet_name_noMatch():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_TWO_LISTS);
-		$sut = new TemplateCollection($document);
+		$sut = new ListElementCollection($document);
 
-		self::expectException(TemplateElementNotFoundInContextException::class);
-		self::expectExceptionMessage('Template element with name "unknown-list" can not be found within the context html element.');
+		self::expectException(ListElementNotFoundInContextException::class);
+		self::expectExceptionMessage('List element with name "unknown-list" can not be found within the context html element.');
 		$sut->get($document, "unknown-list");
 	}
 
 	public function testGet_name():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_TWO_LISTS);
-		$sut = new TemplateCollection($document);
+		$sut = new ListElementCollection($document);
 
-		$templateElement = $sut->get($document, "prog-lang");
+		$listElement = $sut->get($document, "prog-lang");
 		self::assertSame(
 			$document->getElementById("prog-lang-list"),
-			$templateElement->getTemplateParent()
+			$listElement->getListItemParent()
 		);
 	}
 
@@ -58,29 +58,29 @@ class TemplateCollectionTest extends TestCase {
 	 * Baby steps...(this comment was written as part of DomTemplate's TDD).
 	 * Instead of jumping into the implementation of recursive nested list
 	 * binding, we're going to manually iterate over a data source and
-	 * bind the appropriate elements by their explicit template name.
+	 * bind the appropriate elements by their explicit list name.
 	 *
 	 * This is a manually-bound version of
 	 * ListBinderTest::testBindListData_nestedList()
 	 */
 	public function testBindListData_nestedList_manual():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_EXPLICIT_LIST_NAMES);
+		$listElementCollection = new ListElementCollection($document);
 		$elementBinder = new ElementBinder();
 
 		foreach(TestData::MUSIC as $artistName => $albumList) {
-			$artistTemplate = $templateCollection->get($document, "artist");
-			$artistElement = $artistTemplate->insertTemplate();
+			$artistListItem = $listElementCollection->get($document, "artist");
+			$artistElement = $artistListItem->insertListItem();
 			$elementBinder->bind(null, $artistName, $artistElement);
 
 			foreach($albumList as $albumName => $trackList) {
-				$albumTemplate = $templateCollection->get($document, "album");
-				$albumElement = $albumTemplate->insertTemplate();
+				$albumListItem = $listElementCollection->get($document, "album");
+				$albumElement = $albumListItem->insertListItem();
 				$elementBinder->bind(null, $albumName, $albumElement);
 
 				foreach($trackList as $trackName) {
-					$trackTemplate = $templateCollection->get($document, "track");
-					$trackElement = $trackTemplate->insertTemplate();
+					$trackListItem = $listElementCollection->get($document, "track");
+					$trackElement = $trackListItem->insertListItem();
 					$elementBinder->bind(
 						null,
 						$trackName,
@@ -119,27 +119,27 @@ class TemplateCollectionTest extends TestCase {
 	}
 
 	public function testConstructor_removesWhitespace():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_TEMPLATE);
-		new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		new ListElementCollection($document);
 		self::assertSame("", $document->querySelector("ul")->innerHTML);
 	}
 
-	public function testConstructor_nonTemplateChildrenArePreserved():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_WITH_TEXTNODE);
-		new TemplateCollection($document);
+	public function testConstructor_nonListChildrenArePreserved():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_WITH_TEXT_NODE);
+		new ListElementCollection($document);
 		$ulChildren = $document->querySelector("ul")->children;
 		self::assertCount(1, $ulChildren);
 		self::assertSame("This list item will always show at the end", $ulChildren[0]->textContent);
 	}
 
-	public function testConstructor_nonTemplateChildrenArePreservedInOrder():void {
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_WITH_TEXTNODE);
-		$sut = new TemplateCollection($document);
+	public function testConstructor_nonListChildrenArePreservedInOrder():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_WITH_TEXT_NODE);
+		$sut = new ListElementCollection($document);
 		$ulChildren = $document->querySelector("ul")->children;
-		$template = $sut->get($document);
-		$template->insertTemplate();
-		$template->insertTemplate();
-		$template->insertTemplate();
+		$listElement = $sut->get($document);
+		$listElement->insertListItem();
+		$listElement->insertListItem();
+		$listElement->insertListItem();
 		self::assertCount(4, $ulChildren);
 		self::assertSame("This list item will always show at the end", $ulChildren[3]->textContent);
 	}
