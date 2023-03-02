@@ -12,7 +12,7 @@ class ListBinder {
 
 	/** @noinspection PhpPropertyCanBeReadonlyInspection */
 	public function __construct(
-		private TemplateCollection $templateCollection,
+		private ListElementCollection $listElementCollection,
 		?BindableCache $bindableCache = null
 	) {
 		$this->bindableCache = $bindableCache ?? new BindableCache();
@@ -22,7 +22,7 @@ class ListBinder {
 	public function bindListData(
 		iterable $listData,
 		Document|Element $context,
-		?string $templateName = null,
+		?string $listItemName = null,
 		?callable $callback = null,
 	):int {
 		if($context instanceof Document) {
@@ -30,59 +30,59 @@ class ListBinder {
 		}
 
 		if($this->isEmpty($listData)) {
-			$this->clearTemplateParentHTML($context, $templateName);
+			$this->clearListItemParentHTML($context, $listItemName);
 			return 0;
 		}
 
-		$templateItem = $this->templateCollection->get(
+		$listItem = $this->listElementCollection->get(
 			$context,
-			$templateName
+			$listItemName
 		);
 
 		$elementBinder = new ElementBinder();
 		$nestedCount = 0;
 		$i = -1;
-		foreach($listData as $listKey => $listItem) {
+		foreach($listData as $listKey => $listValue) {
 			$i++;
-			$t = $templateItem->insertTemplate();
+			$t = $listItem->insertListItem();
 
-// If the $listItem's first value is iterable, then treat this as a nested list.
-			if($this->isNested($listItem)) {
+// If the $listValue's first value is iterable, then treat this as a nested list.
+			if($this->isNested($listValue)) {
 				$elementBinder->bind(null, $listKey, $t);
 				$nestedCount += $this->bindListData(
-					$listItem,
+					$listValue,
 					$t,
-					$templateName
+					$listItemName
 				);
 				continue;
 			}
 
-			if(is_object($listItem) && method_exists($listItem, "asArray")) {
-				$listItem = $listItem->asArray();
+			if(is_object($listValue) && method_exists($listValue, "asArray")) {
+				$listValue = $listValue->asArray();
 			}
-			elseif(is_object($listItem) && !is_iterable($listItem)) {
-				if($this->bindableCache->isBindable($listItem)) {
-					$listItem = $this->bindableCache->convertToKvp($listItem);
+			elseif(is_object($listValue) && !is_iterable($listValue)) {
+				if($this->bindableCache->isBindable($listValue)) {
+					$listValue = $this->bindableCache->convertToKvp($listValue);
 				}
 			}
 
 			if($callback) {
-				$listItem = call_user_func(
+				$listValue = call_user_func(
 					$callback,
 					$t,
-					$listItem,
+					$listValue,
 					$listKey,
 				);
 			}
 
-			if(is_null($listItem)) {
+			if(is_null($listValue)) {
 				continue;
 			}
 
-			if($this->isKVP($listItem)) {
+			if($this->isKVP($listValue)) {
 				$elementBinder->bind(null, $listKey, $t);
 
-				foreach($listItem as $key => $value) {
+				foreach($listValue as $key => $value) {
 					$elementBinder->bind($key, $value, $t);
 
 					if($this->isNested($value)) {
@@ -90,13 +90,13 @@ class ListBinder {
 						$nestedCount += $this->bindListData(
 							$value,
 							$t,
-							$templateName
+							$listItemName
 						);
 					}
 				}
 			}
 			else {
-				$elementBinder->bind(null, $listItem, $t);
+				$elementBinder->bind(null, $listValue, $t);
 			}
 		}
 
@@ -115,12 +115,12 @@ class ListBinder {
 		}
 	}
 
-	private function clearTemplateParentHTML(
+	private function clearListItemParentHTML(
 		Element $context,
-		?string $templateName
+		?string $listName
 	):void {
-		$template = $this->templateCollection->get($context, $templateName);
-		$parent = $template->getTemplateParent();
+		$listElement = $this->listElementCollection->get($context, $listName);
+		$parent = $listElement->getListItemParent();
 		$parent->innerHTML = trim($parent->innerHTML ?? "");
 	}
 

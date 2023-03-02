@@ -9,7 +9,7 @@ use Gt\DomTemplate\PartialContentFileNotFoundException;
 use Gt\DomTemplate\PartialExpander;
 use Gt\DomTemplate\PartialInjectionMultiplePointException;
 use Gt\DomTemplate\PartialInjectionPointNotFoundException;
-use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 
 class PartialExpanderTest extends PartialContentTestCase {
 	public function testExpand_noMatchingPartial():void {
@@ -18,7 +18,7 @@ class PartialExpanderTest extends PartialContentTestCase {
 				"nothing" => "this doesn't exist",
 			]
 		);
-		$document = new HTMLDocument(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$document = new HTMLDocument(HTMLPageContent::HTML_EXTENDS_PARTIAL_VIEW);
 		$sut = new PartialExpander(
 			$document,
 			$partialContent
@@ -30,10 +30,10 @@ class PartialExpanderTest extends PartialContentTestCase {
 	public function testExpand():void {
 		$partialContent = self::mockPartialContent(
 			"_partial", [
-				"base-page" => DocumentTestFactory::HTML_PARTIAL_VIEW
+				"base-page" => HTMLPageContent::HTML_PARTIAL_VIEW
 			]
 		);
-		$document = new HTMLDocument(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$document = new HTMLDocument(HTMLPageContent::HTML_EXTENDS_PARTIAL_VIEW);
 
 		$mainElement = $document->querySelector("body>main");
 		self::assertNull($mainElement);
@@ -62,10 +62,10 @@ class PartialExpanderTest extends PartialContentTestCase {
 	public function testExpand_commentVarsBound():void {
 		$partialContent = self::mockPartialContent(
 			"_partial", [
-				"base-page" => DocumentTestFactory::HTML_PARTIAL_VIEW
+				"base-page" => HTMLPageContent::HTML_PARTIAL_VIEW
 			]
 		);
-		$document = new HTMLDocument(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$document = new HTMLDocument(HTMLPageContent::HTML_EXTENDS_PARTIAL_VIEW);
 		$binder = self::createMock(DocumentBinder::class);
 		$binder->expects(self::once())
 			->method("bindKeyValue")
@@ -87,11 +87,11 @@ class PartialExpanderTest extends PartialContentTestCase {
 	}
 
 	public function testExpand_recursive():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE);
 		$partialContent = self::mockPartialContent(
 			"_partial", [
-				"extended-page" => DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE_BASE,
-				"partial-base" => DocumentTestFactory::HTML_PARTIAL_VIEW,
+				"extended-page" => HTMLPageContent::HTML_EXTENDS_PARTIAL_VIEW_RECURSIVE_BASE,
+				"partial-base" => HTMLPageContent::HTML_PARTIAL_VIEW,
 			]
 		);
 		$sut = new PartialExpander($document, $partialContent);
@@ -113,11 +113,11 @@ class PartialExpanderTest extends PartialContentTestCase {
 	}
 
 	public function testExpand_noDataPartialElement():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$document = new HTMLDocument(HTMLPageContent::HTML_EXTENDS_PARTIAL_VIEW);
 		$partialContent = self::mockPartialContent(
 			"_partial", [
 // Here, the HTML_COMPONENT isn't expected, because there is no data-partial element.
-				"base-page" => DocumentTestFactory::HTML_COMPONENT,
+				"base-page" => HTMLPageContent::HTML_COMPONENT,
 			]
 		);
 		$sut = new PartialExpander($document, $partialContent);
@@ -127,10 +127,10 @@ class PartialExpanderTest extends PartialContentTestCase {
 	}
 
 	public function testExpand_multipleDataPartialElements():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_EXTENDS_PARTIAL_VIEW);
+		$document = new HTMLDocument(HTMLPageContent::HTML_EXTENDS_PARTIAL_VIEW);
 		$partialContent = self::mockPartialContent(
 			"_partial", [
-				"base-page" => DocumentTestFactory::HTML_INCORRECT_PARTIAL_VIEW,
+				"base-page" => HTMLPageContent::HTML_INCORRECT_PARTIAL_VIEW,
 			]
 		);
 		$sut = new PartialExpander($document, $partialContent);
@@ -140,12 +140,12 @@ class PartialExpanderTest extends PartialContentTestCase {
 	}
 
 	public function testExpand_detectCyclicRecursion():void {
-		$document = DocumentTestFactory::createHTML(DocumentTestFactory::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION);
+		$document = HTMLPageContent::createHTML(HTMLPageContent::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION);
 		$partialContent = self::mockPartialContent(
 			"_partial", [
-				"extended-page-1" => DocumentTestFactory::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_1,
-				"extended-page-2" => DocumentTestFactory::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_2,
-				"partial-base" => DocumentTestFactory::HTML_PARTIAL_VIEW,
+				"extended-page-1" => HTMLPageContent::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_1,
+				"extended-page-2" => HTMLPageContent::HTML_EXTENDS_PARTIAL_CYCLIC_RECURSION_2,
+				"partial-base" => HTMLPageContent::HTML_PARTIAL_VIEW,
 			]
 		);
 		$sut = new PartialExpander($document, $partialContent);

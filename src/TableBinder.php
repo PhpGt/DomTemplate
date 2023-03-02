@@ -9,7 +9,7 @@ use Traversable;
 class TableBinder {
 	/** @noinspection PhpPropertyCanBeReadonlyInspection */
 	public function __construct(
-		private ?TemplateCollection $templateCollection = null,
+		private ?ListElementCollection $templateCollection = null,
 		private ?ElementBinder $elementBinder = null,
 		private ?HTMLAttributeBinder $htmlAttributeBinder = null,
 		private ?HTMLAttributeCollection $htmlAttributeCollection = null,
@@ -90,14 +90,14 @@ class TableBinder {
 			}
 
 			$templateCollection = $this->templateCollection
-				?? new TemplateCollection($context->ownerDocument);
+				?? new ListElementCollection($context->ownerDocument);
 
 			foreach($tableData as $rowData) {
 				try {
 					$trTemplate = $templateCollection->get($tbody);
-					$tr = $trTemplate->insertTemplate();
+					$tr = $trTemplate->insertListItem();
 				}
-				catch(TemplateElementNotFoundInContextException) {
+				catch(ListElementNotFoundInContextException) {
 					$tr = $tbody->insertRow();
 				}
 

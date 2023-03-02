@@ -5,7 +5,7 @@ use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\IncorrectTableDataFormat;
 use Gt\DomTemplate\TableBinder;
 use Gt\DomTemplate\TableDataStructureType;
-use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use PHPUnit\Framework\TestCase;
 
 class TableBinderTest extends TestCase {
@@ -15,7 +15,7 @@ class TableBinderTest extends TestCase {
 	 */
 	public function testBindTable_emptyTable():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table = $document->getElementById("tbl1");
 
@@ -45,7 +45,7 @@ class TableBinderTest extends TestCase {
 	 */
 	public function testBindTable_emptyTableSpecifiedByName():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table0 = $document->getElementById("tbl0");
 		$table1 = $document->getElementById("tbl1");
@@ -80,7 +80,7 @@ class TableBinderTest extends TestCase {
 	 */
 	public function testBindTable_existingTHead():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table = $document->getElementById("tbl2");
 
@@ -125,7 +125,7 @@ class TableBinderTest extends TestCase {
 
 	public function testBindTable_dataNormalised():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table = $document->getElementById("tbl2");
 
@@ -170,7 +170,7 @@ class TableBinderTest extends TestCase {
 	 */
 	public function testBindTable_doubleHeader_shouldEmitTHElementsInRows():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table = $document->getElementById("tbl1");
 
@@ -229,7 +229,7 @@ class TableBinderTest extends TestCase {
 
 	public function testBindTable_nonIterableValue():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table = $document->getElementById("tbl1");
 
@@ -249,7 +249,7 @@ class TableBinderTest extends TestCase {
 
 	public function testBindTable_doubleHeaderNonIterableValue():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table = $document->getElementById("tbl1");
 
@@ -269,7 +269,7 @@ class TableBinderTest extends TestCase {
 
 	public function testBindTable_assocArrayWithoutIterableColumns():void {
 		$sut = new TableBinder();
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 
 		$table = $document->getElementById("tbl1");
 		$tableData = [
@@ -294,7 +294,7 @@ class TableBinderTest extends TestCase {
 			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
 		];
 
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 		$sut->bindTableData(
 			$tableData,
 			$document->getElementById("multi-table-container"),
@@ -333,7 +333,7 @@ class TableBinderTest extends TestCase {
 			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
 		];
 
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLES);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLES);
 		$table = $document->getElementById("tbl3");
 		$sut->bindTableData(
 			$tableData,
@@ -373,7 +373,7 @@ class TableBinderTest extends TestCase {
 			"email" => ["derek@php.net", "cmbecker69@php.net", "pollita@php.net"],
 		];
 
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_NO_BIND_KEY);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLE_NO_BIND_KEY);
 		$sut->bindTableData($tableData, $document);
 
 		self::assertCount(4, $document->querySelectorAll("table tr"));
@@ -389,7 +389,7 @@ class TableBinderTest extends TestCase {
 			array_push($tableData, [$i, $name, md5($name)]);
 		}
 
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_ID_NAME_CODE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLE_ID_NAME_CODE);
 		$sut->bindTableData($tableData, $document);
 
 		$table = $document->querySelector("table");
@@ -416,7 +416,7 @@ class TableBinderTest extends TestCase {
 			array_push($tableData, [$i, md5($name), $name, $i % 3 === 0]);
 		}
 
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_EXISTING_CELLS);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLE_EXISTING_CELLS);
 		$sut = new TableBinder();
 
 		$sut->bindTableData($tableData, $document);
@@ -466,7 +466,7 @@ class TableBinderTest extends TestCase {
 			array_push($tableData["deleted"], $i % 3 === 0);
 		}
 
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_EXISTING_CELLS);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLE_EXISTING_CELLS);
 		$sut = new TableBinder();
 
 		$sut->bindTableData($tableData, $document);
@@ -524,7 +524,7 @@ class TableBinderTest extends TestCase {
 //				"Laptop" => [799_99, 60],
 //			]
 //		];
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TABLE_CRUD);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TABLE_CRUD);
 		$sut = new TableBinder();
 		$sut->bindTableData($tableData, $document);
 		$tBody = $document->querySelector("table tbody");

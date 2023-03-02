@@ -1,10 +1,10 @@
 <?php
-namespace Gt\DomTemplate\Test\TestFactory;
+namespace Gt\DomTemplate\Test\TestHelper;
 
 use Gt\Dom\HTMLDocument;
 use Gt\Dom\XMLDocument;
 
-class DocumentTestFactory {
+class HTMLPageContent {
 	const HTML_EMPTY = <<<HTML
 <!doctype html>
 HTML;
@@ -206,7 +206,7 @@ HTML;
 	</tr>
 </thead>
 <tbody>
-	<tr data-template>
+	<tr data-list>
 		<td data-bind:class=":deleted">
 			<form method="post">
 				<input type="hidden" name="id" data-bind:value="@name" />
@@ -240,7 +240,7 @@ HTML;
 		</tr>
 	</thead>
 	<tbody>
-		<tr data-template>
+		<tr data-list>
 			<td>0</td>
 			<td>Test</td>
 			<td>Testerson</td>
@@ -263,10 +263,10 @@ HTML;
 HTML;
 
 
-	const HTML_LIST_TEMPLATE = <<<HTML
+	const HTML_LIST = <<<HTML
 <!doctype html>
 <ul>
-	<li data-template data-bind:text>Template item!</li>
+	<li data-list data-bind:text>Template item!</li>
 </ul>
 <ol>
 	<li>This doesn't have a data template attribute</li>
@@ -276,18 +276,18 @@ HTML;
 	const HTML_LIST_TEMPLATE_REBIND = <<<HTML
 <!doctype html>
 <ul>
-	<li data-template data-template-rebind data-bind:text>Template item!</li>
+	<li data-list data-list-rebind data-bind:text>Template item!</li>
 </ul>
 <ol>
 	<li>This doesn't have a data template attribute</li>
 </ol>
 HTML;
 
-	const HTML_LIST_WITH_TEXTNODE = <<<HTML
+	const HTML_LIST_WITH_TEXT_NODE = <<<HTML
 <!doctype html>
 <!doctype html>
 <ul>
-	<li data-template data-bind:text>Template item!</li>
+	<li data-list data-bind:text>Template item!</li>
 	<li>This list item will always show at the end</li>
 </ul>
 HTML;
@@ -298,12 +298,12 @@ HTML;
 <div id="favourites">
 	<h1>My favourite programming languages</h1>
 	<ul id="prog-lang-list">
-		<li data-template="prog-lang" data-bind:text>Programming language goes here</li>
+		<li data-list="prog-lang" data-bind:text>Programming language goes here</li>
 	</ul>
 	
 	<h1>My favourite video games</h1>
 	<ul id="game-list">
-		<li data-template="game" data-bind:text>Video game goes here</li>
+		<li data-list="game" data-bind:text>Video game goes here</li>
 	</ul>
 </div>
 HTML;
@@ -313,12 +313,12 @@ HTML;
 <div id="favourites">
 	<h1>My favourite programming languages</h1>
 	<ul id="prog-lang-list">
-		<li data-template data-bind:text>Programming language goes here</li>
+		<li data-list data-bind:text>Programming language goes here</li>
 	</ul>
 	
 	<h1>My favourite video games</h1>
 	<ul id="game-list">
-		<li data-template data-bind:text>Video game goes here</li>
+		<li data-list data-bind:text>Video game goes here</li>
 	</ul>
 </div>
 HTML;
@@ -328,12 +328,12 @@ HTML;
 <div id="favourites">
 	<h1>My favourite programming languages</h1>
 	<ul class="favourite-list prog-lang">
-		<li data-template data-bind:text>Programming language goes here</li>
+		<li data-list data-bind:text>Programming language goes here</li>
 	</ul>
 	
 	<h1>My favourite video games</h1>
 	<ul class="favourite-list game">
-		<li data-template data-bind:text>Video game goes here</li>
+		<li data-list data-bind:text>Video game goes here</li>
 	</ul>
 </div>
 HTML;
@@ -343,7 +343,7 @@ HTML;
 <div id="orders">
 	<h1>Most active users</h1>
 	<ul>
-		<li id="user-{{userId}}" data-template>
+		<li id="user-{{userId}}" data-list>
 			<h2>Username: <span data-bind:text="username">username</span></h2>
 			<h3>ID: <span data-bind:text="userId">000</span></h3>
 			<p>Number of orders: <span data-bind:text="orderCount">0</span>, <a href="/orders/{{userId}}">view</a></p>
@@ -386,24 +386,24 @@ HTML;
 <h1>A list with placeholders</h1>
 
 <ul>
-	<li data-template id="user-{{userId}}">Username: {{username}}</li>
+	<li data-list id="user-{{userId}}">Username: {{username}}</li>
 </ul>
 HTML;
 
-	const HTML_MUSIC_EXPLICIT_TEMPLATE_NAMES = <<<HTML
+	const HTML_MUSIC_EXPLICIT_LIST_NAMES = <<<HTML
 <!doctype html>
 <h1>Music library</h1>
 
 <ul>
-	<li data-template="artist">
+	<li data-list="artist">
 		<h2 data-bind:text>Artist name</h2>
 		
 		<ul>
-			<li data-template="album">
+			<li data-list="album">
 				<h3 data-bind:text>Album name</h3>
 				
 				<ol>
-					<li data-template="track" data-bind:text>Track name</li>
+					<li data-list="track" data-bind:text>Track name</li>
 				</ol>
 			</li>
 		</ul>
@@ -416,15 +416,15 @@ HTML;
 <h1>Music library</h1>
 
 <ul>
-	<li data-template>
+	<li data-list>
 		<h2 data-bind:text>Artist name</h2>
 		
 		<ul>
-			<li data-template>
+			<li data-list>
 				<h3 data-bind:text>Album name</h3>
 				
 				<ol>
-					<li data-template data-bind:text>Track name</li>
+					<li data-list data-bind:text>Track name</li>
 				</ol>
 			</li>
 		</ul>
@@ -436,7 +436,7 @@ HTML;
 <!doctype html>
 <h1>List of students:</h1>
 <ul>
-	<li data-template>
+	<li data-list>
 		<dl>
 			<dt>Student name</dt>
 			<dd class="name">{{firstName}} {{lastName}}</dd>
@@ -444,7 +444,7 @@ HTML;
 			<dt>Current modules</dt>
 			<dd class="modules">
 				<ul>
-					<li data-template data-bind:text>Module name</li>
+					<li data-list data-bind:text>Module name</li>
 				</ul>		
 			</dd>
 		</dl>
@@ -469,11 +469,11 @@ HTML;
 <!doctype html>
 <h1>Numerical sequences</h1>
 <ul>
-	<li data-template>
+	<li data-list>
 		<h2 data-bind:text>Sequence name</h2>
 		
 		<ol>
-			<li data-template data-bind:text>0</li>		
+			<li data-list data-bind:text>0</li>		
 		</ol>	
 	</li>
 </ul>
@@ -482,7 +482,7 @@ HTML;
 <!doctype html>
 <h1>Month starting days for each month this year:</h1>
 <ul>
-	<li data-template data-bind:text></li>
+	<li data-list data-bind:text></li>
 </ul>
 HTML;
 
@@ -496,7 +496,7 @@ HTML;
 <body>
 	<h1>TODO LIST!</h1>
 	<ul>
-		<li data-template data-bind:class=":completedAt completed">
+		<li data-list data-bind:class=":completedAt completed">
 			<form method="post">
 				<input type="hidden" name="id" data-bind:value="@name" />
 				<input name="title" data-bind:value="@name" />
@@ -525,7 +525,7 @@ HTML;
 
 	const HTML_TODO_COMPONENT_TODO_LIST = <<<HTML
 <ul>
-	<todo-list-item data-template data-bind:class=":completedAt completed" />
+	<todo-list-item data-list data-bind:class=":completedAt completed" />
 </ul>
 HTML;
 
@@ -569,7 +569,7 @@ HTML;
 <!doctype html>
 <p>The following list of "good" and "bad" templates is intentionally formatted like this.</p>
 <p>There should be no whitespace, and therefore the template siblings must not include other template items.</p>
-<ul><li data-template="good"><i>GOOD</i> <span data-bind:text>Good message</span></li><li data-template="bad"><i>BAD</i> <span data-bind:text>Bad message</span></li></ul>
+<ul><li data-list="good"><i>GOOD</i> <span data-bind:text>Good message</span></li><li data-list="bad"><i>BAD</i> <span data-bind:text>Bad message</span></li></ul>
 HTML;
 
 	const HTML_PARTIAL_VIEW = <<<HTML
@@ -707,12 +707,12 @@ HTML;
 </form>
 
 <ul>
-	<li data-template>
+	<li data-list>
 		<p data-bind:text="method">Type</p>
 		<time data-bind:text="duration">Type</time>
 		
 		<ol>
-			<li data-template>
+			<li data-list>
 				<a href="/route/step/{{}}">
 					<time data-bind:text="time">00:00</time>
 					<span data-bind:text="location">Somewhere</span>
@@ -727,7 +727,7 @@ HTML;
 <!doctype html>
 <h1>Sales</h1>
 <ul>
-	<li data-template>
+	<li data-list>
 		<p class="name">Item: <span data-bind:text="name">Item name</span></p>
 		<p class="count">Sale count: <span data-bind:text="count">0</span></p>
 		<p class="price">Price per item: £<span data-bind:text="price">0.00</span></p>
@@ -742,10 +742,10 @@ HTML;
 <main>
 	<dl>
 		<dt class="blue">Shades of blue</dt>
-		<dd data-template="blue" data-bind:text>Blue</dd>
+		<dd data-list="blue" data-bind:text>Blue</dd>
 		
 		<dt class="red">Shades of red</dt>
-		<dd data-template="red" data-bind:text>Red</dd>
+		<dd data-list="red" data-bind:text>Red</dd>
 	</dl>
 </main>
 HTML;
@@ -791,7 +791,7 @@ HTML;
 		<span>Select your drink preference</span>
 		<select name="drink" data-bind:value="drink">
 			<option></option>
-			<option data-bind:value="id" data-bind:text="name" data-template>Special option</option>
+			<option data-bind:value="id" data-bind:text="name" data-list>Special option</option>
 			<option value="coffee">Coffee</option>		
 			<option value="tea">Tea</option>		
 			<option value="chocolate">Chocolate</option>		
@@ -802,12 +802,12 @@ HTML;
 </form>
 HTML;
 
-	const HTML_TEMPLATE_ELEMENT_WITH_MULTIPLE_DIVS = <<<HTML
+	const HTML_LIST_ELEMENT_WITH_MULTIPLE_DIVS = <<<HTML
 <!doctype html>
 <h1>Test</h1>
 
 <h2>This element will always be after the H1</h2>
-<p data-template>This is the template element</p>
+<p data-list>This is the template element</p>
 <div>This is the contents of the first DIV. The template should come before it.</div>
 <div>This is the contents of the second DIV. The previous DIV should come before it.</div>
 HTML;
@@ -835,14 +835,14 @@ HTML;
 						<span>Pass on to</span>
 						<select name="pass-on-to" data-bind:value="passOnToUserUuid">
 							<option></option>
-							<option data-template data-bind:text="fullName" data-bind:value="uuid"></option>
+							<option data-list data-bind:text="fullName" data-bind:value="uuid"></option>
 						</select>
 					</label>
 					<label>
 						<span>Assign User</span>
 						<select name="tag-user" data-bind:value="tagUserUuid">
 							<option></option>
-							<option data-template data-bind:text="fullName" data-bind:value="uuid"></option>
+							<option data-list data-bind:text="fullName" data-bind:value="uuid"></option>
 						</select>
 					</label>
 				</div>
@@ -891,11 +891,99 @@ HTML;
 	<h1>Your shopping preference</h1>
 	
 	<select name="shopId" required data-bind:value="selectedShopId">
-		<option data-template="shop" data-bind:text="name" data-bind:value="id"></option>
+		<option data-list="shop" data-bind:text="name" data-bind:value="id"></option>
 	</select>
 	
 	<p>Your receipt ID is <span data-bind:text="id">000</span></p>
 </div>
+HTML;
+
+	const HTML_ADDRESS_NESTED_OBJECT = <<<HTML
+<!doctype html>
+<h1>Customer information</h1>
+<dl>
+	<dt>ID</dt>
+	<dd data-bind:text="id"></dd>
+	
+	<dt>Name</dt>
+	<dd data-bind:text="name"></dd>
+	
+	<dt>Address Street</dt>
+	<dd data-bind:text="address.street">Address line 1</dd>
+	
+	<dt>Address Line 2</dt>
+	<dd data-bind:text="address.line2">Address line 2</dd>
+	
+	<dt>City / State</dt>
+	<dd data-bind:text="address.cityState">Address city/state</dd>
+	
+	<dt>Postcode / ZIP</dt>
+	<dd data-bind:text="address.postcodeZip">Address Postcode/ZIP</dd>
+	
+	<dt>Country</dt>
+	<dd><span data-bind:text="address.country.name">Address country</span> (<span data-bind:text="address.country.code">AA</span>)</dd>
+</dl>
+HTML;
+
+	const HTML_MAP_SHOP_CUSTOMER_OVERVIEW = <<<HTML
+<!doctype html>
+<h1>Customer overview</h1>
+
+<customer-list>
+	<ul>
+		<li data-list>
+			<customer-details>
+				<dl>
+					<dt>ID</dt>
+					<dd data-bind:text="id">000</dd>
+					
+					<dt>Name</dt>
+					<dd data-bind:text="name">Customer Name!</dd>
+					
+					<dt>Address</dt>
+					<dd>
+						<span data-bind:text="address.street">Address Line 1</span>
+						<span data-bind:text="address.line2">Address Line 2</span>
+						<span data-bind:text="address.cityState">Address City</span>
+						<span data-bind:text="address.postcodeZip">Address Postcode</span>
+						<span data-bind:text="address.country.name">Address Country</span>
+					</dd>
+					
+					<dt>Latest orders</dt>
+					
+<!-- the use of a custom element allows data-bind:list to be left blank, so the
+list name will be the same as the element name (camel-cased to orderList) -->
+					<order-list data-bind:list>
+						<ul>
+							<li data-list>
+								<dl>
+									<dt>City / State</dt>
+									<dd data-bind:text="shippingAddress.cityState"></dd>
+									
+									<dt>Subtotal</dt>
+									<dd data-bind:text="subtotal">£0.--</dd>
+									
+									<dt>Shipping</dt>
+									<dd data-bind:text="shippingCost">£0.--</dd>
+									
+									<dt>Total</dt>
+									<dd data-bind:text="totalCost">£0.--</dd>
+								</dl>
+								<h3>Items in order</h3>
+								<ul data-bind:list="itemList">
+									<li data-list>
+										<h4><a href="/item/{{id}}" data-bind:text="title">Item name</a></h4>
+										<p data-bind:text="cost">£0.--</p>
+									</li>								
+								</ul>
+							</li>						
+						</ul>					
+					</order-list>
+				</dl>
+			</customer-details>		
+		</li>
+	</ul>
+</customer-list>
 HTML;
 
 

@@ -55,10 +55,7 @@ class CommentIni {
 			}
 		}
 
-		if($commentNodeToRemove) {
-			$commentNodeToRemove->parentNode->removeChild($commentNodeToRemove);
-		}
-
+		$commentNodeToRemove?->parentNode->removeChild($commentNodeToRemove);
 		$this->iniData = $ini ?: null;
 	}
 

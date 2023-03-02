@@ -91,6 +91,23 @@ class HTMLAttributeBinder {
 				continue;
 			}
 
+			if($attrName === "data-bind:list") {
+				if($attrValue === "") {
+					$attrValue = $element->tagName;
+					if(str_contains($attrValue, "-")) {
+						$newAttrValue = "";
+						foreach(explode("-", $attrValue) as $i => $part) {
+							if($i > 0) {
+								$part = ucfirst($part);
+							}
+							$newAttrValue .= $part;
+						}
+						$attrValue = $newAttrValue;
+					}
+					$element->setAttribute($attrName, $attrValue);
+				}
+			}
+
 			if(strlen($attrValue) === 0) {
 				continue;
 			}
@@ -197,6 +214,9 @@ class HTMLAttributeBinder {
 
 		case "value":
 			$element->value = $bindValue;
+			break;
+
+		case "list";
 			break;
 
 		default:

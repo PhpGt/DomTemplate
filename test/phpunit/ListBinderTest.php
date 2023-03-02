@@ -10,17 +10,18 @@ use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
-use Gt\DomTemplate\TemplateCollection;
-use Gt\DomTemplate\TemplateElement;
-use Gt\DomTemplate\Test\TestFactory\DocumentTestFactory;
+use Gt\DomTemplate\ListElementCollection;
+use Gt\DomTemplate\ListElement;
+use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
+use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 
 class ListBinderTest extends TestCase {
 	public function testBindList_emptyList():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 
-		$templateCollection = new TemplateCollection($document);
+		$templateCollection = new ListElementCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$boundCount = $sut->bindListData(
 			[],
@@ -30,21 +31,21 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_empty_shouldHaveNoWhitespace():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$templateCollection = new ListElementCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData([], $document);
 		self::assertSame("", $document->querySelector("ul")->innerHTML);
 	}
 
 	public function testBindList_emptyList_iterator():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 
 		$templateParent = $document->querySelector("ul");
-		$templateElement = self::createMock(TemplateElement::class);
-		$templateElement->method("getTemplateParent")
+		$templateElement = self::createMock(ListElement::class);
+		$templateElement->method("getListItemParent")
 			->willReturn($templateParent);
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
 
@@ -57,8 +58,8 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_noMatchingTemplate():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->expects(self::once())
 			->method("get")
 			->with($document->documentElement, "missing")
@@ -76,10 +77,10 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindList_simpleList():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
-		$templateElement = new TemplateElement($document->querySelector("li[data-template]"));
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$templateElement = new ListElement($document->querySelector("li[data-list]"));
 
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->expects(self::once())
 			->method("get")
 			->with($document->documentElement, null)
@@ -114,10 +115,10 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_existingChildren():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN);
-		$templateElement = new TemplateElement($document->querySelector("[data-template]"));
+		$document = new HTMLDocument(HTMLPageContent::HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN);
+		$templateElement = new ListElement($document->querySelector("[data-list]"));
 
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->expects(self::once())
 			->method("get")
 			->with($document->documentElement, null)
@@ -157,21 +158,21 @@ class ListBinderTest extends TestCase {
 
 	/**
 	 * This tests what happens when the context element has more than one
-	 * element with a data-template attribute. In this test, we expect the
+	 * element with a data-list attribute. In this test, we expect the
 	 * two template elements to have different template names.
 	 */
 	public function testBindListData_twoLists():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS);
-		$templateElementProgLang = new TemplateElement(
-			$document->querySelector("#favourites li[data-template='prog-lang']")
+		$document = new HTMLDocument(HTMLPageContent::HTML_TWO_LISTS);
+		$templateElementProgLang = new ListElement(
+			$document->querySelector("#favourites li[data-list='prog-lang']")
 		);
-		$templateElementGame = new TemplateElement(
-			$document->querySelector("#favourites li[data-template='game']")
+		$templateElementGame = new ListElement(
+			$document->querySelector("#favourites li[data-list='game']")
 		);
 
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
-			->willReturnCallback(function(Element $documentElement, string $name)use($templateElementProgLang, $templateElementGame):TemplateElement {
+			->willReturnCallback(function(Element $documentElement, string $name)use($templateElementProgLang, $templateElementGame):ListElement {
 				return $name === "game" ? $templateElementGame : $templateElementProgLang;
 			});
 
@@ -198,17 +199,17 @@ class ListBinderTest extends TestCase {
 	 * elements do not identify their own template name.
 	 */
 	public function testBindListData_twoListsDifferentContexts():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
-		$templateElementProgLang = new TemplateElement(
-			$document->querySelector("#prog-lang-list li[data-template]")
+		$document = new HTMLDocument(HTMLPageContent::HTML_TWO_LISTS_WITH_UNNAMED_TEMPLATES);
+		$templateElementProgLang = new ListElement(
+			$document->querySelector("#prog-lang-list li[data-list]")
 		);
-		$templateElementGame = new TemplateElement(
-			$document->querySelector("#game-list li[data-template]")
+		$templateElementGame = new ListElement(
+			$document->querySelector("#game-list li[data-list]")
 		);
 
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
-			->willReturnCallback(function(Element $element)use($templateElementProgLang, $templateElementGame):TemplateElement {
+			->willReturnCallback(function(Element $element)use($templateElementProgLang, $templateElementGame):ListElement {
 				return ($element->id === "prog-lang-list")
 					? $templateElementProgLang
 					: $templateElementGame;
@@ -232,9 +233,9 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_empty_parentShouldBeEmpty():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_LIST_TEMPLATE);
-		$templateElement = new TemplateElement($document->querySelector("li[data-template]"));
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$templateElement = new ListElement($document->querySelector("li[data-list]"));
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
@@ -251,11 +252,11 @@ class ListBinderTest extends TestCase {
 			["userId" => 559, "username" => "seafoam", "orderCount" => 30],
 			["userId" => 274, "username" => "hammatime", "orderCount" => 23],
 		];
-		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
-		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
@@ -276,11 +277,11 @@ class ListBinderTest extends TestCase {
 			(object)["userId" => 559, "username" => "seafoam", "orderCount" => 30],
 			(object)["userId" => 274, "username" => "hammatime", "orderCount" => 23],
 		];
-		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
-		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
@@ -302,11 +303,11 @@ class ListBinderTest extends TestCase {
 			new class { public int $userId = 559; public string $username = "seafoam"; public int $orderCount = 30; },
 			new class { public int $userId = 274; public string $username = "hammatime"; public int $orderCount = 23; },
 		];
-		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
-		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
@@ -380,11 +381,11 @@ class ListBinderTest extends TestCase {
 				}
 			},
 		];
-		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
-		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
@@ -436,11 +437,11 @@ class ListBinderTest extends TestCase {
 				public int $totalOrders = 23;
 			},
 		];
-		$document = new HTMLDocument(DocumentTestFactory::HTML_USER_ORDER_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_USER_ORDER_LIST);
 		$orderList = $document->querySelector("ul");
 
-		$templateElement = new TemplateElement($document->querySelector("ul li[data-template]"));
-		$templateCollection = self::createMock(TemplateCollection::class);
+		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
+		$templateCollection = self::createMock(ListElementCollection::class);
 		$templateCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
@@ -456,8 +457,8 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_nestedList():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_MUSIC_NO_TEMPLATE_NAMES);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_NO_TEMPLATE_NAMES);
+		$templateCollection = new ListElementCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData(TestData::MUSIC, $document);
 
@@ -490,8 +491,8 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_nestedList_withKvps():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_STUDENT_LIST);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
+		$templateCollection = new ListElementCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData(TestData::STUDENTS, $document);
 
@@ -511,8 +512,8 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_iterativeSomething():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_SEQUENCES);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SEQUENCES);
+		$templateCollection = new ListElementCollection($document);
 		$listData = [
 			"Primes" => new ArrayIterator([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71]),
 			"Fibonacci" => new ArrayIterator([0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765]),
@@ -531,8 +532,8 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_dateTime():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_DATES);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATES);
+		$templateCollection = new ListElementCollection($document);
 		$listData = [];
 
 		$dateTime = new DateTime();
@@ -558,8 +559,8 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_dateTimeAutomatic():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_DATES);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATES);
+		$templateCollection = new ListElementCollection($document);
 		/** @var array<DateTimeInterface> $listData */
 		$listData = [];
 
@@ -581,8 +582,8 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_todoList():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_TODO);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_TODO);
+		$templateCollection = new ListElementCollection($document);
 		$data = TestData::TODO_DATA;
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData($data, $document);
@@ -599,9 +600,10 @@ class ListBinderTest extends TestCase {
 	}
 
 	public function testBindListData_multipleTemplateSiblings():void {
-		$document = new HTMLDocument(DocumentTestFactory::HTML_GOOD_BAD);
-		$templateCollection = new TemplateCollection($document);
-		$sut = new ListBinder($templateCollection);
+		$document = new HTMLDocument(HTMLPageContent::HTML_GOOD_BAD);
+		$listElementCollection = new ListElementCollection($document);
+		$sut = new ListBinder($listElementCollection);
+
 		$sut->bindListData(["Good news 1", "Good news 2"], $document, "good");
 		$sut->bindListData(["Bad news 1", "Bad news 2"], $document, "bad");
 		$sut->bindListData(["Good news 3", "Good news 4"], $document, "good");
@@ -646,8 +648,8 @@ class ListBinderTest extends TestCase {
 			return $listItem;
 		};
 
-		$document = new HTMLDocument(DocumentTestFactory::HTML_SALES);
-		$templateCollection = new TemplateCollection($document);
+		$document = new HTMLDocument(HTMLPageContent::HTML_SALES);
+		$templateCollection = new ListElementCollection($document);
 		$sut = new ListBinder($templateCollection);
 		$sut->bindListData(
 			$salesData,
@@ -665,6 +667,40 @@ class ListBinderTest extends TestCase {
 			self::assertEquals($sale["price"], $li->querySelector(".price span")->textContent);
 			self::assertEquals($sale["cost"], $li->querySelector(".cost span")->textContent);
 			self::assertEquals($profitValue, $li->querySelector(".profit span")->textContent);
+		}
+	}
+
+	public function testBindListData_complexStructure():void {
+		$customerOrderData = TestData::getCustomerOrderOverview1();
+		$document = new HTMLDocument(HTMLPageContent::HTML_MAP_SHOP_CUSTOMER_OVERVIEW);
+		$templateCollection = new ListElementCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($customerOrderData, $document);
+
+		foreach($customerOrderData as $customerIndex => $customer) {
+			$customerLi = $document->querySelectorAll("customer-list>ul>li")[$customerIndex];
+
+			self::assertSame((string)$customer->id, $customerLi->querySelectorAll("customer-details>dl>dd")[0]->textContent);
+			self::assertSame($customer->name, $customerLi->querySelectorAll("customer-details>dl>dd")[1]->textContent);
+			self::assertSame($customer->address->street, $customerLi->querySelectorAll("customer-details>dl>dd")[2]->querySelectorAll("span")[0]->textContent);
+			self::assertSame($customer->address->line2, $customerLi->querySelectorAll("customer-details>dl>dd")[2]->querySelectorAll("span")[1]->textContent);
+			self::assertSame($customer->address->cityState, $customerLi->querySelectorAll("customer-details>dl>dd")[2]->querySelectorAll("span")[2]->textContent);
+			self::assertSame($customer->address->postcodeZip, $customerLi->querySelectorAll("customer-details>dl>dd")[2]->querySelectorAll("span")[3]->textContent);
+			self::assertSame($customer->address->country->getName(), $customerLi->querySelectorAll("customer-details>dl>dd")[2]->querySelectorAll("span")[4]->textContent);
+
+			foreach($customer->orderList as $orderIndex => $order) {
+				$orderLi = $customerLi->querySelectorAll("order-list>ul>li")[$orderIndex];
+				self::assertSame($order->shippingAddress->cityState, $orderLi->querySelectorAll("dl dd")[0]->textContent);
+				self::assertSame((string)$order->getSubtotal(), $orderLi->querySelectorAll("dl dd")[1]->textContent);
+				self::assertSame((string)$order->shippingCost, $orderLi->querySelectorAll("dl dd")[2]->textContent);
+				self::assertSame((string)$order->getTotalCost(), $orderLi->querySelectorAll("dl dd")[3]->textContent);
+
+				foreach($order->itemList as $itemIndex => $item) {
+					self::assertSame($item->title, $orderLi->querySelectorAll("ul>li")[$itemIndex]->querySelector("h4")->textContent);
+					self::assertSame("/item/$item->id", $orderLi->querySelectorAll("ul>li")[$itemIndex]->querySelector("h4 a")->href);
+					self::assertSame((string)$item->cost, $orderLi->querySelectorAll("ul>li")[$itemIndex]->querySelector("p")->textContent);
+				}
+			}
 		}
 	}
 }

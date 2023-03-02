@@ -6,28 +6,31 @@ use Gt\Dom\Node;
 use Gt\Dom\Text;
 use Throwable;
 
-class TemplateElement {
-	private string $templateParentPath;
-	private null|Node|Element $templateNextSibling;
+class ListElement {
+	const ATTRIBUTE_LIST_PARENT = "data-list-parent";
+
+	private string $listItemParentPath;
+	private null|Node|Element $listItemNextSibling;
 	private int $insertCount;
 
 	public function __construct(
-		private Node|Element $originalElement
+		private readonly Node|Element $originalElement
 	) {
 		$parentElement = $this->originalElement->parentElement;
-		if(!$parentElement->id) {
-			$parentElement->id = uniqid("template-parent-");
+		if(!$parentElement->getAttribute(self::ATTRIBUTE_LIST_PARENT)) {
+			$parentElement->setAttribute(self::ATTRIBUTE_LIST_PARENT, uniqid("list-parent-"));
 		}
 
-		$this->templateParentPath = new NodePathCalculator($parentElement);
+		$this->listItemParentPath = new NodePathCalculator($parentElement);
 
 		$siblingContext = $this->originalElement;
 		while($siblingContext = $siblingContext->nextElementSibling) {
-			if(!$siblingContext->hasAttribute("data-template")) {
+			if(!$siblingContext->hasAttribute("data-list")
+			&& !$siblingContext->hasAttribute("data-template")) {
 				break;
 			}
 		}
-		$this->templateNextSibling =
+		$this->listItemNextSibling =
 			is_null($siblingContext)
 			? null
 			: $siblingContext;
@@ -38,7 +41,7 @@ class TemplateElement {
 	public function removeOriginalElement():void {
 		$this->originalElement->remove();
 		try {
-			$parent = $this->getTemplateParent();
+			$parent = $this->getListItemParent();
 			if(count($parent->children) === 0) {
 				if($firstNode = $parent->childNodes[0] ?? null) {
 					if(trim($firstNode->wholeText) === "") {
@@ -54,7 +57,7 @@ class TemplateElement {
 	}
 
 	public function getClone():Node|Element {
-// TODO: Bug here - the template-parent-xxx ID is being generated the same for multiple instances.
+// TODO: #368 Bug here - the template-parent-xxx ID is being generated the same for multiple instances.
 		/** @var Element $element */
 		$element = $this->originalElement->cloneNode(true);
 //		foreach($this->originalElement->ownerDocument->evaluate("./*[starts-with(@id,'template-parent-')]", $element) as $existingTemplateElement) {
@@ -69,20 +72,20 @@ class TemplateElement {
 	 * originally extracted from the document, returning the newly-inserted
 	 * clone.
 	 */
-	public function insertTemplate():Element {
+	public function insertListItem():Element {
 		$clone = $this->getClone();
-		$templateParent = $this->getTemplateParent();
-		$templateParent->insertBefore(
+		$listItemParent = $this->getListItemParent();
+		$listItemParent->insertBefore(
 			$clone,
-			$this->getTemplateNextSibling()
+			$this->getListItemNextSibling()
 		);
 		$this->insertCount++;
 		return $clone;
 	}
 
-	public function getTemplateParent():Node|Element {
+	public function getListItemParent():Node|Element {
 		$matches = $this->originalElement->ownerDocument->evaluate(
-			$this->templateParentPath
+			$this->listItemParentPath
 		);
 		do {
 			/** @var Element $parent */
@@ -93,20 +96,20 @@ class TemplateElement {
 		return $parent;
 	}
 
-	public function getTemplateNextSibling():null|Node|Element {
-		return $this->templateNextSibling ?? null;
+	public function getListItemNextSibling():null|Node|Element {
+		return $this->listItemNextSibling ?? null;
 	}
 
-	public function getTemplateName():?string {
-		$templateName = $this->originalElement->getAttribute("data-template");
-		if(strlen($templateName) === 0) {
+	public function getListItemName():?string {
+		$listName = $this->originalElement->getAttribute("data-list") ?? $this->originalElement->getAttribute("data-template");
+		if(strlen($listName) === 0) {
 			return null;
 		}
-		elseif($templateName[0] === "/") {
-			throw new InvalidTemplateElementNameException("A template's name must not start with a forward slash (\"$templateName\")");
+		elseif($listName[0] === "/") {
+			throw new InvalidListElementNameException("A list's name must not start with a forward slash (\"$listName\")");
 		}
 
-		return $templateName;
+		return $listName;
 	}
 
 	public function getInsertCount():int {

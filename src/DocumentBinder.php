@@ -4,30 +4,29 @@ namespace Gt\DomTemplate;
 use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
-use Gt\Dom\XPathResult;
 
 class DocumentBinder {
 	private ElementBinder $elementBinder;
 	private PlaceholderBinder $placeholderBinder;
 	private TableBinder $tableBinder;
 	private ListBinder $listBinder;
-	private TemplateCollection $templateCollection;
+	private ListElementCollection $templateCollection;
 	private BindableCache $bindableCache;
 
 	/**
 	 * @param array<string, string> $config
 	 */
 	public function __construct(
-		private Document $document,
+		private readonly Document $document,
 		private array $config = [],
 		?ElementBinder $elementBinder = null,
 		?PlaceholderBinder $placeholderBinder = null,
 		?TableBinder $tableBinder = null,
 		?ListBinder $listBinder = null,
-		?TemplateCollection $templateCollection = null,
+		?ListElementCollection $templateCollection = null,
 		?BindableCache $bindableCache = null
 	) {
-		$this->templateCollection = $templateCollection ?? new TemplateCollection($document);
+		$this->templateCollection = $templateCollection ?? new ListElementCollection($document);
 		$this->elementBinder = $elementBinder ?? new ElementBinder();
 		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
 		$this->tableBinder = $tableBinder ?? new TableBinder($this->templateCollection);
@@ -106,7 +105,7 @@ class DocumentBinder {
 	}
 
 	/**
-	 * @param iterable<mixed> $listData
+	 * @param iterable<int, mixed> $listData
 	 */
 	public function bindList(
 		iterable $listData,
@@ -120,7 +119,7 @@ class DocumentBinder {
 		return $this->listBinder->bindListData($listData, $context, $templateName);
 	}
 
-	/** @param iterable<mixed> $listData */
+	/** @param iterable<int, mixed> $listData */
 	public function bindListCallback(
 		iterable $listData,
 		callable $callback,
@@ -141,7 +140,7 @@ class DocumentBinder {
 
 	public function cleanDatasets():void {
 		$xpathResult = $this->document->evaluate(
-			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
+			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-list')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
 		);
 		/** @var Attr $item */
 		foreach($xpathResult as $item) {
