@@ -917,7 +917,7 @@ class DocumentBinderTest extends TestCase {
 			"email" => "codyboy@g105b.com",
 			"category" => "cat",
 		]);
-		$sut->cleanDatasets();
+		$sut->cleanupDocument();
 
 		foreach($document->querySelectorAll("dd") as $dd) {
 			self::assertCount(1, $dd->attributes);
@@ -933,7 +933,7 @@ class DocumentBinderTest extends TestCase {
 		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$sut = new DocumentBinder($document);
 		$sut->bindList(["One", "Two", "Three", "Four"]);
-		$sut->cleanDatasets();
+		$sut->cleanupDocument();
 
 		foreach($document->querySelectorAll("ul>li") as $li) {
 			self::assertCount(0, $li->attributes);
@@ -1012,7 +1012,7 @@ class DocumentBinderTest extends TestCase {
 
 		$sut->bindList($list1, $select1);
 		$sut->bindList($list2, $select2);
-		$sut->cleanDatasets();
+		$sut->cleanupDocument();
 
 		$optionList1 = $select1->options;
 		$optionList2 = $select2->options;
@@ -1145,5 +1145,13 @@ class DocumentBinderTest extends TestCase {
 			$address->country->getName() . " (" . $address->country->code . ")",
 			$document->querySelectorAll("dd")[6]->textContent
 		);
+	}
+
+	/** For issue #438 (https://github.com/PhpGt/DomTemplate/issues/438) */
+	public function test_removesUnbound():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND);
+		$sut = new DocumentBinder($document);
+		$sut->cleanupDocument();
+		self::assertStringNotContainsStringIgnoringCase("error", (string)$document);
 	}
 }

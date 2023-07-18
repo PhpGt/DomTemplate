@@ -47,7 +47,7 @@ $document = new HTMLDocument($pageAbout);
 $partial = new PartialContent($partialDirectory);
 $expander = new PartialExpander($document, $partial);
 $binder = new DocumentBinder($document);
-$binder->cleanDatasets();
+$binder->cleanupDocument();
 $expander->expand(binder: $binder);
 
 echo $document;

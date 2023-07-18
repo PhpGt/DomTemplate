@@ -48,7 +48,7 @@ $document = new HTMLDocument($html);
 $binder = new DocumentBinder($document);
 $driverRepo = new DriverRepository();
 example($binder, $driverRepo);
-$binder->cleanDatasets();
+$binder->cleanupDocument();
 echo $document;
 
 /* Output:
