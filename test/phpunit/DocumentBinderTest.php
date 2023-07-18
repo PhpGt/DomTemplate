@@ -1154,4 +1154,12 @@ class DocumentBinderTest extends TestCase {
 		$sut->cleanupDocument();
 		self::assertStringNotContainsStringIgnoringCase("error", (string)$document);
 	}
+
+	public function test_removesUnboundWhenBound():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND);
+		$sut = new DocumentBinder($document);
+		$sut->bindKeyValue("error", "Example error!");
+		$sut->cleanupDocument();
+		self::assertStringContainsStringIgnoringCase("error", (string)$document);
+	}
 }
