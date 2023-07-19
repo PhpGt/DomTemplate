@@ -986,6 +986,26 @@ list name will be the same as the element name (camel-cased to orderList) -->
 </customer-list>
 HTML;
 
+	const HTML_REMOVE_UNBOUND = <<<HTML
+<!doctype html>
+<h1>Log in to the system</h1>
+<form method="post">
+	<div data-element data-bind:text="error">Error message goes here</div>
+	
+	<label>
+		<span>Your email address:</span>
+		<input name="email" type="email" required />
+	</label>
+	<label>
+		<span>Your password:</span>
+		<input name="password" type="password" required />
+	</label>
+	
+	<button name="do" value="login">Log in!</button>
+</form>
+HTML;
+
+
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return new HTMLDocument($html);

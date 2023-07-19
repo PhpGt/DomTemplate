@@ -138,12 +138,17 @@ class DocumentBinder {
 		);
 	}
 
-	public function cleanDatasets():void {
+	public function cleanupDocument():void {
 		$xpathResult = $this->document->evaluate(
 			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-list')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
 		);
 		/** @var Attr $item */
 		foreach($xpathResult as $item) {
+			if($item->ownerElement->hasAttribute("data-element")) {
+				$item->ownerElement->remove();
+				continue;
+			}
+
 			$item->ownerElement->removeAttribute($item->name);
 		}
 	}
