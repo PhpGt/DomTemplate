@@ -990,7 +990,7 @@ HTML;
 <!doctype html>
 <h1>Log in to the system</h1>
 <form method="post">
-	<div data-remove-unbound data-bind:text="error">Error message goes here</div>
+	<div data-element data-bind:text="error">Error message goes here</div>
 	
 	<label>
 		<span>Your email address:</span>

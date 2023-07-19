@@ -1148,14 +1148,14 @@ class DocumentBinderTest extends TestCase {
 	}
 
 	/** For issue #438 (https://github.com/PhpGt/DomTemplate/issues/438) */
-	public function test_removesUnbound():void {
+	public function test_removesUnboundDataElement():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND);
 		$sut = new DocumentBinder($document);
 		$sut->cleanupDocument();
 		self::assertStringNotContainsStringIgnoringCase("error", (string)$document);
 	}
 
-	public function test_removesUnboundWhenBound():void {
+	public function test_keepsElementWhenBound():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND);
 		$sut = new DocumentBinder($document);
 		$sut->bindKeyValue("error", "Example error!");
