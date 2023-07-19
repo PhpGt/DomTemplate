@@ -151,6 +151,10 @@ class DocumentBinder {
 
 			$item->ownerElement->removeAttribute($item->name);
 		}
+
+		foreach($this->document->querySelectorAll("[data-element]") as $dataElement) {
+			$dataElement->removeAttribute("data-element");
+		}
 	}
 
 	private function bind(
