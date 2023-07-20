@@ -145,7 +145,7 @@ class DocumentBinder {
 		/** @var Attr $item */
 		foreach($xpathResult as $item) {
 			if($item->ownerElement->hasAttribute("data-element")) {
-				$item->ownerElement->remove();
+				$item->ownerElement->removeAttribute("data-element");
 				continue;
 			}
 
