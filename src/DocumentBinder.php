@@ -142,10 +142,12 @@ class DocumentBinder {
 		$xpathResult = $this->document->evaluate(
 			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-list')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
 		);
+
+		$elementsToRemove = [];
 		/** @var Attr $item */
 		foreach($xpathResult as $item) {
 			if($item->ownerElement->hasAttribute("data-element")) {
-				$item->ownerElement->removeAttribute("data-element");
+				array_push($elementsToRemove, $item->ownerElement);
 				continue;
 			}
 
@@ -154,6 +156,10 @@ class DocumentBinder {
 
 		foreach($this->document->querySelectorAll("[data-element]") as $dataElement) {
 			$dataElement->removeAttribute("data-element");
+		}
+
+		foreach($elementsToRemove as $element) {
+			$element->remove();
 		}
 	}
 
