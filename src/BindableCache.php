@@ -62,6 +62,9 @@ class BindableCache {
 
 			/** @var ?ReflectionNamedType $refReturn */
 			$refReturn = $refMethod->getReturnType();
+			if(!$refReturn instanceof ReflectionNamedType) {
+				continue;
+			}
 			$refReturnName = $refReturn?->getName();
 
 			foreach($refAttributes as $refAttr) {
