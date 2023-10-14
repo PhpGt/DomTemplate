@@ -29,6 +29,10 @@ class ListBinder {
 			$context = $context->documentElement;
 		}
 
+		if($listData instanceof \IteratorAggregate) {
+			$listData = $listData->getIterator();
+		}
+
 		if($this->isEmpty($listData)) {
 			$this->clearListItemParentHTML($context, $listItemName);
 			return 0;
@@ -144,7 +148,7 @@ class ListBinder {
 			$key = array_key_first($item);
 			return is_int($key) || is_iterable($item[$key]);
 		}
-		elseif($item instanceof Iterator) {
+		elseif($item instanceof Iterator || $item instanceof \Traversable) {
 			return true;
 		}
 

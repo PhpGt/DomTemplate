@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
+use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\ListElementCollection;
@@ -702,5 +703,31 @@ class ListBinderTest extends TestCase {
 				}
 			}
 		}
+	}
+
+	public function testBindListData_objectWithPublicIterable():void {
+		$obj1 = new class("First") {
+			public function __construct(public string $name) {}
+			#[BindGetter]
+			public function getLettersOfName():array {
+				return str_split($this->name, 1);
+			}
+		};
+		$obj2 = new class("Second") {
+			public function __construct(public string $name) {}
+			#[BindGetter]
+			public function getLettersOfName():array {
+				return str_split($this->name, 1);
+			}
+		};
+
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$listItemCollection = new ListElementCollection($document);
+		$sut = new ListBinder($listItemCollection);
+		$sut->bindListData([
+			$obj1,
+			$obj2,
+		], $document);
+		var_dump((string)$document);die();
 	}
 }
