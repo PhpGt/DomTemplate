@@ -791,7 +791,10 @@ class ListBinderTest extends TestCase {
 			$firstName = $arrayStudent["firstName"];
 			$lastName = $arrayStudent["lastName"];
 
-			self::assertSame("$firstName $lastName", $studentLi->querySelector("dd.name")->textContent);
+			self::assertSame(
+				"$firstName $lastName",
+				trim(preg_replace("/\s+/", " ", $studentLi->querySelector("dd.name")->textContent))
+			);
 
 			$arrayModuleData = $arrayStudent["modules"];
 			foreach($studentLi->querySelectorAll(".modules ul>li") as $moduleLi) {

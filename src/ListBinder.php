@@ -98,6 +98,10 @@ class ListBinder {
 
 			if($this->isKVP($listValue)) {
 				$elementBinder->bind(null, $listKey, $t);
+				if(is_object($listValue)) {
+					$listValue = get_object_vars($listValue);
+					$listValue = array_filter($listValue, fn($item) => !is_array($item));
+				}
 
 				foreach($listValue as $key => $value) {
 					$elementBinder->bind($key, $value, $t);
@@ -162,7 +166,7 @@ class ListBinder {
 			$key = array_key_first($item);
 			return is_int($key) || is_iterable($item[$key]);
 		}
-		elseif($item instanceof Iterator || $item instanceof \Traversable) {
+		elseif($item instanceof Iterator) {
 			return true;
 		}
 
