@@ -14,6 +14,7 @@ use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElement;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
+use Gt\DomTemplate\Test\TestHelper\Model\MusicIteratorAggregate\MusicFactory;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use Stringable;
@@ -721,13 +722,51 @@ class ListBinderTest extends TestCase {
 			}
 		};
 
-		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_BIND_NAME);
 		$listItemCollection = new ListElementCollection($document);
 		$sut = new ListBinder($listItemCollection);
 		$sut->bindListData([
 			$obj1,
 			$obj2,
 		], $document);
-		var_dump((string)$document);die();
+
+		$nodeList = $document->querySelectorAll("ul li");
+		self::assertCount(2, $nodeList);
+		self::assertSame("First", $nodeList[0]->textContent);
+		self::assertSame("Second", $nodeList[1]->textContent);
+	}
+
+	public function testBindListData_iteratorAggregate():void {
+		$testData = (new MusicFactory())->buildArtistArray(TestData::MUSIC);
+		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_NO_TEMPLATE_NAMES);
+		$templateCollection = new ListElementCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($testData, $document);
+
+		$arrayArtistData = TestData::MUSIC;
+
+		foreach($document->querySelectorAll("body>ul>li") as $artistLi) {
+			$artistName = key($arrayArtistData);
+			$arrayAlbumData = current($arrayArtistData);
+
+			self::assertSame($artistName, $artistLi->querySelector("h2")->textContent);
+
+			foreach($artistLi->querySelectorAll("ul>li") as $albumLi) {
+				$albumName = key($arrayAlbumData);
+				$arrayTrackData = current($arrayAlbumData);
+
+				self::assertSame($albumName, $albumLi->querySelector("h3")->textContent);
+
+				foreach($albumLi->querySelectorAll("ol>li") as $trackLi) {
+					$trackName = current($arrayTrackData);
+					self::assertSame($trackName, $trackLi->textContent);
+					next($arrayTrackData);
+				}
+
+				next($arrayAlbumData);
+			}
+
+			next($arrayArtistData);
+		}
 	}
 }

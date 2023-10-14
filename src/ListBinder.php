@@ -24,6 +24,7 @@ class ListBinder {
 		Document|Element $context,
 		?string $listItemName = null,
 		?callable $callback = null,
+		bool $nestedCall = false,
 	):int {
 		if($context instanceof Document) {
 			$context = $context->documentElement;
@@ -38,17 +39,28 @@ class ListBinder {
 			return 0;
 		}
 
-		$listItem = $this->listElementCollection->get(
-			$context,
-			$listItemName
-		);
+		try {
+			$listElement = $this->listElementCollection->get(
+				$context,
+				$listItemName
+			);
+		}
+		catch(ListElementNotFoundInContextException $e) {
+			if(!$nestedCall) {
+				throw $e;
+			}
+		}
+
+		if(!$listElement) {
+			return 0;
+		}
 
 		$elementBinder = new ElementBinder();
 		$nestedCount = 0;
 		$i = -1;
 		foreach($listData as $listKey => $listValue) {
 			$i++;
-			$t = $listItem->insertListItem();
+			$t = $listElement->insertListItem();
 
 // If the $listValue's first value is iterable, then treat this as a nested list.
 			if($this->isNested($listValue)) {
@@ -94,7 +106,8 @@ class ListBinder {
 						$nestedCount += $this->bindListData(
 							$value,
 							$t,
-							$listItemName
+							$listItemName,
+							nestedCall: true,
 						);
 					}
 				}
