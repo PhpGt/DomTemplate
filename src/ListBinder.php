@@ -39,6 +39,7 @@ class ListBinder {
 			return 0;
 		}
 
+		$listElement = null;
 		try {
 			$listElement = $this->listElementCollection->get(
 				$context,

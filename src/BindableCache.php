@@ -60,12 +60,12 @@ class BindableCache {
 			$refAttributes = $this->getBindAttributes($refMethod);
 			$methodName = $refMethod->getName();
 
-			/** @var ?ReflectionNamedType $refReturn */
+			/** @var null|ReflectionNamedType $refReturn */
 			$refReturn = $refMethod->getReturnType();
 			if(!$refReturn instanceof ReflectionNamedType) {
 				continue;
 			}
-			$refReturnName = $refReturn?->getName();
+			$refReturnName = $refReturn->getName();
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr, $refMethod);
