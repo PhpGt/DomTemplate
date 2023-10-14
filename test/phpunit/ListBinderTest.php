@@ -10,11 +10,12 @@ use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\ListBinder;
-use Gt\DomTemplate\TableElementNotFoundInContextException;
-use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElement;
+use Gt\DomTemplate\ListElementCollection;
+use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
-use Gt\DomTemplate\Test\TestHelper\Model\MusicIteratorAggregate\MusicFactory;
+use Gt\DomTemplate\Test\TestHelper\Model\IteratorAggregate\Music\MusicFactory;
+use Gt\DomTemplate\Test\TestHelper\Model\IteratorAggregate\Student\StudentFactory;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use Stringable;
@@ -767,6 +768,41 @@ class ListBinderTest extends TestCase {
 			}
 
 			next($arrayArtistData);
+		}
+	}
+
+	/**
+	 * This test asserts that the outer element has its data bound correctly.
+	 * We know that the nested sub-lists are bound correctly from the music examples,
+	 * but there's a bug where the outer element (representing the Student in this case)
+	 * does not have its data bound correctly.
+	 */
+	public function testBindListData_iteratorAggregate_outerBinds():void {
+		$testData = (new StudentFactory())->buildStudentArray(TestData::STUDENTS);
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST_EXPLICIT_BINDS);
+		$templateCollection = new ListElementCollection($document);
+		$sut = new ListBinder($templateCollection);
+		$sut->bindListData($testData, $document);
+
+		$arrayStudentData = TestData::STUDENTS;
+
+		foreach($document->querySelectorAll("body>ul>li") as $studentLi) {
+			$arrayStudent = current($arrayStudentData);
+			$firstName = $arrayStudent["firstName"];
+			$lastName = $arrayStudent["lastName"];
+
+			self::assertSame("$firstName $lastName", $studentLi->querySelector("dd.name")->textContent);
+
+			$arrayModuleData = $arrayStudent["modules"];
+			foreach($studentLi->querySelectorAll(".modules ul>li") as $moduleLi) {
+				$moduleTitle = current($arrayModuleData);
+
+				self::assertSame($moduleTitle, $moduleLi->textContent);
+
+				next($arrayModuleData);
+			}
+
+			next($arrayStudentData);
 		}
 	}
 }

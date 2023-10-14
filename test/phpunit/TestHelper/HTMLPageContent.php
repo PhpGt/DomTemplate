@@ -464,6 +464,29 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_STUDENT_LIST_EXPLICIT_BINDS = <<<HTML
+<!doctype html>
+<h1>List of students:</h1>
+<ul>
+	<li data-list>
+		<dl>
+			<dt>Student name</dt>
+			<dd class="name">
+				<span data-bind:text="firstName">First name</span> 
+				<span data-bind:text="lastName">Last name</span>
+			</dd>
+			
+			<dt>Current modules</dt>
+			<dd class="modules">
+				<ul>
+					<li data-list data-bind:text="title">Module name</li>
+				</ul>		
+			</dd>
+		</dl>
+	</li>
+</ul>
+HTML;
+
 	const HTML_LANGUAGE = <<<HTML
 <!doctype html>
 <html data-bind:lang="language">

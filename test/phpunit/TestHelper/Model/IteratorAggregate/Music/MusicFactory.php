@@ -1,5 +1,5 @@
 <?php
-namespace Gt\DomTemplate\Test\TestHelper\Model\MusicIteratorAggregate;
+namespace Gt\DomTemplate\Test\TestHelper\Model\IteratorAggregate\Music;
 
 class MusicFactory {
 	/**
