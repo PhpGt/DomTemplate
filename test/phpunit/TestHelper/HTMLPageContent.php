@@ -472,8 +472,8 @@ HTML;
 		<dl>
 			<dt>Student name</dt>
 			<dd class="name">
-				<span data-bind:text="firstName">First name</span> 
-				<span data-bind:text="lastName">Last name</span>
+				<span data-bind:text="name.first">First name</span> 
+				<span data-bind:text="name.last">Last name</span>
 			</dd>
 			
 			<dt>Current modules</dt>

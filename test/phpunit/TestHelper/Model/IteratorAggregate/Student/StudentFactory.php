@@ -19,11 +19,12 @@ class StudentFactory {
 				);
 			}
 
+			$name = new Name($inputStudent["firstName"], $inputStudent["lastName"]);
+
 			array_push(
 				$studentArray,
 				new Student(
-					$inputStudent["firstName"],
-					$inputStudent["lastName"],
+					$name,
 					$moduleList,
 				),
 			);

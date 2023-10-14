@@ -6,8 +6,7 @@ use Traversable;
 class Student implements \IteratorAggregate {
 	/** @param array<Module> $moduleList */
 	public function __construct(
-		public readonly string $firstName,
-		public readonly string $lastName,
+		public readonly Name $name,
 		public readonly array $moduleList,
 	) {}
 
