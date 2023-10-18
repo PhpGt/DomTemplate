@@ -292,7 +292,6 @@ HTML;
 </ul>
 HTML;
 
-
 	const HTML_TWO_LISTS = <<<HTML
 <!doctype html>
 <div id="favourites">

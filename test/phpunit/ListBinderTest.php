@@ -8,11 +8,14 @@ use DateTimeInterface;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
+use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElement;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
+use Gt\DomTemplate\Test\TestHelper\IdObject;
+use Gt\DomTemplate\Test\TestHelper\Model\Student;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use Stringable;
@@ -702,5 +705,19 @@ class ListBinderTest extends TestCase {
 				}
 			}
 		}
+	}
+
+	public function testBindListData_objectWithArrayProperties():void {
+		$list = [
+			new Student("Abbey", "Appleby", ["one", "two", "three"]),
+			new Student("Bruna", "Biltsworth", ["four", "five", "six"]),
+			new Student("Charlie", "Chudder", ["seven", "eight", "nine"]),
+		];
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
+		$listElementCollection = new ListElementCollection($document);
+		$sut = new ListBinder($listElementCollection);
+		$numBound = $sut->bindListData($list, $document);
+
+		self::assertEquals(count($list), $numBound);
 	}
 }
