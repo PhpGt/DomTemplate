@@ -8,13 +8,12 @@ use DateTimeInterface;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
-use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\ListBinder;
+use Gt\DomTemplate\ListElementNotFoundInContextException;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElement;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
-use Gt\DomTemplate\Test\TestHelper\IdObject;
 use Gt\DomTemplate\Test\TestHelper\Model\Student;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
@@ -744,6 +743,12 @@ class ListBinderTest extends TestCase {
 		$numBound = $sut->bindListData($list, $document);
 		self::assertCount(count($list), $document->querySelectorAll("body>ul>li"));
 		self::assertSame(count($list), $numBound);
+	}
 
+	public function testBindListData_noListInDocument():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_SINGLE_ELEMENT);
+		$sut = new ListBinder(new ListElementCollection($document));
+		self::expectException(ListElementNotFoundInContextException::class);
+		$sut->bindListData(["one", "two", "three"], $document);
 	}
 }
