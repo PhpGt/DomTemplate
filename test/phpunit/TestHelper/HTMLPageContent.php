@@ -451,6 +451,19 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_STUDENT_LIST_NO_MODULE_LIST = <<<HTML
+<!doctype html>
+<h1>List of students:</h1>
+<ul>
+	<li data-list>
+		<dl>
+			<dt>Student name</dt>
+			<dd class="name">{{firstName}} {{lastName}}</dd>
+		</dl>
+	</li>
+</ul>
+HTML;
+
 	const HTML_LANGUAGE = <<<HTML
 <!doctype html>
 <html data-bind:lang="language">

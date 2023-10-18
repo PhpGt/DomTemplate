@@ -716,8 +716,34 @@ class ListBinderTest extends TestCase {
 		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
 		$listElementCollection = new ListElementCollection($document);
 		$sut = new ListBinder($listElementCollection);
-		$numBound = $sut->bindListData($list, $document);
+		$sut->bindListData($list, $document);
 
-		self::assertEquals(count($list), $numBound);
+		self::assertCount(count($list), $document->querySelectorAll("body>ul>li"));
+		foreach($document->querySelectorAll("dl") as $i => $dlElement) {
+			$student = $list[$i];
+			self::assertSame("$student->firstName $student->lastName", $dlElement->querySelector("dd.name")->textContent);
+			$moduleLiElementList = $dlElement->querySelectorAll("dd.modules li");
+			$moduleList = $student->getModuleList();
+			self::assertCount(count($moduleList), $moduleLiElementList);
+
+			foreach($moduleLiElementList as $j => $moduleLiElement) {
+				self::assertSame($moduleList[$j], $moduleLiElement->textContent);
+			}
+		}
+	}
+
+	public function testBindListData_objectWithArrayProperties_noNestedList():void {
+		$list = [
+			new Student("Abbey", "Appleby", ["one", "two", "three"]),
+			new Student("Bruna", "Biltsworth", ["four", "five", "six"]),
+			new Student("Charlie", "Chudder", ["seven", "eight", "nine"]),
+		];
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST_NO_MODULE_LIST);
+		$listElementCollection = new ListElementCollection($document);
+		$sut = new ListBinder($listElementCollection);
+		$numBound = $sut->bindListData($list, $document);
+		self::assertCount(count($list), $document->querySelectorAll("body>ul>li"));
+		self::assertSame(count($list), $numBound);
+
 	}
 }
