@@ -111,8 +111,4 @@ class ListElement {
 
 		return $listName;
 	}
-
-	public function getInsertCount():int {
-		return $this->insertCount;
-	}
 }
