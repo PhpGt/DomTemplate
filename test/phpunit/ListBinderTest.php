@@ -9,10 +9,12 @@ use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\ListBinder;
+use Gt\DomTemplate\ListElementNotFoundInContextException;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElement;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
+use Gt\DomTemplate\Test\TestHelper\Model\Student;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use Stringable;
@@ -702,5 +704,51 @@ class ListBinderTest extends TestCase {
 				}
 			}
 		}
+	}
+
+	public function testBindListData_objectWithArrayProperties():void {
+		$list = [
+			new Student("Abbey", "Appleby", ["one", "two", "three"]),
+			new Student("Bruna", "Biltsworth", ["four", "five", "six"]),
+			new Student("Charlie", "Chudder", ["seven", "eight", "nine"]),
+		];
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
+		$listElementCollection = new ListElementCollection($document);
+		$sut = new ListBinder($listElementCollection);
+		$sut->bindListData($list, $document);
+
+		self::assertCount(count($list), $document->querySelectorAll("body>ul>li"));
+		foreach($document->querySelectorAll("dl") as $i => $dlElement) {
+			$student = $list[$i];
+			self::assertSame("$student->firstName $student->lastName", $dlElement->querySelector("dd.name")->textContent);
+			$moduleLiElementList = $dlElement->querySelectorAll("dd.modules li");
+			$moduleList = $student->getModuleList();
+			self::assertCount(count($moduleList), $moduleLiElementList);
+
+			foreach($moduleLiElementList as $j => $moduleLiElement) {
+				self::assertSame($moduleList[$j], $moduleLiElement->textContent);
+			}
+		}
+	}
+
+	public function testBindListData_objectWithArrayProperties_noNestedList():void {
+		$list = [
+			new Student("Abbey", "Appleby", ["one", "two", "three"]),
+			new Student("Bruna", "Biltsworth", ["four", "five", "six"]),
+			new Student("Charlie", "Chudder", ["seven", "eight", "nine"]),
+		];
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST_NO_MODULE_LIST);
+		$listElementCollection = new ListElementCollection($document);
+		$sut = new ListBinder($listElementCollection);
+		$numBound = $sut->bindListData($list, $document);
+		self::assertCount(count($list), $document->querySelectorAll("body>ul>li"));
+		self::assertSame(count($list), $numBound);
+	}
+
+	public function testBindListData_noListInDocument():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_SINGLE_ELEMENT);
+		$sut = new ListBinder(new ListElementCollection($document));
+		self::expectException(ListElementNotFoundInContextException::class);
+		$sut->bindListData(["one", "two", "three"], $document);
 	}
 }
