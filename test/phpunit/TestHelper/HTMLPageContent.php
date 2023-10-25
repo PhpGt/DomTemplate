@@ -292,7 +292,6 @@ HTML;
 </ul>
 HTML;
 
-
 	const HTML_TWO_LISTS = <<<HTML
 <!doctype html>
 <div id="favourites">
@@ -447,6 +446,19 @@ HTML;
 					<li data-list data-bind:text>Module name</li>
 				</ul>		
 			</dd>
+		</dl>
+	</li>
+</ul>
+HTML;
+
+	const HTML_STUDENT_LIST_NO_MODULE_LIST = <<<HTML
+<!doctype html>
+<h1>List of students:</h1>
+<ul>
+	<li data-list>
+		<dl>
+			<dt>Student name</dt>
+			<dd class="name">{{firstName}} {{lastName}}</dd>
 		</dl>
 	</li>
 </ul>

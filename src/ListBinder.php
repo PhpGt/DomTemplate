@@ -24,6 +24,7 @@ class ListBinder {
 		Document|Element $context,
 		?string $listItemName = null,
 		?callable $callback = null,
+		bool $recursiveCall = false,
 	):int {
 		if($context instanceof Document) {
 			$context = $context->documentElement;
@@ -34,10 +35,20 @@ class ListBinder {
 			return 0;
 		}
 
-		$listItem = $this->listElementCollection->get(
-			$context,
-			$listItemName
-		);
+		try {
+			$listItem = $this->listElementCollection->get(
+				$context,
+				$listItemName
+			);
+		}
+		catch(ListElementNotFoundInContextException $e) {
+			if($recursiveCall) {
+				return 0;
+			}
+			else {
+				throw $e;
+			}
+		}
 
 		$elementBinder = new ElementBinder();
 		$nestedCount = 0;
@@ -52,7 +63,8 @@ class ListBinder {
 				$nestedCount += $this->bindListData(
 					$listValue,
 					$t,
-					$listItemName
+					$listItemName,
+					recursiveCall: true
 				);
 				continue;
 			}
@@ -90,7 +102,8 @@ class ListBinder {
 						$nestedCount += $this->bindListData(
 							$value,
 							$t,
-							$listItemName
+							$listItemName,
+							recursiveCall: true,
 						);
 					}
 				}
