@@ -5,19 +5,19 @@ use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 
-class DocumentBinder {
-	private ElementBinder $elementBinder;
-	private PlaceholderBinder $placeholderBinder;
-	private TableBinder $tableBinder;
-	private ListBinder $listBinder;
-	private ListElementCollection $templateCollection;
-	private BindableCache $bindableCache;
+class DocumentBinder extends Binder {
+	protected ElementBinder $elementBinder;
+	protected PlaceholderBinder $placeholderBinder;
+	protected TableBinder $tableBinder;
+	protected ListBinder $listBinder;
+	protected ListElementCollection $templateCollection;
+	protected BindableCache $bindableCache;
 
 	/**
 	 * @param array<string, string> $config
 	 */
 	public function __construct(
-		private readonly Document $document,
+		protected readonly Document $document,
 		private array $config = [],
 		?ElementBinder $elementBinder = null,
 		?PlaceholderBinder $placeholderBinder = null,
@@ -163,7 +163,7 @@ class DocumentBinder {
 		}
 	}
 
-	private function bind(
+	protected function bind(
 		?string $key,
 		mixed $value,
 		?Element $context = null
