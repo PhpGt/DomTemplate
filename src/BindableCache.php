@@ -69,8 +69,7 @@ class BindableCache {
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr, $refMethod);
-				$attributeCache[$bindKey] = fn(object $object):null|iterable|string
-					=> $this->nullableStringOrIterable($object->$methodName());
+				$attributeCache[$bindKey] = fn(object $object):null|iterable|string => $this->nullableStringOrIterable($object->$methodName());
 				if(class_exists($refReturnName)) {
 					$cacheObjectKeys[$bindKey] = $refReturnName;
 				}
@@ -178,10 +177,21 @@ class BindableCache {
 // TODO: This "get*()" function should not be hard coded here - it should load the appropriate
 // Bind/BindGetter by matching the correct Attribute.
 				$bindFunc = "get" . ucfirst($propName);
-				$objectToExtract = $objectToExtract->$propName ?? $objectToExtract->$bindFunc();
+				if($objectToExtract) {
+					if(property_exists($objectToExtract, $propName)) {
+						$objectToExtract = $objectToExtract->$propName;
+					}
+					elseif(method_exists($objectToExtract, $bindFunc)) {
+						$objectToExtract = $objectToExtract->$bindFunc();
+					}
+				}
 			}
 
-			$value = $closure($objectToExtract, $deepestKey);
+			$value = null;
+			if($objectToExtract) {
+				$value = $closure($objectToExtract, $deepestKey);
+			}
+
 			if(is_null($value)) {
 				$kvp[$key] = null;
 			}
@@ -200,8 +210,7 @@ class BindableCache {
 	private function getBindAttributes(ReflectionMethod|ReflectionProperty $ref):array {
 		return array_filter(
 			$ref->getAttributes(),
-			fn(ReflectionAttribute $refAttr) =>
-				$refAttr->getName() === Bind::class
+			fn(ReflectionAttribute $refAttr) => $refAttr->getName() === Bind::class
 				|| $refAttr->getName() === BindGetter::class
 		);
 	}
