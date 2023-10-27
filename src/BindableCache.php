@@ -8,6 +8,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionObject;
 use ReflectionProperty;
+use ReflectionType;
 use stdClass;
 use Stringable;
 
@@ -90,9 +91,10 @@ class BindableCache {
 			elseif($refProp->isPublic()) {
 				$bindKey = $propName;
 
-				/** @var ?ReflectionNamedType $refType */
 				$refType = $refProp->getType();
-				$refTypeName = $refType?->getName();
+				if($refType instanceof ReflectionNamedType) {
+					$refTypeName = $refType->getName();
+				}
 				$attributeCache[$bindKey]
 					= fn(object $object, $key):null|iterable|string => isset($object->$key) ? $this->nullableStringOrIterable($object->$key) : null;
 				if(class_exists($refTypeName)) {
