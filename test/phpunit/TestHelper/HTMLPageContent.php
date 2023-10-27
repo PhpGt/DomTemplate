@@ -1052,6 +1052,20 @@ HTML;
 </form>
 HTML;
 
+	const HTML_DATA_BIND_LIST = <<<HTML
+<!doctype html>
+<h1 data-bind:text="name">Data-bind:list example</h1>
+
+<h2>This shouldn't be bound:</h2>
+<ul class="first-list">
+	<li data-list data-bind:text></li>
+</ul>
+
+<h2>This should!</h2>
+<ul class="second-list" data-bind:list="exampleList">
+	<li data-list data-bind:text></li>
+</ul>
+HTML;
 
 
 	public static function createHTML(string $html = ""):HTMLDocument {

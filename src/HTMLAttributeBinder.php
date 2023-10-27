@@ -8,7 +8,13 @@ use Gt\Dom\DOMTokenListFactory;
 use Gt\Dom\Element;
 
 class HTMLAttributeBinder {
+	private ListBinder $listBinder;
 	private TableBinder $tableBinder;
+
+	public function setDependencies(ListBinder $listBinder, TableBinder $tableBinder) {
+		$this->listBinder = $listBinder;
+		$this->tableBinder = $tableBinder;
+	}
 
 	public function bind(
 		?string $key,
@@ -202,9 +208,6 @@ class HTMLAttributeBinder {
 			break;
 
 		case "table":
-			if(!isset($this->tableBinder)) {
-				$this->tableBinder = new TableBinder();
-			}
 			$this->tableBinder->bindTableData(
 				$bindValue,
 				$element,
@@ -217,6 +220,7 @@ class HTMLAttributeBinder {
 			break;
 
 		case "list";
+			$this->listBinder->bindListData($bindValue, $element);
 			break;
 
 		default:

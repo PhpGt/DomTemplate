@@ -5,27 +5,10 @@ use Gt\Dom\Document;
 use Gt\Dom\Element;
 
 class ComponentBinder extends DocumentBinder {
-	public function __construct(
-		private Element $componentElement,
-		Document $document,
-		array $config = [],
-		?ElementBinder $elementBinder = null,
-		?PlaceholderBinder $placeholderBinder = null,
-		?TableBinder $tableBinder = null,
-		?ListBinder $listBinder = null,
-		?ListElementCollection $templateCollection = null,
-		?BindableCache $bindableCache = null,
-	) {
-		parent::__construct(
-			$document,
-			$config,
-			$elementBinder,
-			$placeholderBinder,
-			$tableBinder,
-			$listBinder,
-			$templateCollection,
-			$bindableCache,
-		);
+	private Element $componentElement;
+
+	public function setComponentBinderDependencies(Element $componentElement):void {
+		$this->componentElement = $componentElement;
 	}
 
 	public function bindList(

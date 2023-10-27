@@ -13,33 +13,24 @@ class DocumentBinder extends Binder {
 	protected ListElementCollection $templateCollection;
 	protected BindableCache $bindableCache;
 
-	/**
-	 * @param array<string, string> $config
-	 */
 	public function __construct(
 		protected readonly Document $document,
-		private array $config = [],
-		?ElementBinder $elementBinder = null,
-		?PlaceholderBinder $placeholderBinder = null,
-		?TableBinder $tableBinder = null,
-		?ListBinder $listBinder = null,
-		?ListElementCollection $templateCollection = null,
-		?BindableCache $bindableCache = null
-	) {
-		$this->templateCollection = $templateCollection ?? new ListElementCollection($document);
-		$this->elementBinder = $elementBinder ?? new ElementBinder();
-		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
-		$this->tableBinder = $tableBinder ?? new TableBinder($this->templateCollection);
-		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
-		$this->bindableCache = $bindableCache ?? new BindableCache();
+	) {}
 
-// This is temporary, to suppress PHPStan's complaints for declaring a variable
-// without using it. There are plans to use the config variable, but it is
-// currently not yet used, and this technique prevents the constructor
-// parameters from changing over time.
-		if(!$this->config) {
-			$this->config = [];
-		}
+	public function setDependencies(
+		ElementBinder $elementBinder,
+		PlaceholderBinder $placeholderBinder,
+		TableBinder $tableBinder,
+		ListBinder $listBinder,
+		ListElementCollection $listElementCollection,
+		BindableCache $bindableCache,
+	):void {
+		$this->elementBinder = $elementBinder;
+		$this->placeholderBinder = $placeholderBinder;
+		$this->tableBinder = $tableBinder;
+		$this->listBinder = $listBinder;
+		$this->templateCollection = $listElementCollection;
+		$this->bindableCache = $bindableCache;
 	}
 
 	/**
@@ -177,7 +168,6 @@ class DocumentBinder extends Binder {
 		}
 
 		$this->elementBinder->bind($key, $value, $context);
-		$this->placeholderBinder->bind($key, $value, $context);
 	}
 
 	private function isIndexedArray(mixed $data):bool {

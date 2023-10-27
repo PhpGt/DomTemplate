@@ -8,14 +8,21 @@ use Iterator;
 use Stringable;
 
 class ListBinder {
+	private ElementBinder $elementBinder;
+	private ListElementCollection $listElementCollection;
 	private BindableCache $bindableCache;
+	private TableBinder $tableBinder;
 
-	/** @noinspection PhpPropertyCanBeReadonlyInspection */
-	public function __construct(
-		private ListElementCollection $listElementCollection,
-		?BindableCache $bindableCache = null
-	) {
-		$this->bindableCache = $bindableCache ?? new BindableCache();
+	public function setDependencies(
+		ElementBinder $elementBinder,
+		ListElementCollection $listElementCollection,
+		BindableCache $bindableCache,
+		TableBinder $tableBinder
+	):void {
+		$this->elementBinder = $elementBinder;
+		$this->listElementCollection = $listElementCollection;
+		$this->bindableCache = $bindableCache;
+		$this->tableBinder = $tableBinder;
 	}
 
 	/** @param iterable<int|string,mixed> $listData */
@@ -50,7 +57,7 @@ class ListBinder {
 			}
 		}
 
-		$elementBinder = new ElementBinder();
+		$elementBinder = $this->elementBinder;
 		$nestedCount = 0;
 		$i = -1;
 		foreach($listData as $listKey => $listValue) {

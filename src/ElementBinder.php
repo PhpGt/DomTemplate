@@ -8,14 +8,14 @@ class ElementBinder {
 	private HTMLAttributeCollection $htmlAttributeCollection;
 	private PlaceholderBinder $placeholderBinder;
 
-	public function __construct(
-		?HTMLAttributeBinder $htmlAttributeBinder = null,
-		?HTMLAttributeCollection $htmlAttributeCollection = null,
-		?PlaceholderBinder $placeholderBinder = null,
+	public function setDependencies(
+		HTMLAttributeBinder $htmlAttributeBinder,
+		HTMLAttributeCollection $htmlAttributeCollection,
+		PlaceholderBinder $placeholderBinder,
 	) {
-		$this->htmlAttributeBinder = $htmlAttributeBinder ?? new HTMLAttributeBinder();
-		$this->htmlAttributeCollection = $htmlAttributeCollection ?? new HTMLAttributeCollection();
-		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
+		$this->htmlAttributeBinder = $htmlAttributeBinder;
+		$this->htmlAttributeCollection = $htmlAttributeCollection;
+		$this->placeholderBinder = $placeholderBinder;
 	}
 
 	/**
