@@ -91,12 +91,17 @@ class BindableCache {
 			elseif($refProp->isPublic()) {
 				$bindKey = $propName;
 
+				$refTypeName = null;
 				$refType = $refProp->getType();
 				if($refType instanceof ReflectionNamedType) {
 					$refTypeName = $refType->getName();
 				}
-				$attributeCache[$bindKey]
-					= fn(object $object, $key):null|iterable|string => isset($object->$key) ? $this->nullableStringOrIterable($object->$key) : null;
+				$attributeCache[$bindKey] =
+					fn(object $object, $key):null|iterable|string =>
+					isset($object->$key)
+						? $this->nullableStringOrIterable($object->$key)
+						: null;
+
 				if(class_exists($refTypeName)) {
 					$cacheObjectKeys[$bindKey] = $refTypeName;
 				}
