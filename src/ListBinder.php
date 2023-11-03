@@ -162,7 +162,7 @@ class ListBinder {
 	private function isNested(mixed $item):bool {
 		if(is_array($item)) {
 			$key = array_key_first($item);
-			return is_int($key) || is_iterable($item[$key]);
+			return is_int($key) || (isset($item[$key]) && is_iterable($item[$key]));
 		}
 		elseif($item instanceof Iterator) {
 			return true;

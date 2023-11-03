@@ -78,7 +78,7 @@ class DocumentBinder extends Binder {
 			}
 		}
 
-		foreach($kvp as $key => $value) {
+		foreach($kvp ?? [] as $key => $value) {
 			$this->bindKeyValue($key, $value, $context);
 		}
 	}
