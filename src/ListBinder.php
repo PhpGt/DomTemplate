@@ -60,6 +60,7 @@ class ListBinder {
 		$elementBinder = $this->elementBinder;
 		$nestedCount = 0;
 		$i = -1;
+
 		foreach($listData as $listKey => $listValue) {
 			$i++;
 			$t = $listItem->insertListItem();
@@ -67,12 +68,9 @@ class ListBinder {
 // If the $listValue's first value is iterable, then treat this as a nested list.
 			if($this->isNested($listValue)) {
 				$elementBinder->bind(null, $listKey, $t);
-				$nestedCount += $this->bindListData(
-					$listValue,
-					$t,
-					$listItemName,
-					recursiveCall: true
-				);
+				foreach($this->bindableCache->convertToKvp($listValue) as $key => $value) {
+					$elementBinder->bind($key, $value, $t);
+				}
 				continue;
 			}
 
@@ -129,9 +127,14 @@ class ListBinder {
 			return is_null(array_key_first($listData));
 		}
 		else {
-			/** @var Iterator<mixed> $listData */
-			$listData->rewind();
-			return !$listData->valid();
+			/** @var Iterator|\IteratorAggregate $iterator */
+			$iterator = $listData;
+
+			if($iterator instanceof \IteratorAggregate) {
+				$iterator = $iterator->getIterator();
+			}
+			$iterator->rewind();
+			return !$iterator->valid();
 		}
 	}
 
@@ -164,7 +167,7 @@ class ListBinder {
 			$key = array_key_first($item);
 			return is_int($key) || (isset($item[$key]) && is_iterable($item[$key]));
 		}
-		elseif($item instanceof Iterator) {
+		elseif(is_iterable($item)) {
 			return true;
 		}
 
