@@ -36,7 +36,9 @@ class CommentIni {
 			$data = trim($commentNode->data);
 
 			try {
-				$ini = parse_ini_string($data, true);
+// We know that sometimes this data will not be correct ini format, and it might actually be a textual comment.
+// Therefore, we must suppress the warning that is emitted by parse_ini_string:
+				$ini = @parse_ini_string($data, true);
 				$commentNodeToRemove = $commentNode;
 			}
 			catch(Throwable) {

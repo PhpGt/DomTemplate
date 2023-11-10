@@ -85,8 +85,19 @@ class ListElementCollection {
 			}
 		}
 
+		$elementDescription = $context->tagName;
+		foreach($context->classList as $className) {
+			$elementDescription .= ".$className";
+		}
+
+		if($context->id) {
+			$elementDescription .= "#$context->id";
+		}
+
+		$elementNodePath = $context->getNodePath();
+
 		throw new ListElementNotFoundInContextException(
-			"There is no unnamed template element in the context element ($context->tagName)."
+			"There is no unnamed list element in the context element $elementDescription ($elementNodePath)."
 		);
 	}
 }

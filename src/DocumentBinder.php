@@ -5,41 +5,32 @@ use Gt\Dom\Attr;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 
-class DocumentBinder {
-	private ElementBinder $elementBinder;
-	private PlaceholderBinder $placeholderBinder;
-	private TableBinder $tableBinder;
-	private ListBinder $listBinder;
-	private ListElementCollection $templateCollection;
-	private BindableCache $bindableCache;
+class DocumentBinder extends Binder {
+	protected ElementBinder $elementBinder;
+	protected PlaceholderBinder $placeholderBinder;
+	protected TableBinder $tableBinder;
+	protected ListBinder $listBinder;
+	protected ListElementCollection $templateCollection;
+	protected BindableCache $bindableCache;
 
-	/**
-	 * @param array<string, string> $config
-	 */
 	public function __construct(
-		private readonly Document $document,
-		private array $config = [],
-		?ElementBinder $elementBinder = null,
-		?PlaceholderBinder $placeholderBinder = null,
-		?TableBinder $tableBinder = null,
-		?ListBinder $listBinder = null,
-		?ListElementCollection $templateCollection = null,
-		?BindableCache $bindableCache = null
-	) {
-		$this->templateCollection = $templateCollection ?? new ListElementCollection($document);
-		$this->elementBinder = $elementBinder ?? new ElementBinder();
-		$this->placeholderBinder = $placeholderBinder ?? new PlaceholderBinder();
-		$this->tableBinder = $tableBinder ?? new TableBinder($this->templateCollection);
-		$this->listBinder = $listBinder ?? new ListBinder($this->templateCollection);
-		$this->bindableCache = $bindableCache ?? new BindableCache();
+		protected readonly Document $document,
+	) {}
 
-// This is temporary, to suppress PHPStan's complaints for declaring a variable
-// without using it. There are plans to use the config variable, but it is
-// currently not yet used, and this technique prevents the constructor
-// parameters from changing over time.
-		if(!$this->config) {
-			$this->config = [];
-		}
+	public function setDependencies(
+		ElementBinder $elementBinder,
+		PlaceholderBinder $placeholderBinder,
+		TableBinder $tableBinder,
+		ListBinder $listBinder,
+		ListElementCollection $listElementCollection,
+		BindableCache $bindableCache,
+	):void {
+		$this->elementBinder = $elementBinder;
+		$this->placeholderBinder = $placeholderBinder;
+		$this->tableBinder = $tableBinder;
+		$this->listBinder = $listBinder;
+		$this->templateCollection = $listElementCollection;
+		$this->bindableCache = $bindableCache;
 	}
 
 	/**
@@ -87,7 +78,7 @@ class DocumentBinder {
 			}
 		}
 
-		foreach($kvp as $key => $value) {
+		foreach($kvp ?? [] as $key => $value) {
 			$this->bindKeyValue($key, $value, $context);
 		}
 	}
@@ -163,7 +154,7 @@ class DocumentBinder {
 		}
 	}
 
-	private function bind(
+	protected function bind(
 		?string $key,
 		mixed $value,
 		?Element $context = null
@@ -177,7 +168,6 @@ class DocumentBinder {
 		}
 
 		$this->elementBinder->bind($key, $value, $context);
-		$this->placeholderBinder->bind($key, $value, $context);
 	}
 
 	private function isIndexedArray(mixed $data):bool {

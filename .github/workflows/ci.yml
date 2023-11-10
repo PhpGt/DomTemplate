@@ -18,7 +18,7 @@ jobs:
       - name: Composer install
         uses: php-actions/composer@v6
         with:
-          php_version: 8.1
+          php_version: 8.2
 
       - name: Archive build
         run: mkdir /tmp/github-actions/ && tar -cvf /tmp/github-actions/build.tar ./
@@ -50,7 +50,7 @@ jobs:
         env:
           XDEBUG_MODE: cover
         with:
-          php_version: 8.1
+          php_version: 8.2
           php_extensions: xdebug
           configuration: test/phpunit/phpunit.xml
           bootstrap: vendor/autoload.php
@@ -97,7 +97,9 @@ jobs:
       - name: PHP Static Analysis
         uses: php-actions/phpstan@v3
         with:
+          php_version: 8.2
           path: src/
+          level: 6
 
   remove_old_artifacts:
     runs-on: ubuntu-latest

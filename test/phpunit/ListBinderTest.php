@@ -8,8 +8,14 @@ use DateTimeInterface;
 use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
+use Gt\DomTemplate\BindableCache;
+use Gt\DomTemplate\ElementBinder;
+use Gt\DomTemplate\HTMLAttributeBinder;
+use Gt\DomTemplate\HTMLAttributeCollection;
 use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\ListElementNotFoundInContextException;
+use Gt\DomTemplate\PlaceholderBinder;
+use Gt\DomTemplate\TableBinder;
 use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElement;
@@ -23,8 +29,8 @@ class ListBinderTest extends TestCase {
 	public function testBindList_emptyList():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 
-		$templateCollection = new ListElementCollection($document);
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$boundCount = $sut->bindListData(
 			[],
 			$document
@@ -34,8 +40,8 @@ class ListBinderTest extends TestCase {
 
 	public function testBindList_empty_shouldHaveNoWhitespace():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
-		$templateCollection = new ListElementCollection($document);
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData([], $document);
 		self::assertSame("", $document->querySelector("ul")->innerHTML);
 	}
@@ -47,11 +53,12 @@ class ListBinderTest extends TestCase {
 		$templateElement = self::createMock(ListElement::class);
 		$templateElement->method("getListItemParent")
 			->willReturn($templateParent);
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturn($templateElement);
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$boundCount = $sut->bindListData(
 			new ArrayIterator([]),
 			$document
@@ -61,15 +68,16 @@ class ListBinderTest extends TestCase {
 
 	public function testBindList_noMatchingTemplate():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->expects(self::once())
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->expects(self::once())
 			->method("get")
 			->with($document->documentElement, "missing")
 			->willReturnCallback(function() {
 				throw new TableElementNotFoundInContextException();
 			});
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		self::expectException(TableElementNotFoundInContextException::class);
 		$sut->bindListData(
 			["one", "two", "three"],
@@ -82,8 +90,8 @@ class ListBinderTest extends TestCase {
 		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
 		$templateElement = new ListElement($document->querySelector("li[data-list]"));
 
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->expects(self::once())
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->expects(self::once())
 			->method("get")
 			->with($document->documentElement, null)
 			->willReturn($templateElement);
@@ -98,7 +106,8 @@ class ListBinderTest extends TestCase {
 		);
 
 		$testData = ["one", "two", "three"];
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$boundCount = $sut->bindListData(
 			$testData,
 			$document
@@ -120,8 +129,8 @@ class ListBinderTest extends TestCase {
 		$document = new HTMLDocument(HTMLPageContent::HTML_SELECT_OPTIONS_TEMPLATE_WITH_EXISTING_CHILDREN);
 		$templateElement = new ListElement($document->querySelector("[data-list]"));
 
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->expects(self::once())
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->expects(self::once())
 			->method("get")
 			->with($document->documentElement, null)
 			->willReturn($templateElement);
@@ -135,7 +144,8 @@ class ListBinderTest extends TestCase {
 			["id" => "bovril", "name" => "Bovril"],
 			["id" => "almond-milk", "name" => "Almond Milk"],
 		];
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$bindCount = $sut->bindListData($testData, $document);
 
 		$newOptionList = $document->querySelectorAll("select[name='drink'] option");
@@ -172,13 +182,14 @@ class ListBinderTest extends TestCase {
 			$document->querySelector("#favourites li[data-list='game']")
 		);
 
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturnCallback(function(Element $documentElement, string $name)use($templateElementProgLang, $templateElementGame):ListElement {
 				return $name === "game" ? $templateElementGame : $templateElementProgLang;
 			});
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$progLangData = ["PHP", "HTML", "bash"];
 		$sut->bindListData($progLangData, $document, "prog-lang");
 		$gameData = ["Pac Man", "Mega Man", "Tetris"];
@@ -209,15 +220,16 @@ class ListBinderTest extends TestCase {
 			$document->querySelector("#game-list li[data-list]")
 		);
 
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturnCallback(function(Element $element)use($templateElementProgLang, $templateElementGame):ListElement {
 				return ($element->id === "prog-lang-list")
 					? $templateElementProgLang
 					: $templateElementGame;
 			});
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$progLangData = ["PHP", "HTML", "bash"];
 		$sut->bindListData($progLangData, $document->getElementById("prog-lang-list"));
 		$gameData = ["Pac Man", "Mega Man", "Tetris"];
@@ -236,13 +248,14 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_empty_parentShouldBeEmpty():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
-		$templateElement = new ListElement($document->querySelector("li[data-list]"));
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
-			->willReturn($templateElement);
-		$templateElement->removeOriginalElement();
+		$listElement = new ListElement($document->querySelector("li[data-list]"));
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
+			->willReturn($listElement);
+		$listElement->removeOriginalElement();
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$sut->bindListData([], $document);
 
 		self::assertSame("", $document->querySelector("ul")->innerHTML);
@@ -258,12 +271,13 @@ class ListBinderTest extends TestCase {
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
@@ -283,12 +297,13 @@ class ListBinderTest extends TestCase {
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
@@ -309,12 +324,13 @@ class ListBinderTest extends TestCase {
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
@@ -387,12 +403,13 @@ class ListBinderTest extends TestCase {
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
@@ -443,12 +460,13 @@ class ListBinderTest extends TestCase {
 		$orderList = $document->querySelector("ul");
 
 		$templateElement = new ListElement($document->querySelector("ul li[data-list]"));
-		$templateCollection = self::createMock(ListElementCollection::class);
-		$templateCollection->method("get")
+		$listElementCollection = self::createMock(ListElementCollection::class);
+		$listElementCollection->method("get")
 			->willReturn($templateElement);
 		$templateElement->removeOriginalElement();
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document, $listElementCollection));
 		$sut->bindListData($kvpList, $orderList);
 
 		foreach($orderList->children as $i => $li) {
@@ -460,8 +478,8 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_nestedList():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_NO_TEMPLATE_NAMES);
-		$templateCollection = new ListElementCollection($document);
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData(TestData::MUSIC, $document);
 
 		$artistNameArray = array_keys(TestData::MUSIC);
@@ -494,8 +512,8 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_nestedList_withKvps():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
-		$templateCollection = new ListElementCollection($document);
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData(TestData::STUDENTS, $document);
 
 		foreach($document->querySelectorAll("body>ul>li") as $i => $studentLiElement) {
@@ -515,12 +533,12 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_iterativeSomething():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_SEQUENCES);
-		$templateCollection = new ListElementCollection($document);
 		$listData = [
 			"Primes" => new ArrayIterator([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71]),
 			"Fibonacci" => new ArrayIterator([0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765]),
 		];
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData($listData, $document);
 
 		$listDataKeys = array_keys($listData);
@@ -535,7 +553,6 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_dateTime():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_DATES);
-		$templateCollection = new ListElementCollection($document);
 		$listData = [];
 
 		$dateTime = new DateTime();
@@ -552,7 +569,8 @@ class ListBinderTest extends TestCase {
 			$dateTime->add(new DateInterval("P1M"));
 		}
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData($listData, $document);
 
 		foreach($document->querySelectorAll("li") as $i => $li) {
@@ -562,7 +580,6 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_dateTimeAutomatic():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_DATES);
-		$templateCollection = new ListElementCollection($document);
 		/** @var array<DateTimeInterface> $listData */
 		$listData = [];
 
@@ -575,7 +592,8 @@ class ListBinderTest extends TestCase {
 			$dateTime->add(new DateInterval("P1M"));
 		}
 
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData($listData, $document);
 
 		foreach($document->querySelectorAll("li") as $i => $li) {
@@ -585,9 +603,9 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_todoList():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_TODO);
-		$templateCollection = new ListElementCollection($document);
 		$data = TestData::TODO_DATA;
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData($data, $document);
 
 		$todoLiElements = $document->querySelectorAll("ul>li");
@@ -603,8 +621,8 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_multipleTemplateSiblings():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_GOOD_BAD);
-		$listElementCollection = new ListElementCollection($document);
-		$sut = new ListBinder($listElementCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 
 		$sut->bindListData(["Good news 1", "Good news 2"], $document, "good");
 		$sut->bindListData(["Bad news 1", "Bad news 2"], $document, "bad");
@@ -651,8 +669,8 @@ class ListBinderTest extends TestCase {
 		};
 
 		$document = new HTMLDocument(HTMLPageContent::HTML_SALES);
-		$templateCollection = new ListElementCollection($document);
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData(
 			$salesData,
 			$document,
@@ -675,8 +693,8 @@ class ListBinderTest extends TestCase {
 	public function testBindListData_complexStructure():void {
 		$customerOrderData = TestData::getCustomerOrderOverview1();
 		$document = new HTMLDocument(HTMLPageContent::HTML_MAP_SHOP_CUSTOMER_OVERVIEW);
-		$templateCollection = new ListElementCollection($document);
-		$sut = new ListBinder($templateCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData($customerOrderData, $document);
 
 		foreach($customerOrderData as $customerIndex => $customer) {
@@ -713,8 +731,8 @@ class ListBinderTest extends TestCase {
 			new Student("Charlie", "Chudder", ["seven", "eight", "nine"]),
 		];
 		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST);
-		$listElementCollection = new ListElementCollection($document);
-		$sut = new ListBinder($listElementCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$sut->bindListData($list, $document);
 
 		self::assertCount(count($list), $document->querySelectorAll("body>ul>li"));
@@ -738,8 +756,8 @@ class ListBinderTest extends TestCase {
 			new Student("Charlie", "Chudder", ["seven", "eight", "nine"]),
 		];
 		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST_NO_MODULE_LIST);
-		$listElementCollection = new ListElementCollection($document);
-		$sut = new ListBinder($listElementCollection);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		$numBound = $sut->bindListData($list, $document);
 		self::assertCount(count($list), $document->querySelectorAll("body>ul>li"));
 		self::assertSame(count($list), $numBound);
@@ -747,8 +765,60 @@ class ListBinderTest extends TestCase {
 
 	public function testBindListData_noListInDocument():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_SINGLE_ELEMENT);
-		$sut = new ListBinder(new ListElementCollection($document));
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
 		self::expectException(ListElementNotFoundInContextException::class);
 		$sut->bindListData(["one", "two", "three"], $document);
 	}
+
+	private function listBinderDependencies(HTMLDocument $document, mixed...$otherObjectList):array {
+		$htmlAttributeBinder = new HTMLAttributeBinder();
+		$htmlAttributeCollection = new HTMLAttributeCollection();
+		$placeholderBinder = new PlaceholderBinder();
+		$elementBinder = new ElementBinder();
+		$listElementCollection = new ListElementCollection($document);
+		$bindableCache = new BindableCache();
+		$listBinder = new ListBinder();
+		$tableBinder = new TableBinder();
+
+		foreach($otherObjectList as $object) {
+			if($object instanceof HTMLAttributeBinder) {
+				$htmlAttributeBinder = $object;
+			}
+			elseif($object instanceof HTMLAttributeCollection) {
+				$htmlAttributeCollection = $object;
+			}
+			elseif($object instanceof ElementBinder) {
+				$elementBinder = $object;
+			}
+			elseif($object instanceof PlaceholderBinder) {
+				$placeholderBinder = $object;
+			}
+			elseif($object instanceof TableBinder) {
+				$tableBinder = $object;
+			}
+			elseif($object instanceof ListBinder) {
+				$listBinder = $object;
+			}
+			elseif($object instanceof ListElementCollection) {
+				$listElementCollection = $object;
+			}
+			elseif($object instanceof BindableCache) {
+				$bindableCache = $object;
+			}
+		}
+
+		$htmlAttributeBinder->setDependencies($listBinder, $tableBinder);
+		$elementBinder->setDependencies($htmlAttributeBinder, $htmlAttributeCollection, $placeholderBinder);
+		$listBinder->setDependencies($elementBinder, $listElementCollection, $bindableCache, $tableBinder);
+		$tableBinder->setDependencies($listBinder, $listElementCollection, $elementBinder, $htmlAttributeBinder, $htmlAttributeCollection, $placeholderBinder);
+
+		return [
+			$elementBinder,
+			$listElementCollection,
+			$bindableCache,
+			$tableBinder,
+		];
+	}
+
 }

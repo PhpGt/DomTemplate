@@ -177,4 +177,28 @@ class BindableCacheTest extends TestCase {
 			self::assertSame($customer->address->country->getName(), $kvpList[$i]["address.country.name"]);
 		}
 	}
+
+	public function testConvertToKvp_nestedNullProperty():void {
+		$sut = new BindableCache();
+
+		$customerList = TestData::getCustomerOrderOverview1();
+		$kvpList = [];
+		foreach($customerList as $customer) {
+// force the address to be null, so address.street can't resolve.
+			$customer->address = null;
+			array_push($kvpList, $sut->convertToKvp($customer));
+		}
+
+		foreach($customerList as $i => $customer) {
+			self::assertSame((string)$customer->id, $kvpList[$i]["id"]);
+			self::assertSame($customer->name, $kvpList[$i]["name"]);
+			self::assertNull($customer->address);
+			self::assertNull($kvpList[$i]["address.street"]);
+			self::assertNull($kvpList[$i]["address.line2"]);
+			self::assertNull($kvpList[$i]["address.cityState"]);
+			self::assertNull($kvpList[$i]["address.postcodeZip"]);
+			self::assertNull($kvpList[$i]["address.country.code"]);
+			self::assertNull($kvpList[$i]["address.country.name"]);
+		}
+	}
 }

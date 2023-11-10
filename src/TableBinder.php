@@ -7,14 +7,32 @@ use Gt\Dom\ElementType;
 use Traversable;
 
 class TableBinder {
-	/** @noinspection PhpPropertyCanBeReadonlyInspection */
-	public function __construct(
-		private ?ListElementCollection $templateCollection = null,
-		private ?ElementBinder $elementBinder = null,
-		private ?HTMLAttributeBinder $htmlAttributeBinder = null,
-		private ?HTMLAttributeCollection $htmlAttributeCollection = null,
-		private ?PlaceholderBinder $placeholderBinder = null
-	) {}
+	/**
+	 * @noinspection PhpPropertyOnlyWrittenInspection
+	 * @phpstan-ignore-next-line
+	 */
+	private ListBinder $listBinder;
+	private ListElementCollection $templateCollection;
+	private ElementBinder $elementBinder;
+	private HTMLAttributeBinder $htmlAttributeBinder;
+	private HTMLAttributeCollection $htmlAttributeCollection;
+	private PlaceholderBinder $placeholderBinder;
+
+	public function setDependencies(
+		ListBinder $listBinder,
+		ListElementCollection $listElementCollection,
+		ElementBinder $elementBinder,
+		HTMLAttributeBinder $htmlAttributeBinder,
+		HTMLAttributeCollection $htmlAttributeCollection,
+		PlaceholderBinder $placeholderBinder,
+	):void {
+		$this->listBinder = $listBinder;
+		$this->templateCollection = $listElementCollection;
+		$this->elementBinder = $elementBinder;
+		$this->htmlAttributeBinder = $htmlAttributeBinder;
+		$this->htmlAttributeCollection = $htmlAttributeCollection;
+		$this->placeholderBinder = $placeholderBinder;
+	}
 
 	/**
 	 * @param array<int, array<int, string>>|array<int, array<int|string, string|array<int, mixed>>> $tableData
@@ -329,21 +347,17 @@ class TableBinder {
 	}
 
 	private function initBinders():void {
-		if(!$this->htmlAttributeBinder) {
+		if(!isset($this->htmlAttributeBinder)) {
 			$this->htmlAttributeBinder = new HTMLAttributeBinder();
 		}
-		if(!$this->htmlAttributeCollection) {
+		if(!isset($this->htmlAttributeCollection)) {
 			$this->htmlAttributeCollection = new HTMLAttributeCollection();
 		}
-		if(!$this->placeholderBinder) {
+		if(!isset($this->placeholderBinder)) {
 			$this->placeholderBinder = new PlaceholderBinder();
 		}
-		if(!$this->elementBinder) {
-			$this->elementBinder = new ElementBinder(
-				$this->htmlAttributeBinder,
-				$this->htmlAttributeCollection,
-				$this->placeholderBinder
-			);
+		if(!isset($this->elementBinder)) {
+			$this->elementBinder = new ElementBinder();
 		}
 	}
 }
