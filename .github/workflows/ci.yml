@@ -99,6 +99,7 @@ jobs:
         with:
           php_version: 8.2
           path: src/
+          level: 6
 
   remove_old_artifacts:
     runs-on: ubuntu-latest
