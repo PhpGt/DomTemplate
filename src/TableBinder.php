@@ -7,6 +7,10 @@ use Gt\Dom\ElementType;
 use Traversable;
 
 class TableBinder {
+	/**
+	 * @noinspection PhpPropertyOnlyWrittenInspection
+	 * @phpstan-ignore-next-line
+	 */
 	private ListBinder $listBinder;
 	private ListElementCollection $templateCollection;
 	private ElementBinder $elementBinder;
@@ -21,7 +25,7 @@ class TableBinder {
 		HTMLAttributeBinder $htmlAttributeBinder,
 		HTMLAttributeCollection $htmlAttributeCollection,
 		PlaceholderBinder $placeholderBinder,
-	) {
+	):void {
 		$this->listBinder = $listBinder;
 		$this->templateCollection = $listElementCollection;
 		$this->elementBinder = $elementBinder;
@@ -343,26 +347,17 @@ class TableBinder {
 	}
 
 	private function initBinders():void {
-		if(!$this->htmlAttributeBinder) {
-			$this->htmlAttributeBinder = new HTMLAttributeBinder(
-				$this->listBinder,
-				$this,
-			);
+		if(!isset($this->htmlAttributeBinder)) {
+			$this->htmlAttributeBinder = new HTMLAttributeBinder();
 		}
-		if(!$this->htmlAttributeCollection) {
+		if(!isset($this->htmlAttributeCollection)) {
 			$this->htmlAttributeCollection = new HTMLAttributeCollection();
 		}
-		if(!$this->placeholderBinder) {
+		if(!isset($this->placeholderBinder)) {
 			$this->placeholderBinder = new PlaceholderBinder();
 		}
-		if(!$this->elementBinder) {
-			$this->elementBinder = new ElementBinder(
-				$this->listBinder,
-				$this,
-				$this->htmlAttributeBinder,
-				$this->htmlAttributeCollection,
-				$this->placeholderBinder
-			);
+		if(!isset($this->elementBinder)) {
+			$this->elementBinder = new ElementBinder();
 		}
 	}
 }

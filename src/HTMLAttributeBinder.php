@@ -11,7 +11,7 @@ class HTMLAttributeBinder {
 	private ListBinder $listBinder;
 	private TableBinder $tableBinder;
 
-	public function setDependencies(ListBinder $listBinder, TableBinder $tableBinder) {
+	public function setDependencies(ListBinder $listBinder, TableBinder $tableBinder):void {
 		$this->listBinder = $listBinder;
 		$this->tableBinder = $tableBinder;
 	}

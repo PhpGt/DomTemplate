@@ -5,19 +5,24 @@ use DateTimeInterface;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Iterator;
+use IteratorAggregate;
 use Stringable;
 
 class ListBinder {
 	private ElementBinder $elementBinder;
 	private ListElementCollection $listElementCollection;
 	private BindableCache $bindableCache;
+	/**
+	 * @noinspection PhpPropertyOnlyWrittenInspection
+	 * @phpstan-ignore-next-line
+	 */
 	private TableBinder $tableBinder;
 
 	public function setDependencies(
 		ElementBinder $elementBinder,
 		ListElementCollection $listElementCollection,
 		BindableCache $bindableCache,
-		TableBinder $tableBinder
+		TableBinder $tableBinder,
 	):void {
 		$this->elementBinder = $elementBinder;
 		$this->listElementCollection = $listElementCollection;
@@ -127,11 +132,12 @@ class ListBinder {
 			return is_null(array_key_first($listData));
 		}
 		else {
-			/** @var Iterator|\IteratorAggregate $iterator */
+			/** @var Iterator|IteratorAggregate $iterator */
 			$iterator = $listData;
 
-			if($iterator instanceof \IteratorAggregate) {
+			if($iterator instanceof IteratorAggregate) {
 				$iterator = $iterator->getIterator();
+				/** @var Iterator $iterator */
 			}
 			$iterator->rewind();
 			return !$iterator->valid();

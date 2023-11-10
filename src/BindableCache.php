@@ -149,7 +149,10 @@ class BindableCache {
 		return $cache;
 	}
 
-	/** @return array<string, string> */
+	/**
+	 * @param object|array<string, string> $object
+	 * @return array<string, string>
+	 */
 	public function convertToKvp(object|array $object):array {
 		$kvp = [];
 		if(is_array($object)) {

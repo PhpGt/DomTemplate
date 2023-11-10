@@ -12,7 +12,7 @@ class ElementBinder {
 		HTMLAttributeBinder $htmlAttributeBinder,
 		HTMLAttributeCollection $htmlAttributeCollection,
 		PlaceholderBinder $placeholderBinder,
-	) {
+	):void {
 		$this->htmlAttributeBinder = $htmlAttributeBinder;
 		$this->htmlAttributeCollection = $htmlAttributeCollection;
 		$this->placeholderBinder = $placeholderBinder;
