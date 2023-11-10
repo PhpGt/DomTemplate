@@ -8,6 +8,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionObject;
 use ReflectionProperty;
+use ReflectionType;
 use stdClass;
 use Stringable;
 
@@ -69,8 +70,7 @@ class BindableCache {
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr, $refMethod);
-				$attributeCache[$bindKey] = fn(object $object):null|iterable|string
-					=> $this->nullableStringOrIterable($object->$methodName());
+				$attributeCache[$bindKey] = fn(object $object):null|iterable|string => $this->nullableStringOrIterable($object->$methodName());
 				if(class_exists($refReturnName)) {
 					$cacheObjectKeys[$bindKey] = $refReturnName;
 				}
@@ -91,11 +91,17 @@ class BindableCache {
 			elseif($refProp->isPublic()) {
 				$bindKey = $propName;
 
-				/** @var ?ReflectionNamedType $refType */
+				$refTypeName = null;
 				$refType = $refProp->getType();
-				$refTypeName = $refType?->getName();
-				$attributeCache[$bindKey]
-					= fn(object $object, $key):null|iterable|string => isset($object->$key) ? $this->nullableStringOrIterable($object->$key) : null;
+				if($refType instanceof ReflectionNamedType) {
+					$refTypeName = $refType->getName();
+				}
+				$attributeCache[$bindKey] =
+					fn(object $object, $key):null|iterable|string =>
+					isset($object->$key)
+						? $this->nullableStringOrIterable($object->$key)
+						: null;
+
 				if(class_exists($refTypeName)) {
 					$cacheObjectKeys[$bindKey] = $refTypeName;
 				}
@@ -143,9 +149,15 @@ class BindableCache {
 		return $cache;
 	}
 
-	/** @return array<string, string> */
-	public function convertToKvp(object $object):array {
+	/**
+	 * @param object|array<string, string> $object
+	 * @return array<string, string>
+	 */
+	public function convertToKvp(object|array $object):array {
 		$kvp = [];
+		if(is_array($object)) {
+			return $object;
+		}
 
 		if($object instanceof stdClass) {
 			foreach(get_object_vars($object) as $key => $value) {
@@ -178,10 +190,21 @@ class BindableCache {
 // TODO: This "get*()" function should not be hard coded here - it should load the appropriate
 // Bind/BindGetter by matching the correct Attribute.
 				$bindFunc = "get" . ucfirst($propName);
-				$objectToExtract = $objectToExtract->$propName ?? $objectToExtract->$bindFunc();
+				if($objectToExtract) {
+					if(property_exists($objectToExtract, $propName)) {
+						$objectToExtract = $objectToExtract->$propName;
+					}
+					elseif(method_exists($objectToExtract, $bindFunc)) {
+						$objectToExtract = $objectToExtract->$bindFunc();
+					}
+				}
 			}
 
-			$value = $closure($objectToExtract, $deepestKey);
+			$value = null;
+			if($objectToExtract) {
+				$value = $closure($objectToExtract, $deepestKey);
+			}
+
 			if(is_null($value)) {
 				$kvp[$key] = null;
 			}
@@ -200,8 +223,7 @@ class BindableCache {
 	private function getBindAttributes(ReflectionMethod|ReflectionProperty $ref):array {
 		return array_filter(
 			$ref->getAttributes(),
-			fn(ReflectionAttribute $refAttr) =>
-				$refAttr->getName() === Bind::class
+			fn(ReflectionAttribute $refAttr) => $refAttr->getName() === Bind::class
 				|| $refAttr->getName() === BindGetter::class
 		);
 	}

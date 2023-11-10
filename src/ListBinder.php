@@ -5,17 +5,29 @@ use DateTimeInterface;
 use Gt\Dom\Document;
 use Gt\Dom\Element;
 use Iterator;
+use IteratorAggregate;
 use Stringable;
 
 class ListBinder {
+	private ElementBinder $elementBinder;
+	private ListElementCollection $listElementCollection;
 	private BindableCache $bindableCache;
+	/**
+	 * @noinspection PhpPropertyOnlyWrittenInspection
+	 * @phpstan-ignore-next-line
+	 */
+	private TableBinder $tableBinder;
 
-	/** @noinspection PhpPropertyCanBeReadonlyInspection */
-	public function __construct(
-		private ListElementCollection $listElementCollection,
-		?BindableCache $bindableCache = null
-	) {
-		$this->bindableCache = $bindableCache ?? new BindableCache();
+	public function setDependencies(
+		ElementBinder $elementBinder,
+		ListElementCollection $listElementCollection,
+		BindableCache $bindableCache,
+		TableBinder $tableBinder,
+	):void {
+		$this->elementBinder = $elementBinder;
+		$this->listElementCollection = $listElementCollection;
+		$this->bindableCache = $bindableCache;
+		$this->tableBinder = $tableBinder;
 	}
 
 	/** @param iterable<int|string,mixed> $listData */
@@ -50,9 +62,10 @@ class ListBinder {
 			}
 		}
 
-		$elementBinder = new ElementBinder();
+		$elementBinder = $this->elementBinder;
 		$nestedCount = 0;
 		$i = -1;
+
 		foreach($listData as $listKey => $listValue) {
 			$i++;
 			$t = $listItem->insertListItem();
@@ -60,12 +73,9 @@ class ListBinder {
 // If the $listValue's first value is iterable, then treat this as a nested list.
 			if($this->isNested($listValue)) {
 				$elementBinder->bind(null, $listKey, $t);
-				$nestedCount += $this->bindListData(
-					$listValue,
-					$t,
-					$listItemName,
-					recursiveCall: true
-				);
+				foreach($this->bindableCache->convertToKvp($listValue) as $key => $value) {
+					$elementBinder->bind($key, $value, $t);
+				}
 				continue;
 			}
 
@@ -122,9 +132,15 @@ class ListBinder {
 			return is_null(array_key_first($listData));
 		}
 		else {
-			/** @var Iterator<mixed> $listData */
-			$listData->rewind();
-			return !$listData->valid();
+			/** @var Iterator|IteratorAggregate $iterator */
+			$iterator = $listData;
+
+			if($iterator instanceof IteratorAggregate) {
+				$iterator = $iterator->getIterator();
+				/** @var Iterator $iterator */
+			}
+			$iterator->rewind();
+			return !$iterator->valid();
 		}
 	}
 
@@ -155,9 +171,9 @@ class ListBinder {
 	private function isNested(mixed $item):bool {
 		if(is_array($item)) {
 			$key = array_key_first($item);
-			return is_int($key) || is_iterable($item[$key]);
+			return is_int($key) || (isset($item[$key]) && is_iterable($item[$key]));
 		}
-		elseif($item instanceof Iterator) {
+		elseif(is_iterable($item)) {
 			return true;
 		}
 
