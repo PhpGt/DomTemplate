@@ -9,6 +9,7 @@ use Gt\Dom\Element;
 use Gt\Dom\HTMLDocument;
 use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\BindableCache;
+use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\ElementBinder;
 use Gt\DomTemplate\HTMLAttributeBinder;
 use Gt\DomTemplate\HTMLAttributeCollection;
@@ -20,6 +21,8 @@ use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElement;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
+use Gt\DomTemplate\Test\TestHelper\Model\IteratorAggregate\Music\MusicFactory;
+use Gt\DomTemplate\Test\TestHelper\Model\IteratorAggregate\Student\StudentFactory;
 use Gt\DomTemplate\Test\TestHelper\Model\Student;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
@@ -821,4 +824,105 @@ class ListBinderTest extends TestCase {
 		];
 	}
 
+	public function testBindListData_objectWithPublicIterable():void {
+		$obj1 = new class("First") {
+			public function __construct(public string $name) {}
+			#[BindGetter]
+			public function getLettersOfName():array {
+				return str_split($this->name, 1);
+			}
+		};
+		$obj2 = new class("Second") {
+			public function __construct(public string $name) {}
+			#[BindGetter]
+			public function getLettersOfName():array {
+				return str_split($this->name, 1);
+			}
+		};
+
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST_BIND_NAME);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
+		$sut->bindListData([
+			$obj1,
+			$obj2,
+		], $document);
+
+		$nodeList = $document->querySelectorAll("ul li");
+		self::assertCount(2, $nodeList);
+		self::assertSame("First", $nodeList[0]->textContent);
+		self::assertSame("Second", $nodeList[1]->textContent);
+	}
+
+	public function testBindListData_iteratorAggregate():void {
+		$testData = (new MusicFactory())->buildArtistArray(TestData::MUSIC);
+		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_NO_TEMPLATE_NAMES);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
+		$sut->bindListData($testData, $document);
+
+		$arrayArtistData = TestData::MUSIC;
+
+		foreach($document->querySelectorAll("body>ul>li") as $artistLi) {
+			$artistName = key($arrayArtistData);
+			$arrayAlbumData = current($arrayArtistData);
+
+			self::assertSame($artistName, $artistLi->querySelector("h2")->textContent);
+
+			foreach($artistLi->querySelectorAll("ul>li") as $albumLi) {
+				$albumName = key($arrayAlbumData);
+				$arrayTrackData = current($arrayAlbumData);
+
+				self::assertSame($albumName, $albumLi->querySelector("h3")->textContent);
+
+				foreach($albumLi->querySelectorAll("ol>li") as $trackLi) {
+					$trackName = current($arrayTrackData);
+					self::assertSame($trackName, $trackLi->textContent);
+					next($arrayTrackData);
+				}
+
+				next($arrayAlbumData);
+			}
+
+			next($arrayArtistData);
+		}
+	}
+
+	/**
+	 * This test asserts that the outer element has its data bound correctly.
+	 * We know that the nested sub-lists are bound correctly from the music examples,
+	 * but there's a bug where the outer element (representing the Student in this case)
+	 * does not have its data bound correctly.
+	 */
+	public function testBindListData_iteratorAggregate_outerBinds():void {
+		$testData = (new StudentFactory())->buildStudentArray(TestData::STUDENTS);
+		$document = new HTMLDocument(HTMLPageContent::HTML_STUDENT_LIST_EXPLICIT_BINDS);
+		$sut = new ListBinder();
+		$sut->setDependencies(...$this->listBinderDependencies($document));
+		$sut->bindListData($testData, $document);
+
+		$arrayStudentData = TestData::STUDENTS;
+
+		foreach($document->querySelectorAll("body>ul>li") as $studentLi) {
+			$arrayStudent = current($arrayStudentData);
+			$firstName = $arrayStudent["firstName"];
+			$lastName = $arrayStudent["lastName"];
+
+			self::assertSame(
+				"$firstName $lastName",
+				trim(preg_replace("/\s+/", " ", $studentLi->querySelector("dd.name")->textContent))
+			);
+
+			$arrayModuleData = $arrayStudent["modules"];
+			foreach($studentLi->querySelectorAll(".modules ul>li") as $moduleLi) {
+				$moduleTitle = current($arrayModuleData);
+
+				self::assertSame($moduleTitle, $moduleLi->textContent);
+
+				next($arrayModuleData);
+			}
+
+			next($arrayStudentData);
+		}
+	}
 }
