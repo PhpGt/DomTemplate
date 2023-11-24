@@ -1101,6 +1101,12 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_MULTIPLE_BINDS_ON_SINGLE_ELEMENT = <<<HTML
+<!doctype html>
+<output data-bind:data-attr2="key2" data-bind:data-attr1="key1">Nothing is bound</output>
+HTML;
+
+
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return new HTMLDocument($html);
 	}

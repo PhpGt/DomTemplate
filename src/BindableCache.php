@@ -102,7 +102,7 @@ class BindableCache {
 						? $this->nullableStringOrIterable($object->$key)
 						: null;
 
-				if(class_exists($refTypeName)) {
+				if($refTypeName && class_exists($refTypeName)) {
 					$cacheObjectKeys[$bindKey] = $refTypeName;
 				}
 			}
