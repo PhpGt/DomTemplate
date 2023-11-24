@@ -530,12 +530,15 @@ HTML;
 </head>
 <body>
 	<h1>TODO LIST!</h1>
+	<h2 data-bind:text="subtitle">Subtitle here</h2>
+	
 	<todo-list />
 </body>
 </html>
 HTML;
 
 	const HTML_TODO_COMPONENT_TODO_LIST = <<<HTML
+<h3 data-bind:text="listTitle">List title here</h3>
 <ul>
 	<todo-list-item data-list data-bind:class=":completedAt completed" />
 </ul>
@@ -551,6 +554,38 @@ HTML;
 	</form>
 </li>
 HTML;
+
+	const HTML_TODO_CUSTOM_ELEMENT_ALREADY_EXPANDED = <<<HTML
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>TODO LIST!</title>
+</head>
+<body>
+	<h1>TODO LIST!</h1>
+	<h2 data-bind:text="subtitle">Subtitle here</h2>
+	
+	<todo-list>
+		<h3 data-bind:text="listTitle">List title here</h3>
+		
+		<ul>
+			<todo-list-item data-list data-bind:class=":completedAt completed">
+				<li>
+					<form method="post">
+						<input type="hidden" name="id" data-bind:value="@name" />
+						<input name="title" data-bind:value="@name" />
+						<button name="do" value="complete">Complete</button>
+						<button name="do" value="delete">Delete</button>
+					</form>
+				</li>
+			</todo-list-item>
+		</ul>
+	</todo-list>
+</body>
+</html>
+HTML;
+
 
 	const HTML_COMPONENT_NESTED_OUTER = <<<HTML
 <!doctype html>
@@ -1017,7 +1052,54 @@ HTML;
 </form>
 HTML;
 
+	const HTML_DATA_BIND_LIST = <<<HTML
+<!doctype html>
+<h1 data-bind:text="name">Data-bind:list example</h1>
 
+<h2>This shouldn't be bound:</h2>
+<ul class="first-list">
+	<li data-list data-bind:text></li>
+</ul>
+
+<h2>This should!</h2>
+<ul class="second-list" data-bind:list="exampleList">
+	<li data-list data-bind:text></li>
+</ul>
+HTML;
+
+	const HTML_LIST_BIND_NAME = <<<HTML
+<!doctype html>
+<ul>
+	<li data-list data-bind:text="name">Template item!</li>
+</ul>
+<ol>
+	<li>This doesn't have a data template attribute</li>
+</ol>
+<p data-bind:text="message">Text message goes here</p>
+HTML;
+
+	const HTML_STUDENT_LIST_EXPLICIT_BINDS = <<<HTML
+<!doctype html>
+<h1>List of students:</h1>
+<ul>
+	<li data-list>
+		<dl>
+			<dt>Student name</dt>
+			<dd class="name">
+				<span data-bind:text="name.first">First name</span> 
+				<span data-bind:text="name.last">Last name</span>
+			</dd>
+			
+			<dt>Current modules</dt>
+			<dd class="modules">
+				<ul>
+					<li data-list data-bind:text="title">Module name</li>
+				</ul>		
+			</dd>
+		</dl>
+	</li>
+</ul>
+HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return new HTMLDocument($html);

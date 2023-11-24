@@ -2,9 +2,15 @@
 namespace Gt\DomTemplate\Test;
 
 use Gt\Dom\HTMLDocument;
+use Gt\DomTemplate\BindableCache;
 use Gt\DomTemplate\ElementBinder;
+use Gt\DomTemplate\HTMLAttributeBinder;
+use Gt\DomTemplate\HTMLAttributeCollection;
+use Gt\DomTemplate\ListBinder;
 use Gt\DomTemplate\ListElementCollection;
 use Gt\DomTemplate\ListElementNotFoundInContextException;
+use Gt\DomTemplate\PlaceholderBinder;
+use Gt\DomTemplate\TableBinder;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
@@ -67,6 +73,7 @@ class ListElementCollectionTest extends TestCase {
 		$document = new HTMLDocument(HTMLPageContent::HTML_MUSIC_EXPLICIT_LIST_NAMES);
 		$listElementCollection = new ListElementCollection($document);
 		$elementBinder = new ElementBinder();
+		$elementBinder->setDependencies(...$this->elementBinderDependencies($document));
 
 		foreach(TestData::MUSIC as $artistName => $albumList) {
 			$artistListItem = $listElementCollection->get($document, "artist");
@@ -142,5 +149,27 @@ class ListElementCollectionTest extends TestCase {
 		$listElement->insertListItem();
 		self::assertCount(4, $ulChildren);
 		self::assertSame("This list item will always show at the end", $ulChildren[3]->textContent);
+	}
+
+	private function elementBinderDependencies(HTMLDocument $document, mixed...$otherObjectList):array {
+		$htmlAttributeBinder = new HTMLAttributeBinder();
+		$htmlAttributeCollection = new HTMLAttributeCollection();
+		$placeholderBinder = new PlaceholderBinder();
+		$elementBinder = new ElementBinder();
+		$listElementCollection = new ListElementCollection($document);
+		$bindableCache = new BindableCache();
+		$listBinder = new ListBinder();
+		$tableBinder = new TableBinder();
+
+		$htmlAttributeBinder->setDependencies($listBinder, $tableBinder);
+		$elementBinder->setDependencies($htmlAttributeBinder, $htmlAttributeCollection, $placeholderBinder);
+		$listBinder->setDependencies($elementBinder, $listElementCollection, $bindableCache, $tableBinder);
+		$tableBinder->setDependencies($listBinder, $listElementCollection, $elementBinder, $htmlAttributeBinder, $htmlAttributeCollection, $placeholderBinder);
+
+		return [
+			$htmlAttributeBinder,
+			$htmlAttributeCollection,
+			$placeholderBinder,
+		];
 	}
 }

@@ -4,9 +4,9 @@ namespace Gt\DomTemplate\Test\TestHelper\Model;
 class Customer {
 	/** @param array<Order> $orderList */
 	public function __construct(
-		public readonly int $id,
-		public readonly string $name,
-		public readonly Address $address,
+		public int $id,
+		public string $name,
+		public ?Address $address = null,
 		public array $orderList = [],
 	) {}
 
