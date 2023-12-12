@@ -1101,6 +1101,13 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_MULTIPLE_BIND_ATTRIBUTES = <<<HTML
+<!doctype html>
+<a id="link1" data-bind:text="url" data-bind:href="url" target="_blank" href="/">example.com</a>
+<a id="link2" data-bind:href="url" data-bind:text="url" target="_blank" href="/">example.com</a>
+HTML;
+
+
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return new HTMLDocument($html);
 	}

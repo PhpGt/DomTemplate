@@ -32,6 +32,8 @@ class HTMLAttributeBinder {
 			$element = $element->documentElement;
 		}
 
+		$attributesToRemove = [];
+
 		/**
 		 * @var string $attrName
 		 * @var Attr $attr
@@ -80,8 +82,12 @@ class HTMLAttributeBinder {
 			);
 
 			if(!$attr->ownerElement->hasAttribute("data-rebind")) {
-				$attr->ownerElement->removeAttribute($attrName);
+				array_push($attributesToRemove, $attrName);
 			}
+		}
+
+		foreach($attributesToRemove as $attrName) {
+			$element->removeAttribute($attrName);
 		}
 	}
 

@@ -127,4 +127,17 @@ class HTMLAttributeBinderTest extends TestCase {
 		$sut->bind(null, $dateTime, $outputElement);
 		self::assertSame("Tue, 05 Apr 1988 17:23:00 GMT", $outputElement->textContent);
 	}
+
+	public function testBind_multipleBindAttributes():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_MULTIPLE_BIND_ATTRIBUTES);
+		$sut = new HTMLAttributeBinder();
+		$link1 = $document->getElementById("link1");
+		$link2 = $document->getElementById("link2");
+		$sut->bind("url", "https://www.php.gt/", $link1);
+		$sut->bind("url", "https://www.php.gt/", $link2);
+		self::assertSame("https://www.php.gt/", $link1->textContent);
+		self::assertSame("https://www.php.gt/", $link2->href);
+		self::assertSame("https://www.php.gt/", $link1->href);
+		self::assertSame("https://www.php.gt/", $link2->textContent);
+	}
 }
