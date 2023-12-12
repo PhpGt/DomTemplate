@@ -1067,6 +1067,39 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_LIST_BIND_NAME = <<<HTML
+<!doctype html>
+<ul>
+	<li data-list data-bind:text="name">Template item!</li>
+</ul>
+<ol>
+	<li>This doesn't have a data template attribute</li>
+</ol>
+<p data-bind:text="message">Text message goes here</p>
+HTML;
+
+	const HTML_STUDENT_LIST_EXPLICIT_BINDS = <<<HTML
+<!doctype html>
+<h1>List of students:</h1>
+<ul>
+	<li data-list>
+		<dl>
+			<dt>Student name</dt>
+			<dd class="name">
+				<span data-bind:text="name.first">First name</span> 
+				<span data-bind:text="name.last">Last name</span>
+			</dd>
+			
+			<dt>Current modules</dt>
+			<dd class="modules">
+				<ul>
+					<li data-list data-bind:text="title">Module name</li>
+				</ul>		
+			</dd>
+		</dl>
+	</li>
+</ul>
+HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return new HTMLDocument($html);
