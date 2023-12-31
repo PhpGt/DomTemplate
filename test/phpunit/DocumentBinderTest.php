@@ -1207,6 +1207,25 @@ class DocumentBinderTest extends TestCase {
 		);
 	}
 
+	public function testBind_multipleAttributes():void {
+		$kvp = [
+			"key1" => "value1",
+			"key2" => "value2",
+			"id" => "abc123",
+			"name" => "example",
+		];
+		$document = new HTMLDocument(HTMLPageContent::HTML_MULTIPLE_BINDS_ON_SINGLE_ELEMENT);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+		$sut->bindData($kvp);
+		$outputElement = $document->querySelector("output");
+		self::assertSame($kvp["key1"], $outputElement->dataset->get("attr1"));
+		self::assertSame($kvp["key2"], $outputElement->dataset->get("attr2"));
+		self::assertSame($kvp["id"], $outputElement->id);
+		self::assertSame($kvp["name"], $outputElement->getAttribute("name"));
+		self::assertSame($kvp["name"], $outputElement->getAttribute("title"));
+	}
+
 	/** For issue #438 (https://github.com/PhpGt/DomTemplate/issues/438) */
 	public function test_removesUnboundDataElement():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND);

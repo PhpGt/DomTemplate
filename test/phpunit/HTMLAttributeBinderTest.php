@@ -134,8 +134,15 @@ class HTMLAttributeBinderTest extends TestCase {
 		$sut = new HTMLAttributeBinder();
 		$sut->bind("key1", "value1", $outputElement);
 		$sut->bind("key2", "value2", $outputElement);
+		$sut->bind("id", "example-id", $outputElement);
+		$sut->bind("name", "example-name", $outputElement);
 
-		self::assertTrue($outputElement->hasAttribute("id"));
+		self::assertSame("value1", $outputElement->getAttribute("data-attr1"));
+		self::assertSame("value2", $outputElement->getAttribute("data-attr2"));
+		self::assertSame("example-id", $outputElement->getAttribute("id"));
+		self::assertSame("example-name", $outputElement->getAttribute("name"));
+
+		self::assertSame("existing-value", $outputElement->dataset->get("existingAttr"));
 		self::assertSame("value1", $outputElement->dataset->get("attr1"));
 		self::assertSame("value2", $outputElement->dataset->get("attr2"));
 	}
