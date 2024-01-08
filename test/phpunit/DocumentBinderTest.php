@@ -1285,6 +1285,53 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("Is it day or night? It's daytime!", $dayOrNight->textContent);
 	}
 
+	public function testBind_removeInverse():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATA_BIND_REMOVE);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+
+		$sut->bindKeyValue("name", "Example");
+		$sut->bindKeyValue("day", false);
+
+		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
+		$dayOrNight = $document->getElementById("day-or-night");
+		self::assertSame("Is it day or night? It's nighttime!", $dayOrNight->textContent);
+	}
+
+	public function testBind_removeTruthy():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATA_BIND_REMOVE);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+
+		$sut->bindKeyValue("name", "Example");
+		$sut->bindKeyValue("day", "Daytime");
+
+		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
+		$dayOrNight = $document->getElementById("day-or-night");
+		self::assertSame("Is it day or night? It's daytime!", $dayOrNight->textContent);
+	}
+
+	public function testBind_removeObject():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATA_BIND_REMOVE);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+
+		$obj = new class {
+			public string $name = "Example";
+
+			#[Bind("day")]
+			public function isDay():bool {
+				return true;
+			}
+		};
+
+		$sut->bindData($obj);
+
+		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
+		$dayOrNight = $document->getElementById("day-or-night");
+		self::assertSame("Is it day or night? It's daytime!", $dayOrNight->textContent);
+	}
+
 	private function documentBinderDependencies(HTMLDocument $document, mixed...$otherObjectList):array {
 		$htmlAttributeBinder = new HTMLAttributeBinder();
 		$htmlAttributeCollection = new HTMLAttributeCollection();
