@@ -230,6 +230,17 @@ class HTMLAttributeBinder {
 			$this->listBinder->bindListData($bindValue, $element);
 			break;
 
+		case "remove":
+			$remove = $bindValue;
+			if(str_contains($modifier, "!")) {
+				$remove = !$remove;
+			}
+
+			if($remove) {
+				$element->remove();
+			}
+			break;
+
 		default:
 			if($modifier) {
 				$this->handleModifier(

@@ -1272,6 +1272,19 @@ class DocumentBinderTest extends TestCase {
 		}
 	}
 
+	public function testBind_remove():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_DATA_BIND_REMOVE);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+
+		$sut->bindKeyValue("name", "Example");
+		$sut->bindKeyValue("day", true);
+
+		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
+		$dayOrNight = $document->getElementById("day-or-night");
+		self::assertSame("Is it day or night? It's daytime!", $dayOrNight->textContent);
+	}
+
 	private function documentBinderDependencies(HTMLDocument $document, mixed...$otherObjectList):array {
 		$htmlAttributeBinder = new HTMLAttributeBinder();
 		$htmlAttributeCollection = new HTMLAttributeCollection();

@@ -1106,6 +1106,13 @@ HTML;
 <output data-bind:data-attr2="key2" data-bind:data-attr1="key1" data-bind:data-another-attr1="key1" data-existing-attr="existing-value" data-bind:id="id" data-bind:name="name" data-bind:title="name">Nothing is bound</output>
 HTML;
 
+	const HTML_DATA_BIND_REMOVE = <<<HTML
+<!doctype html>
+<h1>Hello, <span data-bind:text="name">World</span>!</h1>
+<p>This paragraph will always display.</p>
+<p id="day-or-night">Is it day or night? <span data-bind:remove="?day">It's nighttime!</span><span data-bind:remove="?!day">It's daytime!</span></p>
+HTML;
+
 	public static function createHTML(string $html = ""):HTMLDocument {
 		return new HTMLDocument($html);
 	}
