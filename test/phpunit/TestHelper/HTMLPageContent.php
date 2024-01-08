@@ -1110,7 +1110,7 @@ HTML;
 <!doctype html>
 <h1>Hello, <span data-bind:text="name">World</span>!</h1>
 <p>This paragraph will always display.</p>
-<p id="day-or-night">Is it day or night? <span data-bind:remove="?day">It's nighttime!</span><span data-bind:remove="?!day">It's daytime!</span></p>
+<p id="day-or-night">Is it day or night? <span data-bind:remove="?isDay">It's nighttime!</span><span data-bind:remove="?!isDay">It's daytime!</span></p>
 HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {

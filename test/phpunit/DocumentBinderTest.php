@@ -1278,7 +1278,7 @@ class DocumentBinderTest extends TestCase {
 		$sut->setDependencies(...$this->documentBinderDependencies($document));
 
 		$sut->bindKeyValue("name", "Example");
-		$sut->bindKeyValue("day", true);
+		$sut->bindKeyValue("isDay", true);
 
 		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
 		$dayOrNight = $document->getElementById("day-or-night");
@@ -1291,7 +1291,7 @@ class DocumentBinderTest extends TestCase {
 		$sut->setDependencies(...$this->documentBinderDependencies($document));
 
 		$sut->bindKeyValue("name", "Example");
-		$sut->bindKeyValue("day", false);
+		$sut->bindKeyValue("isDay", false);
 
 		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
 		$dayOrNight = $document->getElementById("day-or-night");
@@ -1304,7 +1304,7 @@ class DocumentBinderTest extends TestCase {
 		$sut->setDependencies(...$this->documentBinderDependencies($document));
 
 		$sut->bindKeyValue("name", "Example");
-		$sut->bindKeyValue("day", "Daytime");
+		$sut->bindKeyValue("isDay", "Daytime");
 
 		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
 		$dayOrNight = $document->getElementById("day-or-night");
@@ -1319,8 +1319,8 @@ class DocumentBinderTest extends TestCase {
 		$obj = new class {
 			public string $name = "Example";
 
-			#[Bind("day")]
-			public function isDay():bool {
+			#[Bind("isDay")]
+			public function isTimeCurrentlyDaytime():bool {
 				return true;
 			}
 		};
