@@ -127,4 +127,23 @@ class HTMLAttributeBinderTest extends TestCase {
 		$sut->bind(null, $dateTime, $outputElement);
 		self::assertSame("Tue, 05 Apr 1988 17:23:00 GMT", $outputElement->textContent);
 	}
+
+	public function testBind_multipleAttributes():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_MULTIPLE_BINDS_ON_SINGLE_ELEMENT);
+		$outputElement = $document->querySelector("output");
+		$sut = new HTMLAttributeBinder();
+		$sut->bind("key1", "value1", $outputElement);
+		$sut->bind("key2", "value2", $outputElement);
+		$sut->bind("id", "example-id", $outputElement);
+		$sut->bind("name", "example-name", $outputElement);
+
+		self::assertSame("value1", $outputElement->getAttribute("data-attr1"));
+		self::assertSame("value2", $outputElement->getAttribute("data-attr2"));
+		self::assertSame("example-id", $outputElement->getAttribute("id"));
+		self::assertSame("example-name", $outputElement->getAttribute("name"));
+
+		self::assertSame("existing-value", $outputElement->dataset->get("existingAttr"));
+		self::assertSame("value1", $outputElement->dataset->get("attr1"));
+		self::assertSame("value2", $outputElement->dataset->get("attr2"));
+	}
 }
