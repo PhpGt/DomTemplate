@@ -72,14 +72,23 @@ class DocumentBinder extends Binder {
 			$kvp = $kvp->asArray();
 		}
 
-		if(is_object($kvp) && !is_iterable($kvp)) {
+// The $kvp object may be both an object with its own key-value-pairs and
+// an iterable object. We can perform the two bind operations here.
+
+		$object = null;
+		if(is_object($kvp)) {
 			if($this->bindableCache->isBindable($kvp)) {
+				$object = $kvp;
 				$kvp = $this->bindableCache->convertToKvp($kvp);
 			}
 		}
 
 		foreach($kvp ?? [] as $key => $value) {
 			$this->bindKeyValue($key, $value, $context);
+		}
+
+		if(is_iterable($object)) {
+			$this->listBinder->bindListData($object, $context ?? $this->document);
 		}
 	}
 

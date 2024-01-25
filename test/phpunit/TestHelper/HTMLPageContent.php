@@ -265,6 +265,7 @@ HTML;
 
 	const HTML_LIST = <<<HTML
 <!doctype html>
+<h1 data-bind:text="name">List name</h1>
 <ul>
 	<li data-list data-bind:text>Template item!</li>
 </ul>
@@ -1104,6 +1105,13 @@ HTML;
 	const HTML_MULTIPLE_BINDS_ON_SINGLE_ELEMENT = <<<HTML
 <!doctype html>
 <output data-bind:data-attr2="key2" data-bind:data-attr1="key1" data-bind:data-another-attr1="key1" data-existing-attr="existing-value" data-bind:id="id" data-bind:name="name" data-bind:title="name">Nothing is bound</output>
+HTML;
+
+	const HTML_DATA_BIND_REMOVE = <<<HTML
+<!doctype html>
+<h1>Hello, <span data-bind:text="name">World</span>!</h1>
+<p>This paragraph will always display.</p>
+<p id="day-or-night">Is it day or night? <span data-bind:remove="?isDay">It's nighttime!</span><span data-bind:remove="?!isDay">It's daytime!</span></p>
 HTML;
 
 	public static function createHTML(string $html = ""):HTMLDocument {
