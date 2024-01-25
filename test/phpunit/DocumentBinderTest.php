@@ -29,6 +29,9 @@ use Gt\DomTemplate\Test\TestHelper\Model\Country;
 use Gt\DomTemplate\Test\TestHelper\Model\Customer;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use IteratorAggregate;
+use Traversable;
+use ArrayIterator;
 
 class DocumentBinderTest extends TestCase {
 	/**
@@ -1330,6 +1333,37 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("Hello, Example!", $document->querySelector("h1")->textContent);
 		$dayOrNight = $document->getElementById("day-or-night");
 		self::assertSame("Is it day or night? It's daytime!", $dayOrNight->textContent);
+	}
+
+	/**
+	 * When passing an object to bindData, the object could be both
+	 * key-value-pairs and iterable (notably an IteratorAggregate).
+	 */
+	public function testBindData_iterableObject():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_LIST);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+
+		$obj = new class implements IteratorAggregate {
+			public string $id = "ABC123";
+			public string $name = "Example";
+
+			public function getIterator():Traversable {
+				return new ArrayIterator(["One", "Two", "Three", "Four"]);
+			}
+		};
+
+		$sut->bindData($obj);
+		$h1 = $document->querySelector("h1");
+		$ul = $document->querySelector("ul");
+		$ol = $document->querySelector("ol");
+
+		// The object should have its properties bound to the page:
+		self::assertSame("Example", $h1->textContent);
+		// but it should bind itself as an iterator to the list:
+		self::assertCount(4, $ul->children);
+		// and the un-attributed list should not change:
+		self::assertCount(1, $ol->children);
 	}
 
 	private function documentBinderDependencies(HTMLDocument $document, mixed...$otherObjectList):array {

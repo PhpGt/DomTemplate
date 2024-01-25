@@ -265,6 +265,7 @@ HTML;
 
 	const HTML_LIST = <<<HTML
 <!doctype html>
+<h1 data-bind:text="name">List name</h1>
 <ul>
 	<li data-list data-bind:text>Template item!</li>
 </ul>
