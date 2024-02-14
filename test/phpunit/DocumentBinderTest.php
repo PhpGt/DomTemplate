@@ -25,6 +25,7 @@ use Gt\DomTemplate\TableElementNotFoundInContextException;
 use Gt\DomTemplate\Test\TestHelper\HTMLPageContent;
 use Gt\DomTemplate\Test\TestHelper\ExampleClass;
 use Gt\DomTemplate\Test\TestHelper\Model\Address;
+use Gt\DomTemplate\Test\TestHelper\Model\ArrayIterator\Product\ProductList;
 use Gt\DomTemplate\Test\TestHelper\Model\Country;
 use Gt\DomTemplate\Test\TestHelper\Model\Customer;
 use PHPUnit\Framework\TestCase;
@@ -1364,6 +1365,39 @@ class DocumentBinderTest extends TestCase {
 		self::assertCount(4, $ul->children);
 		// and the un-attributed list should not change:
 		self::assertCount(1, $ol->children);
+	}
+
+	public function testBindList_arrayIterator():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_SHOP_PRODUCTS);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+
+		$categoryNameList = ["Category 1", "Category 2"];
+		$productNameList = [
+			["Product 1 in cat 1", "Product 2 in cat 1"],
+			["Product 3 in cat 2", "Product 4 in cat 2", "Product 5 in cat 2"],
+		];
+
+		$obj = new ProductList(
+			$categoryNameList,
+			$productNameList,
+		);
+		$sut->bindList($obj);
+
+		$categoryList = $document->querySelector("ul.categoryList");
+		self::assertCount(count($categoryNameList), $categoryList->children);
+
+		$productCount = 0;
+		foreach($categoryList->children as $categoryIndex => $categoryLi) {
+			self::assertSame("Category " . ($categoryIndex + 1), $categoryLi->querySelector("h2")->innerText);
+
+			self::assertCount(count($productNameList[$categoryIndex]), $categoryLi->querySelector("ul")->children);
+
+			foreach($categoryLi->querySelectorAll("ul li") as $productIndex => $productLi) {
+				self::assertSame("Product " . ($productCount + 1) . " in cat " . ($categoryIndex + 1), $productLi->textContent);
+				$productCount++;
+			}
+		}
 	}
 
 	private function documentBinderDependencies(HTMLDocument $document, mixed...$otherObjectList):array {
