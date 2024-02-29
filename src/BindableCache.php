@@ -2,6 +2,7 @@
 namespace Gt\DomTemplate;
 
 use Closure;
+use Error;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
@@ -70,7 +71,8 @@ class BindableCache {
 
 			foreach($refAttributes as $refAttr) {
 				$bindKey = $this->getBindKey($refAttr, $refMethod);
-				$attributeCache[$bindKey] = fn(object $object):null|iterable|string => $this->nullableStringOrIterable($object->$methodName());
+				$attributeCache[$bindKey] = fn(object $object):null|iterable|string => $this->nullableStringOrIterable($object, $methodName);
+
 				if(class_exists($refReturnName)) {
 					$cacheObjectKeys[$bindKey] = $refReturnName;
 				}
@@ -85,7 +87,7 @@ class BindableCache {
 					$bindKey = $this->getBindKey($refAttr);
 // TODO: Test for object type in object property.
 					$attributeCache[$bindKey]
-						= fn(object $object, $key):null|iterable|string => $this->nullableStringOrIterable($object->$propName);
+						= fn(object $object, $key):null|iterable|string => $this->nullableStringOrIterable($object, $propName);
 				}
 			}
 			elseif($refProp->isPublic()) {
@@ -99,7 +101,7 @@ class BindableCache {
 				$attributeCache[$bindKey] =
 					fn(object $object, $key):null|iterable|string =>
 					isset($object->$key)
-						? $this->nullableStringOrIterable($object->$key)
+						? $this->nullableStringOrIterable($object, $key)
 						: null;
 
 				if($refTypeName && class_exists($refTypeName)) {
@@ -192,7 +194,10 @@ class BindableCache {
 				$bindFunc = "get" . ucfirst($propName);
 				if($objectToExtract) {
 					if(property_exists($objectToExtract, $propName)) {
-						$objectToExtract = $objectToExtract->$propName;
+						try {
+							$objectToExtract = $objectToExtract->$propName;
+						}
+						catch(Error) {}
 					}
 					elseif(method_exists($objectToExtract, $bindFunc)) {
 						$objectToExtract = $objectToExtract->$bindFunc();
@@ -249,7 +254,17 @@ class BindableCache {
 	}
 
 	/** @return null|string|array<int|string, mixed> */
-	private function nullableStringOrIterable(mixed $value):null|iterable|string {
+	private function nullableStringOrIterable(object $object, string $keyOrMethod):null|iterable|string {
+		if(method_exists($object, $keyOrMethod)) {
+			$value = $object->$keyOrMethod();
+		}
+		elseif(property_exists($object, $keyOrMethod)) {
+			$value = $object->$keyOrMethod;
+		}
+		else {
+			return null;
+		}
+
 		if(is_scalar($value)) {
 			return $value;
 		}
