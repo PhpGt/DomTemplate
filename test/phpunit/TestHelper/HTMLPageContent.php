@@ -1034,6 +1034,22 @@ list name will be the same as the element name (camel-cased to orderList) -->
 </customer-list>
 HTML;
 
+	const HTML_SHOP_PRODUCTS = <<<HTML
+<!doctype html>
+<h1>Categorised shop items</h1>
+
+<ul class="categoryList">
+	<li data-list>
+		<h2 data-bind:text>Category name</h2>
+		
+		<ul class="productList">
+			<li data-list data-bind:text="name">Product name</li>
+		</ul>
+	</li>
+</ul>
+HTML;
+
+
 	const HTML_REMOVE_UNBOUND = <<<HTML
 <!doctype html>
 <h1>Log in to the system</h1>

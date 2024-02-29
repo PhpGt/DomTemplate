@@ -73,6 +73,10 @@ class ListBinder {
 // If the $listValue's first value is iterable, then treat this as a nested list.
 			if($this->isNested($listValue)) {
 				$elementBinder->bind(null, $listKey, $t);
+				$this->bindListData(
+					$listValue,
+					$t,
+				);
 				foreach($this->bindableCache->convertToKvp($listValue) as $key => $value) {
 					$elementBinder->bind($key, $value, $t);
 				}
