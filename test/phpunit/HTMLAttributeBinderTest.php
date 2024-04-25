@@ -146,4 +146,16 @@ class HTMLAttributeBinderTest extends TestCase {
 		self::assertSame("value1", $outputElement->dataset->get("attr1"));
 		self::assertSame("value2", $outputElement->dataset->get("attr2"));
 	}
+
+	public function testExpandAttributes_atCharacter():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_BASIC_FORM_WITH_AT_BINDER);
+		$sut = new HTMLAttributeBinder();
+		$fromInput = $document->querySelector("input[name=from]");
+		$toInput = $document->querySelector("input[name=to]");
+		$sut->bind("from", "London", $fromInput);
+		$sut->bind("to", "Derby", $toInput);
+
+		self::assertSame("London", $fromInput->value);
+		self::assertSame("Derby", $toInput->value);
+	}
 }
