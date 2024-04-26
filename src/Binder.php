@@ -6,7 +6,7 @@ use Gt\Dom\Element;
 abstract class Binder {
 	abstract public function bindValue(
 		mixed $value,
-		?Element $context = null
+		null|string|Element $context = null
 	):void;
 
 	/**
@@ -16,7 +16,7 @@ abstract class Binder {
 	abstract public function bindKeyValue(
 		string $key,
 		mixed $value,
-		?Element $context = null
+		null|string|Element $context = null
 	):void;
 
 	/**
@@ -25,12 +25,12 @@ abstract class Binder {
 	 */
 	abstract public function bindData(
 		mixed $kvp,
-		?Element $context = null
+		null|string|Element $context = null
 	):void;
 
 	abstract public function bindTable(
 		mixed $tableData,
-		?Element $context = null,
+		null|string|Element $context = null,
 		?string $bindKey = null
 	):void;
 
@@ -39,7 +39,7 @@ abstract class Binder {
 	 */
 	abstract public function bindList(
 		iterable $listData,
-		?Element $context = null,
+		null|string|Element $context = null,
 		?string $templateName = null
 	):int;
 
@@ -47,7 +47,7 @@ abstract class Binder {
 	abstract public function bindListCallback(
 		iterable $listData,
 		callable $callback,
-		?Element $context = null,
+		null|string|Element $context = null,
 		?string $templateName = null
 	):int;
 }

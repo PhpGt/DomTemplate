@@ -587,6 +587,22 @@ HTML;
 </html>
 HTML;
 
+	const HTML_COMPONENT_WITH_ATTRIBUTE_NESTED = <<<HTML
+<!doctype html>
+<h1>Hello, World!</h1>
+
+<example-component>
+	<h2 data-bind:text="title">Component title</h2>
+	
+	<example-subcomponent id="subcomponent-1">
+		<h3 data-bind:text="title">Sub-component title</h3>
+	</example-subcomponent>
+	<example-subcomponent id="subcomponent-2">
+		<h3 data-bind:text="title">Sub-component title</h3>
+	</example-subcomponent>
+</example-component>
+HTML;
+
 
 	const HTML_COMPONENT_NESTED_OUTER = <<<HTML
 <!doctype html>
