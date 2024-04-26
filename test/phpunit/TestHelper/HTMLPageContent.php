@@ -771,6 +771,16 @@ HTML;
 </ul>
 HTML;
 
+	const HTML_BASIC_FORM_WITH_AT_BINDER = <<<HTML
+<!doctype html>
+
+<form>
+	<input name="from" data-bind:value="@" />
+	<input name="to" data-bind:value="@" />
+</form>
+HTML;
+
+
 	const HTML_SALES = <<<HTML
 <!doctype html>
 <h1>Sales</h1>

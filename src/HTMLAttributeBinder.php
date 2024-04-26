@@ -63,7 +63,7 @@ class HTMLAttributeBinder {
 // skip this attribute.
 				$trimmedAttrValue = ltrim($attrValue, ":!?");
 				$trimmedAttrValue = strtok($trimmedAttrValue, " ");
-				if($key !== $trimmedAttrValue) {
+				if($key !== $trimmedAttrValue && $trimmedAttrValue !== "@") {
 					continue;
 				}
 				if($attrValue !== $trimmedAttrValue) {
@@ -126,7 +126,12 @@ class HTMLAttributeBinder {
 			}
 
 			if($attrValue[0] === "@") {
-				$otherAttrName = substr($attrValue, 1);
+				if($attrValue === "@") {
+					$otherAttrName = "name";
+				}
+				else {
+					$otherAttrName = substr($attrValue, 1);
+				}
 				$element->setAttribute(
 					$attrName,
 					$element->getAttribute($otherAttrName)
