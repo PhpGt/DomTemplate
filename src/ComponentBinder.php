@@ -13,9 +13,13 @@ class ComponentBinder extends DocumentBinder {
 
 	public function bindList(
 		iterable $listData,
-		?Element $context = null,
+		null|string|Element $context = null,
 		?string $templateName = null
 	):int {
+		if(is_string($context)) {
+			$context = $this->stringToContext($context);
+		}
+
 		if($context) {
 			$this->checkElementContainedWithinComponent($context);
 		}
@@ -52,5 +56,9 @@ class ComponentBinder extends DocumentBinder {
 				"<{$this->componentElement->tagName}> does not contain requested <$context->tagName>."
 			);
 		}
+	}
+
+	protected function stringToContext(string $context):Element {
+		return $this->componentElement->querySelector($context);
 	}
 }
