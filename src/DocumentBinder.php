@@ -39,8 +39,12 @@ class DocumentBinder extends Binder {
 	 */
 	public function bindValue(
 		mixed $value,
-		?Element $context = null
+		null|string|Element $context = null
 	):void {
+		if(is_string($context)) {
+			$context = $this->stringToContext($context);
+		}
+
 		$this->bind(null, $value, $context);
 	}
 
@@ -51,8 +55,12 @@ class DocumentBinder extends Binder {
 	public function bindKeyValue(
 		string $key,
 		mixed $value,
-		?Element $context = null
+		null|Element|string $context = null,
 	):void {
+		if(is_string($context)) {
+			$context = $this->stringToContext($context);
+		}
+
 		$this->bind($key, $value, $context);
 	}
 
@@ -62,8 +70,12 @@ class DocumentBinder extends Binder {
 	 */
 	public function bindData(
 		mixed $kvp,
-		?Element $context = null
+		null|string|Element $context = null
 	):void {
+		if(is_string($context)) {
+			$context = $this->stringToContext($context);
+		}
+
 		if($this->isIndexedArray($kvp)) {
 			throw new IncompatibleBindDataException("bindData is only compatible with key-value-pair data, but it was passed an indexed array.");
 		}
@@ -94,9 +106,13 @@ class DocumentBinder extends Binder {
 
 	public function bindTable(
 		mixed $tableData,
-		?Element $context = null,
+		null|string|Element $context = null,
 		?string $bindKey = null
 	):void {
+		if(is_string($context)) {
+			$context = $this->stringToContext($context);
+		}
+
 		$this->tableBinder->bindTableData(
 			$tableData,
 			$context ?? $this->document,
@@ -109,9 +125,13 @@ class DocumentBinder extends Binder {
 	 */
 	public function bindList(
 		iterable $listData,
-		?Element $context = null,
+		null|string|Element $context = null,
 		?string $templateName = null
 	):int {
+		if(is_string($context)) {
+			$context = $this->stringToContext($context);
+		}
+
 		if(!$context) {
 			$context = $this->document;
 		}
@@ -123,7 +143,7 @@ class DocumentBinder extends Binder {
 	public function bindListCallback(
 		iterable $listData,
 		callable $callback,
-		?Element $context = null,
+		null|string|Element $context = null,
 		?string $templateName = null
 	):int {
 		if(!$context) {
@@ -191,5 +211,9 @@ class DocumentBinder extends Binder {
 		}
 
 		return true;
+	}
+
+	protected function stringToContext(string $context):Element {
+		return $this->document->querySelector($context);
 	}
 }
