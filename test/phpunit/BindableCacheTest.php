@@ -5,6 +5,9 @@ use Gt\DomTemplate\Bind;
 use Gt\DomTemplate\BindGetter;
 use Gt\DomTemplate\BindableCache;
 use Gt\DomTemplate\BindGetterMethodDoesNotStartWithGetException;
+use Gt\DomTemplate\Test\TestHelper\Model\Address;
+use Gt\DomTemplate\Test\TestHelper\Model\Customer;
+use Gt\DomTemplate\Test\TestHelper\Model\Order;
 use Gt\DomTemplate\Test\TestHelper\TestData;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -176,6 +179,15 @@ class BindableCacheTest extends TestCase {
 			self::assertSame($customer->address->country->code, $kvpList[$i]["address.country.code"]);
 			self::assertSame($customer->address->country->getName(), $kvpList[$i]["address.country.name"]);
 		}
+	}
+
+	public function testConvertKvp_nestedObjectSameType():void {
+		$sut = new BindableCache();
+		$parentCustomer = new Customer(100, "Parent Customer");
+		$customer = new Customer(101, "Test Customer", parentCustomer: $parentCustomer);
+		$kvp = $sut->convertToKvp($customer);
+		self::assertSame("101", $kvp["id"]);
+		self::assertSame("Test Customer", $kvp["name"]);
 	}
 
 	public function testConvertToKvp_nestedNullProperty():void {

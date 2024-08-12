@@ -8,6 +8,7 @@ class Customer {
 		public string $name,
 		public ?Address $address = null,
 		public array $orderList = [],
+		public ?Customer $parentCustomer = null,
 	) {}
 
 	public function addOrder(Order $order):void {
