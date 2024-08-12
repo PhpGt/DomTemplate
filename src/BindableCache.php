@@ -31,7 +31,7 @@ class BindableCache {
 		$this->nonBindableClassMap = [];
 	}
 
-	public function isBindable(object $object):bool {
+	public function isBindable(object $object, bool $recursive = false):bool {
 		$refObj = null;
 
 		if($object instanceof ReflectionClass) {
@@ -115,6 +115,7 @@ class BindableCache {
 			return false;
 		}
 
+		$this->bindableClassMap[$classString] = $attributeCache;
 		$attributeCache = $this->expandObjects(
 			$attributeCache,
 			$cacheObjectKeys,
@@ -137,14 +138,14 @@ class BindableCache {
 		foreach($cache as $key => $closure) {
 			if($objectType = $objectKeys[$key] ?? null) {
 				$refClass = new ReflectionClass($objectType);
-				if($this->isBindable($refClass)) {
+				$refClassName = $refClass->getName();
+
+				if(isset($this->bindableClassMap[$refClassName]) || $this->isBindable($refClass)) {
 					$bindable = $this->bindableClassMap[$objectType];
 					foreach($bindable as $bindableKey => $bindableClosure) {
 						$cache["$key.$bindableKey"] = $bindableClosure;
 					}
 				}
-
-//				unset($cache[$key]);
 			}
 		}
 

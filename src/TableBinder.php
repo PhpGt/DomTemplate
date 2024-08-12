@@ -218,7 +218,7 @@ class TableBinder {
 				 */
 				foreach($rowData as $cellIndex => $cellData) {
 					if($rowIndex > 0) {
-						if(isset($array[0]) && array_is_list($array[0]) && !array_is_list($rowData)) {
+						if(!empty($array[0]) && array_is_list($array[0]) && !array_is_list($rowData)) {
 							if(!is_iterable($cellData)) {
 								throw new IncorrectTableDataFormat("Row $rowIndex has a string key ($cellIndex) but the value is not iterable.");
 							}
