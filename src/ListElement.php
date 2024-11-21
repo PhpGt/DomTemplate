@@ -10,7 +10,7 @@ class ListElement {
 	const ATTRIBUTE_LIST_PARENT = "data-list-parent";
 
 	private string $listItemParentPath;
-	private null|Node|Element $listItemNextSibling;
+	private null|Element $listItemNextSibling;
 	private int $insertCount;
 
 	public function __construct(
