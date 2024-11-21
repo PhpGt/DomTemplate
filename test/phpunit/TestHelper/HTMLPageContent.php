@@ -1095,6 +1095,25 @@ HTML;
 </form>
 HTML;
 
+	const HTML_REMOVE_UNBOUND_BIND_VALUE = <<<HTML
+<!doctype html>
+<h1>Log in to the system</h1>
+<form method="post">
+	<div data-element="error">There has been an error!</div>
+	
+	<label>
+		<span>Your email address:</span>
+		<input name="email" type="email" required />
+	</label>
+	<label>
+		<span>Your password:</span>
+		<input name="password" type="password" required />
+	</label>
+	
+	<button name="do" value="login">Log in!</button>
+</form>
+HTML;
+
 	const HTML_DATA_BIND_LIST = <<<HTML
 <!doctype html>
 <h1 data-bind:text="name">Data-bind:list example</h1>

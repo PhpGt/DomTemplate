@@ -160,22 +160,28 @@ class DocumentBinder extends Binder {
 
 	public function cleanupDocument():void {
 		$xpathResult = $this->document->evaluate(
-			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-list')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')]"
+			"//*/@*[starts-with(name(), 'data-bind')] | //*/@*[starts-with(name(), 'data-list')] | //*/@*[starts-with(name(), 'data-template')] | //*/@*[starts-with(name(), 'data-table-key')] | //*/@*[starts-with(name(), 'data-element')]"
 		);
 
 		$elementsToRemove = [];
 		/** @var Attr $item */
 		foreach($xpathResult as $item) {
-			if($item->ownerElement->hasAttribute("data-element")) {
-				array_push($elementsToRemove, $item->ownerElement);
+			$ownerElement = $item->ownerElement;
+			if($ownerElement->hasAttribute("data-element")) {
+				if(!$ownerElement->hasAttribute("data-bound")) {
+					array_push($elementsToRemove, $ownerElement);
+				}
 				continue;
 			}
 
-			$item->ownerElement->removeAttribute($item->name);
+			$ownerElement->removeAttribute($item->name);
 		}
 
 		foreach($this->document->querySelectorAll("[data-element]") as $dataElement) {
 			$dataElement->removeAttribute("data-element");
+		}
+		foreach($this->document->querySelectorAll("[data-bound]") as $dataBound) {
+			$dataBound->removeAttribute("data-bound");
 		}
 
 		foreach($elementsToRemove as $element) {
