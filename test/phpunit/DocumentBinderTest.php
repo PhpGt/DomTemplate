@@ -1245,7 +1245,51 @@ class DocumentBinderTest extends TestCase {
 		$sut->setDependencies(...$this->documentBinderDependencies($document));
 		$sut->bindKeyValue("error", "Example error!");
 		$sut->cleanupDocument();
-		self::assertStringContainsStringIgnoringCase("error", (string)$document);
+		$errorDiv = $document->querySelector("form>div");
+		self::assertNotNull($errorDiv);
+		self::assertSame("Example error!", $errorDiv->textContent);
+	}
+
+	public function test_bindElementWithBindValue():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND_BIND_VALUE);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+		$sut->bindKeyValue("error", true);
+		$sut->cleanupDocument();
+		$errorDiv = $document->querySelector("form>div");
+		self::assertNotNull($errorDiv);
+		self::assertSame("There has been an error!", $errorDiv->textContent);
+	}
+
+	public function test_bindElementRemovesMultiple():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_ADMIN_PANEL);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+		$sut->bindKeyValue("isAdmin", false);
+		$sut->cleanupDocument();
+
+		$panelDiv = $document->querySelector("div.panel");
+		self::assertCount(2, $panelDiv->children);
+	}
+
+	public function test_bindElementRemovesMultiple_doesNotRemoveWithTrue():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_ADMIN_PANEL);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+		$sut->bindKeyValue("isAdmin", true);
+		$sut->cleanupDocument();
+
+		$panelDiv = $document->querySelector("div.panel");
+		self::assertCount(4, $panelDiv->children);
+	}
+
+	public function test_bindElementIsRemovedWhenNotBound():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND_BIND_VALUE);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+		$sut->cleanupDocument();
+		$errorDiv = $document->querySelector("form>div");
+		self::assertNull($errorDiv);
 	}
 
 	public function test_bindData_withList_dataBindList():void {

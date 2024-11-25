@@ -82,6 +82,16 @@ HTML;
 </div>
 HTML;
 
+	const HTML_ADMIN_PANEL = <<<HTML
+<div class="panel">
+	<p>You are logged in as <span data-bind:text="username">username</span></p>
+	<p data-element="isAdmin">You are an administrator</p>
+	<button name="do" value="save">Save record</button>
+	<button data-element="isAdmin" name="do" value="delete">Delete record</button>
+</div>
+HTML;
+
+
 	const HTML_DIFFERENT_BIND_PROPERTIES = <<<HTML
 <!doctype html>
 <img id="img1" class="main" src="/default.png" alt="Not bound" 
@@ -1081,6 +1091,25 @@ HTML;
 <h1>Log in to the system</h1>
 <form method="post">
 	<div data-element data-bind:text="error">Error message goes here</div>
+	
+	<label>
+		<span>Your email address:</span>
+		<input name="email" type="email" required />
+	</label>
+	<label>
+		<span>Your password:</span>
+		<input name="password" type="password" required />
+	</label>
+	
+	<button name="do" value="login">Log in!</button>
+</form>
+HTML;
+
+	const HTML_REMOVE_UNBOUND_BIND_VALUE = <<<HTML
+<!doctype html>
+<h1>Log in to the system</h1>
+<form method="post">
+	<div data-element="error">There has been an error!</div>
 	
 	<label>
 		<span>Your email address:</span>

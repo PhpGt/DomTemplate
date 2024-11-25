@@ -187,7 +187,7 @@ class TableBinder {
 		}
 	}
 
-	/** @param array<int,array<int,string>>|array<int,array<string,string>>|array<string,array<int,string>>|array<int, array<int,string>|array<string,string>> $array */
+	/** @param array<int, array<int,string>> | array<int, array<string, string>> | array<string, array<int, string>> | array<int, array<int, string>> | array<string, string> $array */
 	public function detectTableDataStructureType(array $array):TableDataStructureType {
 		if(empty($array)) {
 			return TableDataStructureType::NORMALISED;

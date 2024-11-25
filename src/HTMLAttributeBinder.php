@@ -41,6 +41,12 @@ class HTMLAttributeBinder {
 		foreach($element->attributes as $attrName => $attr) {
 			$attrValue = $attr->value;
 
+			if($attrName === "data-element") {
+				if($attr->value === $key && $value) {
+					$element->setAttribute("data-bound", "");
+				}
+			}
+
 			if(!str_starts_with($attrName, "data-bind")) {
 				continue;
 			}
@@ -81,6 +87,7 @@ class HTMLAttributeBinder {
 				$value,
 				$modifier
 			);
+			$element->setAttribute("data-bound", "");
 
 			if(!$attr->ownerElement->hasAttribute("data-rebind")) {
 				array_push($attributesToRemove, $attrName);
