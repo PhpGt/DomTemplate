@@ -1261,6 +1261,28 @@ class DocumentBinderTest extends TestCase {
 		self::assertSame("There has been an error!", $errorDiv->textContent);
 	}
 
+	public function test_bindElementRemovesMultiple():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_ADMIN_PANEL);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+		$sut->bindKeyValue("isAdmin", false);
+		$sut->cleanupDocument();
+
+		$panelDiv = $document->querySelector("div.panel");
+		self::assertCount(2, $panelDiv->children);
+	}
+
+	public function test_bindElementRemovesMultiple_doesNotRemoveWithTrue():void {
+		$document = new HTMLDocument(HTMLPageContent::HTML_ADMIN_PANEL);
+		$sut = new DocumentBinder($document);
+		$sut->setDependencies(...$this->documentBinderDependencies($document));
+		$sut->bindKeyValue("isAdmin", true);
+		$sut->cleanupDocument();
+
+		$panelDiv = $document->querySelector("div.panel");
+		self::assertCount(4, $panelDiv->children);
+	}
+
 	public function test_bindElementIsRemovedWhenNotBound():void {
 		$document = new HTMLDocument(HTMLPageContent::HTML_REMOVE_UNBOUND_BIND_VALUE);
 		$sut = new DocumentBinder($document);

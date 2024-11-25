@@ -82,6 +82,16 @@ HTML;
 </div>
 HTML;
 
+	const HTML_ADMIN_PANEL = <<<HTML
+<div class="panel">
+	<p>You are logged in as <span data-bind:text="username">username</span></p>
+	<p data-element="isAdmin">You are an administrator</p>
+	<button name="do" value="save">Save record</button>
+	<button data-element="isAdmin" name="do" value="delete">Delete record</button>
+</div>
+HTML;
+
+
 	const HTML_DIFFERENT_BIND_PROPERTIES = <<<HTML
 <!doctype html>
 <img id="img1" class="main" src="/default.png" alt="Not bound" 
