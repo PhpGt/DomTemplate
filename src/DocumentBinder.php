@@ -158,9 +158,9 @@ class DocumentBinder extends Binder {
 		);
 	}
 
+	// @phpstan-ignore varTag.nativeType
 	public function cleanupDocument():void {
 		/**
-		 * @phpstan-ignore-next-line
 		 * @var Attr[] $xpathResult
 		 */
 		$xpathResult = $this->document->evaluate(
