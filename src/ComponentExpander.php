@@ -32,6 +32,13 @@ class ComponentExpander extends PartialContentExpander {
 					src: $src,
 				);
 				$element->innerHTML = $content;
+				foreach($element->querySelectorAll("form[method='post']") as $form) {
+					$componentInput = $element->ownerDocument->createElement("input");
+					$componentInput->type = "hidden";
+					$componentInput->name = "__component";
+					$componentInput->value = $name;
+					$form->prepend($componentInput);
+				}
 				array_push($expandedComponentArray, $element);
 				$recursiveExpandedComponents = $this->expand($element);
 				$expandedComponentArray = array_merge(
